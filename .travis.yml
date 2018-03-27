@@ -14,8 +14,10 @@
 
 language: java
 
+os: linux
+dist: trusty
+
 jdk:
   - oraclejdk8
   - oraclejdk9
   - openjdk8
-  - openjdk9
