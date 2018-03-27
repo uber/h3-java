@@ -1,0 +1,13 @@
+# IntelliJ
+.idea
+*.iml
+
+# Eclipse/Eclim
+.classpath
+.project
+.settings/
+
+# Build artifacts
+target/
+src/main/c/h3-java/src/com_uber_h3core_NativeMethods.h
+dependency-reduced-pom.xml
