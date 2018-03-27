@@ -560,37 +560,40 @@ public class TestH3Core {
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3NaN() {
-        assertEquals(0, h3.geoToH3(Double.NaN, Double.NaN, 5));
+        h3.geoToH3(Double.NaN, Double.NaN, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3PositiveInfinity() {
-        assertEquals(0, h3.geoToH3(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 5));
+        h3.geoToH3(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3NegativeInfinity() {
-        assertEquals(0, h3.geoToH3(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 5));
+        h3.geoToH3(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testHostileInput2() {
-        assertEquals(0, h3.geoToH3(0, 0, -1));
+    public void testHostileInputNegativeRes() {
+        h3.geoToH3(0, 0, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testHostileInput3() {
-        assertEquals(0, h3.geoToH3(0, 0, 1000));
+    public void testHostileInputLargeRes() {
+        h3.geoToH3(0, 0, 1000);
     }
 
     @Test
-    public void testHostileInput4() {
-        // Don't crash
-        h3.geoToH3(1e45, 1e45, 0);
+    public void testHostileInputLatLng() {
+        try {
+            assertNotEquals(0, h3.geoToH3(1e45, 1e45, 0));
+        } catch (IllegalArgumentException e) {
+            // Also acceptable result
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testHostileInput5() {
+    public void testHostileInputMaximum() {
         h3.geoToH3(Double.MAX_VALUE, Double.MAX_VALUE, 0);
     }
 
