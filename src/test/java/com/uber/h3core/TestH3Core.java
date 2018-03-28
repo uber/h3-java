@@ -586,7 +586,7 @@ public class TestH3Core {
     @Test
     public void testHostileInputLatLng() {
         try {
-            assertNotEquals(0, h3.geoToH3(1e45, 1e45, 0));
+            assertEquals(0x80effffffffffffL, h3.geoToH3(1e45, 1e45, 0));
         } catch (IllegalArgumentException e) {
             // Also acceptable result
         }
