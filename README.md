@@ -78,7 +78,7 @@ mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.ub
 
 Pull requests and Github issues are welcome. Please include tests that show the bug is fixed or feature works as intended. Please open issues to discuss large features or changes which would break compatibility, before submitting pull requests.
 
-Before we can merge your changes, you must agree to the [Uber Contributor License Agreement](http://t.uber.com/cla).
+Before we can merge your changes, you must agree to the [Uber Contributor License Agreement](http://cla-assistant.io/uber/h3-java).
 
 ## Legal and Licensing
 
