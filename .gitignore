@@ -11,3 +11,5 @@
 target/
 src/main/c/h3-java/src/com_uber_h3core_NativeMethods.h
 dependency-reduced-pom.xml
+
+src/main/resources/*h3*
