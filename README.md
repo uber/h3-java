@@ -8,7 +8,7 @@ This library provides Java bindings for the [H3 Core Library](https://github.com
 
 Add it to your pom.xml:
 
-```
+```xml
 <dependency>
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
@@ -18,13 +18,13 @@ Add it to your pom.xml:
 
 Or, using Gradle:
 
-```
+```gradle
 compile("com.uber:h3:3.0.0")
 ```
 
 Encode a location into a hexagon address:
 
-```
+```java
 H3Core h3 = H3Core.newInstance();
 
 double lat = 37.775938728915946;
@@ -36,7 +36,7 @@ String hexAddr = h3.geoToH3Address(lat, lng, res);
 
 Decode a hexagon address into coordinates:
 
-```
+```java
 Vector2D[] geoCoords = h3.h3ToGeoBoundary(hexAddr);
 ```
 
@@ -44,13 +44,13 @@ Vector2D[] geoCoords = h3.h3ToGeoBoundary(hexAddr);
 
 Building the library requires a JDK, Maven, CMake, and a C compiler. To install to your local Maven cache, run:
 
-```
+```sh
 mvn install
 ```
 
 To build the library, run:
 
-```
+```sh
 mvn package
 ```
 
@@ -60,7 +60,7 @@ Additional information on how the build process works is available in the [build
 
 To build Javadocs documentation:
 
-```
+```sh
 mvn site
 ```
 
@@ -70,7 +70,7 @@ Then open the file `target/site/apidocs/index.html`.
 
 To run benchmarks, either execute them from IntelliJ or run the following from shell: (Replace the class name as needed)
 
-```
+```sh
 mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.uber.h3core.benchmarking.H3CoreBenchmark" -Dexec.classpathScope="test"
 ```
 
