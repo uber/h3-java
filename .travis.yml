@@ -18,12 +18,12 @@ os: linux
 dist: trusty
 
 jdk:
-  - oraclejdk8
+  - oraclejdk9
   - openjdk8
 
 matrix:
   include:
     - env: NAME="Coverage report"
-      jdk: oraclejdk9
-      after_success:
+      jdk: oraclejdk8
+      script:
         - mvn clean test jacoco:report coveralls:report
