@@ -1,5 +1,7 @@
 # H3-Java
 
+[![Build Status](https://travis-ci.org/uber/h3-java.svg?branch=master)](https://travis-ci.org/uber/h3-java)
+[![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://uber.github.io/h3/).
