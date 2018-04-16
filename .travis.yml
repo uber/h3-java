@@ -27,3 +27,4 @@ matrix:
       jdk: oraclejdk8
       script:
         - mvn clean test jacoco:report coveralls:report
+    - os: osx
