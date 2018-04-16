@@ -15,11 +15,13 @@
 # limitations under the License.
 #
 
-# Arguments: [git-remote] [git-ref]
+# Arguments: [git-remote] [git-ref] [use-docker]
 # git-remote - The git remote to pull from. An existing cloned repository
 #              will not be deleted if a new remote is specified.
 # git-ref    - A specific git ref to build, or "default" to use
 #              the H3 version (next argument) to determine the tag.
+# use-docker - "true" to perform cross compilation via Docker, "false" to
+#              skip that step.
 #
 # This script downloads H3, builds H3, and builds the H3-Java native library.
 #
@@ -30,6 +32,7 @@ set -ex
 
 GIT_REMOTE=$1
 GIT_REVISION=$2
+USE_DOCKER=$3
 
 echo Downloading H3 from "$GIT_REMOTE"
 
@@ -68,12 +71,22 @@ if [ "$(uname -sm)" = "Darwin x86_64" ]; then
     mkdir -p src/main/resources/darwin-x64
     cp target/h3-java-build/lib/libh3-java.dylib src/main/resources/darwin-x64
 else
+    # TODO: Detect which platform is being built on and copy to the correct directory.
     cp target/h3-java-build/lib/libh3-java* src/main/resources/
 fi
 
 #
 # Now that H3 is downloaded, build H3-Java's native library for other platforms.
 #
+
+if ! command -v docker; then
+    echo Docker not found, skipping cross compilation.
+    exit 0
+fi
+if ! $USE_DOCKER; then
+    echo Docker disabled, skipping cross compilation.
+    exit 0
+fi
 
 # linux-armv6 excluded because of build failure
 for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-mipsel linux-mips linux-s390x linux-ppc64le linux-x64 linux-x86 windows-x64 windows-x86; do

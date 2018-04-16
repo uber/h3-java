@@ -43,6 +43,7 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.git.reference>v3.0.3</h3.git.reference>
+        <h3.crosscompile>true</h3.crosscompile>
     </properties>
 
     <dependencies>
@@ -129,6 +130,7 @@
                             <arguments>
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>
+                                <argument>${h3.crosscompile}</argument>
                             </arguments>
                         </configuration>
                     </execution>
