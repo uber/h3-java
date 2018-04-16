@@ -16,6 +16,9 @@
 
 cmake_minimum_required(VERSION 3.1)
 
+set(CMAKE_C_STANDARD_REQUIRED 1)
+set(CMAKE_C_STANDARD 11)
+
 # Needed due to CMP0042
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
@@ -26,10 +29,18 @@ set(H3_SOVERSION 1)
 
 project(h3-java)
 
-find_package(JNI)
-
 include_directories(${H3_ROOT}/src/h3lib/include)
-include_directories(${JNI_INCLUDE_DIRS})
+
+if(USE_NATIVE_JNI)
+    find_package(JNI REQUIRED)
+
+    include_directories(${JNI_INCLUDE_DIRS})
+else()
+    include_directories(/java/include)
+    # TODO Provide correct jni_md.h
+    include_directories(/java/include/linux)
+    include_directories(/java/include/darwin)
+endif()
 
 # For building H3 itself
 add_subdirectory(${H3_ROOT} build)

@@ -77,19 +77,17 @@ final class H3CoreLoader {
         // loading the shared object at the same time, bad things could happen.
 
         if (libraryFile == null) {
-            String suffix = ".so";
-            String h3LibName = "libh3-java.so";
-            // Switch to Mac dylib if running on OS X
-            if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-                h3LibName = "libh3-java.dylib";
-                suffix = ".dylib";
-            }
+            OperatingSystem os = detectOs();
+            String arch = detectArch();
 
-            File newLibraryFile = File.createTempFile("libh3-java", suffix);
+            String dirName = String.format("%s-%s", os.getDirName(), arch);
+            String libName = String.format("libh3-java%s", os.getSuffix());
+
+            File newLibraryFile = File.createTempFile("libh3-java", os.getSuffix());
 
             newLibraryFile.deleteOnExit();
 
-            copyResource("/" + h3LibName, newLibraryFile);
+            copyResource(String.format("/%s/%s", dirName, libName), newLibraryFile);
 
             libraryFile = newLibraryFile;
         }
@@ -110,5 +108,68 @@ final class H3CoreLoader {
         System.loadLibrary("h3-java");
 
         return new NativeMethods();
+    }
+
+    /**
+     * Operating systems supported by H3-Java.
+     */
+    private enum OperatingSystem {
+        ANDROID(".so"),
+        DARWIN(".dylib"),
+        WINDOWS(".dll"),
+        LINUX(".so");
+
+        private final String suffix;
+
+        OperatingSystem(String suffix) {
+            this.suffix = suffix;
+        }
+
+        /**
+         * Suffix for native libraries.
+         */
+        public String getSuffix() {
+            return suffix;
+        }
+
+        /**
+         * How this operating system's name is rendered when extracting the native library.
+         */
+        public String getDirName() {
+            return name().toLowerCase();
+        }
+    }
+
+    /**
+     * Detect the current operating system.
+     */
+    private static final OperatingSystem detectOs() {
+        // Detecting Android using the properties from:
+        // https://developer.android.com/reference/java/lang/System.html
+        if (System.getProperty("java.vendor").toLowerCase().contains("android")) {
+            return OperatingSystem.ANDROID;
+        }
+
+        String javaOs = System.getProperty("os.name").toLowerCase();
+        if (javaOs.contains("mac")) {
+            return OperatingSystem.DARWIN;
+        } else if (javaOs.contains("win")) {
+            return OperatingSystem.WINDOWS;
+        } else {
+            // Only other supported platform
+            return OperatingSystem.LINUX;
+        }
+    }
+
+    /**
+     * Detect the system architecture.
+     */
+    private static final String detectArch() {
+        String javaArch = System.getProperty("os.arch");
+        if (javaArch.equals("amd64") || javaArch.equals("x86_64")) {
+            return "x64";
+        } else {
+            return javaArch;
+        }
     }
 }

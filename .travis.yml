@@ -14,16 +14,20 @@
 
 language: java
 
-os: linux
-dist: trusty
+sudo: required
 
-jdk:
-  - oraclejdk9
-  - openjdk8
+services:
+  - docker
 
 matrix:
   include:
-    - env: NAME="Coverage report"
+    - os: linux
+      env: NAME="Coverage report"
       jdk: oraclejdk8
       script:
         - mvn clean test jacoco:report coveralls:report
+    - os: linux
+      jdk: openjdk8
+    - os: linux
+      jdk: oraclejdk9
+    - os: osx
