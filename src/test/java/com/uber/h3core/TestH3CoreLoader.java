@@ -17,13 +17,41 @@ package com.uber.h3core;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
- * H3CoreLoader is mostly tested by {@link TestH3Core}.
+ * H3CoreLoader is mostly tested by {@link TestH3Core}. This also tests OS detection.
  */
 public class TestH3CoreLoader {
     @Test
     public void testConstructor() {
         new H3CoreLoader();
         // Nothing else to test here
+    }
+
+    @Test
+    public void testDetectOs() {
+        assertEquals(H3CoreLoader.OperatingSystem.ANDROID,
+                H3CoreLoader.detectOs("Android", "anything"));
+        assertEquals(H3CoreLoader.OperatingSystem.DARWIN,
+                H3CoreLoader.detectOs("vendor", "Mac OS X"));
+        assertEquals(H3CoreLoader.OperatingSystem.WINDOWS,
+                H3CoreLoader.detectOs("vendor", "Windows"));
+        assertEquals(H3CoreLoader.OperatingSystem.LINUX,
+                H3CoreLoader.detectOs("vendor", "Linux"));
+
+        assertEquals(H3CoreLoader.OperatingSystem.LINUX,
+                H3CoreLoader.detectOs("vendor", "anything else"));
+    }
+
+    @Test
+    public void testDetectArch() {
+        assertEquals("x64", H3CoreLoader.detectArch("amd64"));
+        assertEquals("x64", H3CoreLoader.detectArch("x86_64"));
+        assertEquals("x64", H3CoreLoader.detectArch("x64"));
+
+        assertEquals("x86", H3CoreLoader.detectArch("x86"));
+
+        assertEquals("anything", H3CoreLoader.detectArch("anything"));
     }
 }

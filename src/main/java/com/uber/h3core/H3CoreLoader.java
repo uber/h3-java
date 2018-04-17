@@ -29,6 +29,9 @@ final class H3CoreLoader {
         // Prevent instantiation
     }
 
+    // Supported H3 architectures
+    private static final String ARCH_X64 = "x64";
+
     private static volatile File libraryFile = null;
 
     /**
@@ -77,8 +80,8 @@ final class H3CoreLoader {
         // loading the shared object at the same time, bad things could happen.
 
         if (libraryFile == null) {
-            OperatingSystem os = detectOs();
-            String arch = detectArch();
+            OperatingSystem os = detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
+            String arch = detectArch(System.getProperty("os.arch"));
 
             String dirName = String.format("%s-%s", os.getDirName(), arch);
             String libName = String.format("libh3-java%s", os.getSuffix());
@@ -113,7 +116,7 @@ final class H3CoreLoader {
     /**
      * Operating systems supported by H3-Java.
      */
-    private enum OperatingSystem {
+    enum OperatingSystem {
         ANDROID(".so"),
         DARWIN(".dylib"),
         WINDOWS(".dll"),
@@ -142,15 +145,18 @@ final class H3CoreLoader {
 
     /**
      * Detect the current operating system.
+     *
+     * @param javaVendor Value of system property "java.vendor"
+     * @param osName Value of system property "os.name"
      */
-    private static final OperatingSystem detectOs() {
+    static final OperatingSystem detectOs(String javaVendor, String osName) {
         // Detecting Android using the properties from:
         // https://developer.android.com/reference/java/lang/System.html
-        if (System.getProperty("java.vendor").toLowerCase().contains("android")) {
+        if (javaVendor.toLowerCase().contains("android")) {
             return OperatingSystem.ANDROID;
         }
 
-        String javaOs = System.getProperty("os.name").toLowerCase();
+        String javaOs = osName.toLowerCase();
         if (javaOs.contains("mac")) {
             return OperatingSystem.DARWIN;
         } else if (javaOs.contains("win")) {
@@ -163,13 +169,14 @@ final class H3CoreLoader {
 
     /**
      * Detect the system architecture.
+     *
+     * @param osArch Value of system property "os.arch"
      */
-    private static final String detectArch() {
-        String javaArch = System.getProperty("os.arch");
-        if (javaArch.equals("amd64") || javaArch.equals("x86_64")) {
-            return "x64";
+    static final String detectArch(String osArch) {
+        if (osArch.equals("amd64") || osArch.equals("x86_64")) {
+            return ARCH_X64;
         } else {
-            return javaArch;
+            return osArch;
         }
     }
 }
