@@ -23,7 +23,8 @@
 # use-docker - "true" to perform cross compilation via Docker, "false" to
 #              skip that step.
 #
-# This script downloads H3, builds H3, and builds the H3-Java native library.
+# This script downloads H3, builds H3 and the H3-Java native library, and
+# cross compiles via Docker.
 #
 # This script expects to be run from the project's base directory (where
 # pom.xml is) as part of the Maven build process.
@@ -49,7 +50,7 @@ git pull origin master --tags
 echo Using revision "$GIT_REVISION"
 git checkout "$GIT_REVISION"
 
-H3_ROOT=`pwd`
+H3_SRC_ROOT="$(pwd)"
 
 popd
 
@@ -60,8 +61,24 @@ popd
 mkdir -p h3-java-build
 pushd h3-java-build
 
-cmake -DUSE_NATIVE_JNI=ON -DBUILD_SHARED_LIBS=ON "-DH3_ROOT=$H3_ROOT" -DCMAKE_BUILD_TYPE=Release ../../src/main/c/h3-java
-make h3-java binding-functions
+mkdir -p build
+pushd build
+
+cmake -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    ../../h3
+make h3 binding-functions
+H3_BUILD_ROOT="$(pwd)"
+
+popd
+
+cmake -DUSE_NATIVE_JNI=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    "-DH3_SRC_ROOT=$H3_SRC_ROOT" \
+    "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
+    -DCMAKE_BUILD_TYPE=Release \
+    ../../src/main/c/h3-java
+make h3-java
 
 popd
 popd
@@ -89,7 +106,9 @@ if ! $USE_DOCKER; then
 fi
 
 # linux-armv6 excluded because of build failure
-for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-mipsel linux-mips linux-s390x linux-ppc64le linux-x64 linux-x86 windows-x64 windows-x86; do
+for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-mipsel linux-mips linux-s390x \
+    linux-ppc64le linux-x64 linux-x86 windows-x64 windows-x86; do
+
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
@@ -98,7 +117,7 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     chmod +x $BUILD_ROOT/dockcross
 
     # Perform the actual build inside Docker
-    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" bash -c "cd $BUILD_ROOT && cmake -DBUILD_SHARED_LIBS=ON -DH3_ROOT=/work/target/h3 -DCMAKE_BUILD_TYPE=Release /work/src/main/c/h3-java && make h3-java"
+    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT"
 
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.

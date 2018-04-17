@@ -19,6 +19,8 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_C_STANDARD_REQUIRED 1)
 set(CMAKE_C_STANDARD 11)
 
+include(CMakeDependentOption)
+
 # Needed due to CMP0042
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
@@ -29,7 +31,7 @@ set(H3_SOVERSION 1)
 
 project(h3-java)
 
-include_directories(${H3_ROOT}/src/h3lib/include)
+include_directories(${H3_SRC_ROOT}/src/h3lib/include)
 
 if(USE_NATIVE_JNI)
     find_package(JNI REQUIRED)
@@ -42,20 +44,13 @@ else()
     include_directories(/java/include/darwin)
 endif()
 
-# For building H3 itself
-add_subdirectory(${H3_ROOT} build)
-
 set(JNI_SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/jniapi.c
     ${PROJECT_SOURCE_DIR}/src/com_uber_h3core_NativeMethods.h)
 
 add_library(h3-java SHARED ${JNI_SOURCE_FILES})
-if(BUILD_SHARED_LIBS)
-    set_target_properties(h3 PROPERTIES SOVERSION ${H3_SOVERSION})
-endif()
-target_link_libraries(h3-java h3)
+target_link_libraries(h3-java ${H3_BUILD_ROOT}/lib/libh3${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-# ENABLE_FORMAT is from ${H3_ROOT}/CMakeLists.txt
 find_program(CLANG_FORMAT_PATH clang-format)
 cmake_dependent_option(
     ENABLE_FORMAT "Enable running clang-format before compiling" ON
@@ -75,5 +70,3 @@ elseif(NOT CLANG_FORMAT_PATH)
     message(WARNING "clang-format was not detected, "
                     "so automatic source code reformatting is disabled.")
 endif()
-
-add_dependencies(h3-java h3)
