@@ -13,3 +13,7 @@ src/main/c/h3-java/src/com_uber_h3core_NativeMethods.h
 dependency-reduced-pom.xml
 
 src/main/resources/*h3*
+src/main/resources/darwin-*
+src/main/resources/android-*
+src/main/resources/linux-*
+src/main/resources/windows-*
