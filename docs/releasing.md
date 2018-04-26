@@ -9,7 +9,7 @@ Release builds should only be run on Mac OSX with Docker. This is needed so that
 1. Ensure you are on master and that the library is building correctly.
 2. Change the version number of the library to remove "-SNAPSHOT". Update [CHANGELOG.md](../CHANGELOG.md) to have the correct date for this version.
 3. Commit. Make sure this revision builds in CI.
-4. `mvn clean deploy`
+4. `mvn clean deploy -P release-profile`
 5. If this looks good, release the build in [Sonatype Nexus Manager](https://oss.sonatype.org/).
 6. Update the version number to be higher and include "-SNAPSHOT'. Update `CHANGELOG.md` to have an Unreleased section.
 7. Commit. The release is now done and development can resume from this point.
