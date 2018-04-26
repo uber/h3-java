@@ -17,3 +17,10 @@ src/main/resources/darwin-*
 src/main/resources/android-*
 src/main/resources/linux-*
 src/main/resources/windows-*
+
+# Release
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
