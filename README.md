@@ -42,6 +42,19 @@ Decode a hexagon address into coordinates:
 Vector2D[] geoCoords = h3.h3ToGeoBoundary(hexAddr);
 ```
 
+## Supported Operating Systems
+
+H3-Java provides bindings to the H3 library, which is written in C. The built artifact supports the following:
+
+| Operating System | Architectures
+| ---------------- | -------------
+| Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
+| Windows          | x64, x86
+| Darwin (Mac OSX) | x64
+| Android          | ARM, ARM64
+
+You may be able to build H3-Java locally if you need to use an operating system or architecture not listed above.
+
 # Development
 
 Building the library requires a JDK, Maven, CMake, and a C compiler. To install to your local Maven cache, run:
@@ -78,7 +91,7 @@ mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.ub
 
 ## Contributing
 
-Pull requests and Github issues are welcome. Please include tests that show the bug is fixed or feature works as intended. Please open issues to discuss large features or changes which would break compatibility, before submitting pull requests.
+Pull requests and Github issues are welcome. Please see our [contributing guide](./CONTRIBUTING.md) for more information.
 
 Before we can merge your changes, you must agree to the [Uber Contributor License Agreement](http://cla-assistant.io/uber/h3-java).
 
