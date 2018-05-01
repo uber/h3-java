@@ -1,9 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to a [versioning policy](./docs/versioning.md).
 
 The public API of this library consists of the public functions declared in
-file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java).
+file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
+for the Linux x64 and Darwin x64 platforms.
 
 ## [3.0.1] - 2018-04-30
 ### Added

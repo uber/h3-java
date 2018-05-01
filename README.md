@@ -49,10 +49,11 @@ H3-Java provides bindings to the H3 library, which is written in C. The built ar
 
 | Operating System | Architectures
 | ---------------- | -------------
-| Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
+| Linux            | x64<sup>*</sup>, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
 | Windows          | x64, x86
-| Darwin (Mac OSX) | x64
+| Darwin (Mac OSX) | x64<sup>*</sup>
 | Android          | ARM, ARM64
+<em><sup>*</sup> Part of the semantic version of the library.</em>
 
 You may be able to build H3-Java locally if you need to use an operating system or architecture not listed above.
 
