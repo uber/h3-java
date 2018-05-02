@@ -68,7 +68,6 @@
         <org.openjdk.jmh.version>1.19</org.openjdk.jmh.version>
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
-        <h3.git.reference>v3.0.5</h3.git.reference>
         <h3.use.docker>true</h3.use.docker>
     </properties>
 
@@ -124,6 +123,25 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Load h3.git.reference from file -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${basedir}/h3version.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
