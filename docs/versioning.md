@@ -1,13 +1,11 @@
 # Versioning
 
-The H3-Java library adheres to [Semantic Versioning](http://semver.org/).
-Major and minor versions of the H3-Java library may not have a one-to-one
-correspondence with major and minor versions of H3 (the core library).
-Incorporating major or minor version changes of H3 requires a major or minor
-version change to H3-Java.
+The H3 core library adheres to [Semantic Versioning](http://semver.org/).
+H3-Java has a `major.minor.patch` version scheme. The major and minor version
+numbers of H3-Java is the major and minor version of the bound core library,
+respectively. The patch version is incremented independently of the core
+library.
 
-The reason for not enforcing a one-to-one correspondence is so that the H3-Java
-library can make bugfixes, add features, and correct backwards-incompatible
-issues without having a corresponding change to the H3 core library itself.
-This makes it clear when upgrading the library whether breaking changes are
-being introduced, regardless of where the breaking change comes from.
+Because H3-Java is versioned in lockstep with the H3 core library, please
+avoid adding features or APIs which do not map onto the
+[H3 core API](https://uber.github.io/h3/#/documentation/api-reference/).
