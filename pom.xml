@@ -39,7 +39,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/uber/h3-java.git</connection>
-        <developerConnection>scm:git:ssh://github.com/uber/h3-java.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/uber/h3-java.git</developerConnection>
         <url>http://github.com/uber/h3-java/tree/master</url>
     </scm>
 
