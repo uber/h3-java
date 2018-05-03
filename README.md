@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/uber/h3-java.svg?branch=master)](https://travis-ci.org/uber/h3-java)
 [![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.uber/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.uber/h3)
 
 This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://uber.github.io/h3/).
 
@@ -14,14 +15,14 @@ Add it to your pom.xml:
 <dependency>
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 </dependency>
 ```
 
 Or, using Gradle:
 
 ```gradle
-compile("com.uber:h3:3.0.0")
+compile("com.uber:h3:3.0.1")
 ```
 
 Encode a location into a hexagon address:
@@ -48,10 +49,11 @@ H3-Java provides bindings to the H3 library, which is written in C. The built ar
 
 | Operating System | Architectures
 | ---------------- | -------------
-| Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
+| Linux            | x64<sup>*</sup>, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
 | Windows          | x64, x86
-| Darwin (Mac OSX) | x64
+| Darwin (Mac OSX) | x64<sup>*</sup>
 | Android          | ARM, ARM64
+<em><sup>*</sup> Part of the semantic version of the library.</em>
 
 You may be able to build H3-Java locally if you need to use an operating system or architecture not listed above.
 
