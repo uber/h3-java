@@ -17,6 +17,9 @@ package com.uber.h3core;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -51,7 +54,24 @@ public class TestH3CoreLoader {
         assertEquals("x64", H3CoreLoader.detectArch("x64"));
 
         assertEquals("x86", H3CoreLoader.detectArch("x86"));
+        assertEquals("x86", H3CoreLoader.detectArch("i386"));
+        assertEquals("x86", H3CoreLoader.detectArch("i486"));
+        assertEquals("x86", H3CoreLoader.detectArch("i586"));
+        assertEquals("x86", H3CoreLoader.detectArch("i686"));
+        assertEquals("x86", H3CoreLoader.detectArch("i786"));
+        assertEquals("x86", H3CoreLoader.detectArch("i886"));
 
         assertEquals("anything", H3CoreLoader.detectArch("anything"));
+        assertEquals("i996", H3CoreLoader.detectArch("i996"));
+        assertEquals("i286", H3CoreLoader.detectArch("i286"));
+    }
+
+    @Test(expected = UnsatisfiedLinkError.class)
+    public void testExtractNonexistant() throws IOException {
+        File tempFile = File.createTempFile("test-extract-resource", null);
+
+        tempFile.deleteOnExit();
+
+        H3CoreLoader.copyResource("/nonexistant-resource", tempFile);
     }
 }
