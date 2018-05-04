@@ -62,7 +62,7 @@ public class TestH3CoreLoader {
         assertEquals("x86", H3CoreLoader.detectArch("i886"));
 
         assertEquals("anything", H3CoreLoader.detectArch("anything"));
-        assertEquals("i996", H3CoreLoader.detectArch("i996"));
+        assertEquals("i986", H3CoreLoader.detectArch("i986"));
         assertEquals("i286", H3CoreLoader.detectArch("i286"));
     }
 
