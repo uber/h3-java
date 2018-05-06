@@ -29,6 +29,7 @@ matrix:
     - os: linux
       jdk: openjdk8
     - os: linux
+      env: NAME="Linux without Docker"
       jdk: oraclejdk9
       script:
         - mvn clean test -Dh3.use.docker=false
