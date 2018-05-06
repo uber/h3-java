@@ -16,6 +16,7 @@
 package com.uber.h3core;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.Vector2D;
 import org.junit.BeforeClass;
@@ -363,6 +364,23 @@ public class TestH3Core {
         );
 
         assertTrue(hexagons.size() > 1000);
+    }
+
+    @Test
+    public void testPolyfillKnownHoles() {
+        List<Long> inputHexagons = h3.kRing(0x85283083fffffffL, 2);
+        inputHexagons.remove(0x8528308ffffffffL);
+        inputHexagons.remove(0x85283097fffffffL);
+        inputHexagons.remove(0x8528309bfffffffL);
+
+        List<List<Vector2D>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
+
+        // TODO: looks like a bug in H3 that this is index 1
+        List<Vector2D> outline = geo.remove(1); // geo is now holes
+
+        List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
+
+        assertEquals(ImmutableSet.copyOf(inputHexagons), ImmutableSet.copyOf(outputHexagons));
     }
 
     @Test
