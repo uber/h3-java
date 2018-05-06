@@ -31,6 +31,8 @@ matrix:
     - os: linux
       env: NAME="Linux without Docker"
       jdk: oraclejdk9
+      install:
+        - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dh3.use.docker=false
       script:
-        - mvn clean test -Dh3.use.docker=false
+        - mvn test -B -Dh3.use.docker=false
     - os: osx
