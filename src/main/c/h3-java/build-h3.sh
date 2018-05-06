@@ -87,6 +87,11 @@ popd
 case "$(uname -sm)" in
     "Linux x86_64")  LIBRARY_DIR=linux-x64 ;;
     "Linux i386")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i486")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i586")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i686")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i786")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i886")    LIBRARY_DIR=linux-x86 ;;
     "Darwin x86_64") LIBRARY_DIR=darwin-x64 ;;
     # TODO: Detect others
     *)               LIBRARY_DIR="" ;;
