@@ -30,7 +30,8 @@ final class H3CoreLoader {
     }
 
     // Supported H3 architectures
-    private static final String ARCH_X64 = "x64";
+    static final String ARCH_X64 = "x64";
+    static final String ARCH_X86 = "x86";
 
     private static volatile File libraryFile = null;
 
@@ -52,8 +53,9 @@ final class H3CoreLoader {
      *
      * @param resourcePath Resource to copy
      * @param newH3LibFile File to write
+     * @throws UnsatisfiedLinkError The resource path does not exist
      */
-    private static void copyResource(String resourcePath, File newH3LibFile) throws IOException {
+    static void copyResource(String resourcePath, File newH3LibFile) throws IOException {
         // Set the permissions
         newH3LibFile.setReadable(true);
         newH3LibFile.setWritable(true, true);
@@ -61,6 +63,10 @@ final class H3CoreLoader {
 
         // Shove the resource into the file and close it
         try (InputStream resource = H3CoreLoader.class.getResourceAsStream(resourcePath)) {
+            if (resource == null) {
+                throw new UnsatisfiedLinkError(String.format("No native resource found at %s", resource));
+            }
+
             try (FileOutputStream outFile = new FileOutputStream(newH3LibFile)) {
                 copyStream(resource, outFile);
             }
@@ -80,13 +86,13 @@ final class H3CoreLoader {
         // loading the shared object at the same time, bad things could happen.
 
         if (libraryFile == null) {
-            OperatingSystem os = detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
-            String arch = detectArch(System.getProperty("os.arch"));
+            final OperatingSystem os = detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
+            final String arch = detectArch(System.getProperty("os.arch"));
 
-            String dirName = String.format("%s-%s", os.getDirName(), arch);
-            String libName = String.format("libh3-java%s", os.getSuffix());
+            final String dirName = String.format("%s-%s", os.getDirName(), arch);
+            final String libName = String.format("libh3-java%s", os.getSuffix());
 
-            File newLibraryFile = File.createTempFile("libh3-java", os.getSuffix());
+            final File newLibraryFile = File.createTempFile("libh3-java", os.getSuffix());
 
             newLibraryFile.deleteOnExit();
 
@@ -175,6 +181,13 @@ final class H3CoreLoader {
     static final String detectArch(String osArch) {
         if (osArch.equals("amd64") || osArch.equals("x86_64")) {
             return ARCH_X64;
+        } else if (osArch.equals("i386") ||
+                   osArch.equals("i486") ||
+                   osArch.equals("i586") ||
+                   osArch.equals("i686") ||
+                   osArch.equals("i786") ||
+                   osArch.equals("i886")) {
+            return ARCH_X86;
         } else {
             return osArch;
         }
