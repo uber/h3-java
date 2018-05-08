@@ -9,6 +9,7 @@ for the Linux x64 and Darwin x64 platforms.
 ## Unreleased
 ### Fixed
 - Fixed memory management in polyfill with multiple holes.
+- Fixed build on Linux without Docker.
 ### Changed
 - Improve detection of x86 architecture.
 

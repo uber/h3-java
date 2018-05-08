@@ -45,7 +45,7 @@ if [ ! -d "h3" ]; then
 fi
 
 pushd h3
-git pull origin master --tags
+git fetch origin --tags
 
 echo Using revision "$GIT_REVISION"
 git checkout "$GIT_REVISION"
@@ -84,24 +84,32 @@ popd
 popd
 
 # Copy the built artifact for this platform.
-if [ "$(uname -sm)" = "Darwin x86_64" ]; then
-    mkdir -p src/main/resources/darwin-x64
-    cp target/h3-java-build/lib/libh3-java.dylib src/main/resources/darwin-x64
-else
-    # TODO: Detect which platform is being built on and copy to the correct directory.
-    cp target/h3-java-build/lib/libh3-java* src/main/resources/
-fi
+case "$(uname -sm)" in
+    "Linux x86_64")  LIBRARY_DIR=linux-x64 ;;
+    "Linux i386")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i486")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i586")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i686")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i786")    LIBRARY_DIR=linux-x86 ;;
+    "Linux i886")    LIBRARY_DIR=linux-x86 ;;
+    "Darwin x86_64") LIBRARY_DIR=darwin-x64 ;;
+    # TODO: Detect others
+    *)               LIBRARY_DIR="" ;;
+esac
+
+mkdir -p src/main/resources/$LIBRARY_DIR
+cp target/h3-java-build/lib/libh3-java* src/main/resources/$LIBRARY_DIR
 
 #
 # Now that H3 is downloaded, build H3-Java's native library for other platforms.
 #
 
-if ! command -v docker; then
-    echo Docker not found, skipping cross compilation.
-    exit 0
-fi
 if ! $USE_DOCKER; then
     echo Docker disabled, skipping cross compilation.
+    exit 0
+fi
+if ! command -v docker; then
+    echo Docker not found, skipping cross compilation.
     exit 0
 fi
 

@@ -64,7 +64,7 @@ final class H3CoreLoader {
         // Shove the resource into the file and close it
         try (InputStream resource = H3CoreLoader.class.getResourceAsStream(resourcePath)) {
             if (resource == null) {
-                throw new UnsatisfiedLinkError(String.format("No native resource found at %s", resource));
+                throw new UnsatisfiedLinkError(String.format("No native resource found at %s", resourcePath));
             }
 
             try (FileOutputStream outFile = new FileOutputStream(newH3LibFile)) {
