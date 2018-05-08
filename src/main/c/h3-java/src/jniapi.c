@@ -98,10 +98,10 @@ int CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
 
         size_t offset = 0;
         for (int i = 0; i < polygon->numHoles; i++) {
-            // This is the number of doubles, so convert to numver of verts
+            // This is the number of doubles, so convert to number of verts
             polygon->holes[i].numVerts = holeSizesElements[i] / 2;
             polygon->holes[i].verts = holeVertsElements + offset;
-            offset += holeSizesElements[i] * sizeof(double);
+            offset += holeSizesElements[i];
         }
 
         (**env).ReleaseIntArrayElements(env, holeSizes, holeSizesElements, 0);
