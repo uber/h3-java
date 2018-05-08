@@ -9,6 +9,8 @@ for the Linux x64 and Darwin x64 platforms.
 ## Unreleased
 ### Fixed
 - Fixed memory management in polyfill with multiple holes.
+### Changed
+- Improve detection of x86 architecture.
 
 ## [3.0.1] - 2018-04-30
 ### Added

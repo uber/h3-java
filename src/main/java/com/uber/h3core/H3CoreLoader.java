@@ -30,8 +30,8 @@ final class H3CoreLoader {
     }
 
     // Supported H3 architectures
-    private static final String ARCH_X64 = "x64";
-    private static final String ARCH_X86 = "x86";
+    static final String ARCH_X64 = "x64";
+    static final String ARCH_X86 = "x86";
 
     private static volatile File libraryFile = null;
 
