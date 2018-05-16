@@ -17,7 +17,7 @@ package com.uber.h3core.benchmarking;
 
 import com.google.common.collect.ImmutableList;
 import com.uber.h3core.H3Core;
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -38,13 +38,13 @@ import java.util.List;
 public class H3SetToMultiPolygonBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<List<Vector2D>>> benchmarkH3SetToMultiPolygon2() {
+    public List<List<List<GeoCoord>>> benchmarkH3SetToMultiPolygon2() {
         return BenchmarkState.h3Core.h3SetToMultiPolygon(BenchmarkState.list2, false);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<List<Vector2D>>> benchmarkH3SetToMultiPolygon20() {
+    public List<List<List<GeoCoord>>> benchmarkH3SetToMultiPolygon20() {
         return BenchmarkState.h3Core.h3SetToMultiPolygon(BenchmarkState.list20, true);
     }
 

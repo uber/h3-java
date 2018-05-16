@@ -24,12 +24,12 @@ import static org.junit.Assert.assertTrue;
 /**
  *
  */
-public class TestVector2D {
+public class TestGeoCoord {
     @Test
     public void test() {
-        Vector2D v1 = new Vector2D(0, 1);
-        Vector2D v2 = new Vector2D(1, 0);
-        Vector2D v3 = new Vector2D(0, 1);
+        GeoCoord v1 = new GeoCoord(0, 1);
+        GeoCoord v2 = new GeoCoord(1, 0);
+        GeoCoord v3 = new GeoCoord(0, 1);
 
         assertNotEquals(null, v1);
         assertNotEquals(0, v1);
@@ -44,10 +44,10 @@ public class TestVector2D {
 
     @Test
     public void testToString() {
-        Vector2D v = new Vector2D(123.456, 456.789);
+        GeoCoord v = new GeoCoord(123.456, 456.789);
 
         String toString = v.toString();
-        assertTrue(toString.contains("x=123.456"));
-        assertTrue(toString.contains("y=456.789"));
+        assertTrue(toString.contains("lat=123.456"));
+        assertTrue(toString.contains("lng=456.789"));
     }
 }

@@ -381,7 +381,7 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polyfill(
 
 /**
  * Converts the given polygon to managed objects
- * (ArrayList<ArrayList<ArrayList<Vector2D>>>)
+ * (ArrayList<ArrayList<ArrayList<GeoCoord>>>)
  *
  * May return early if allocation or finding required classes or methods fails.
  */
@@ -393,9 +393,9 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
         ThrowOutOfMemoryError(env);
         return;
     }
-    jclass vector2DClass =
-        (**env).FindClass(env, "com/uber/h3core/util/Vector2D");
-    if (vector2DClass == NULL) {
+    jclass geoCoordClass =
+        (**env).FindClass(env, "com/uber/h3core/util/GeoCoord");
+    if (geoCoordClass == NULL) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -411,9 +411,9 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
         ThrowOutOfMemoryError(env);
         return;
     }
-    jmethodID vector2DConstructor =
-        (**env).GetMethodID(env, vector2DClass, "<init>", "(DD)V");
-    if (vector2DConstructor == NULL) {
+    jmethodID geoCoordConstructor =
+        (**env).GetMethodID(env, geoCoordClass, "<init>", "(DD)V");
+    if (geoCoordConstructor == NULL) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -440,7 +440,7 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
                 LinkedGeoCoord *coord = currentLoop->first;
                 while (coord != NULL) {
                     jobject v = (**env).NewObject(
-                        env, vector2DClass, vector2DConstructor,
+                        env, geoCoordClass, geoCoordConstructor,
                         coord->vertex.lat, coord->vertex.lon);
                     if (v == NULL) {
                         return;

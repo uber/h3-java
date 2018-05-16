@@ -18,33 +18,33 @@ package com.uber.h3core.util;
 import java.util.Objects;
 
 /**
- * Immutable two-dimensional vector.
+ * Immutable two-dimensional spherical coordinates, in degrees.
  */
-public class Vector2D {
-    public final double x;
-    public final double y;
+public class GeoCoord {
+    public final double lat;
+    public final double lng;
 
-    public Vector2D(double x, double y) {
-        this.x = x;
-        this.y = y;
+    public GeoCoord(double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Vector2D vector = (Vector2D) o;
-        return Double.compare(vector.x, x) == 0 &&
-                Double.compare(vector.y, y) == 0;
+        GeoCoord coord = (GeoCoord) o;
+        return Double.compare(coord.lat, lat) == 0 &&
+                Double.compare(coord.lng, lng) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(lat, lng);
     }
 
     @Override
     public String toString() {
-        return String.format("Vector2D{x=%f, y=%f}", x, y);
+        return String.format("GeoCoord{lat=%f, lng=%f}", lat, lng);
     }
 }

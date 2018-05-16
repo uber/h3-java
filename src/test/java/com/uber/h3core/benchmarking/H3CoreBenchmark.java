@@ -16,7 +16,7 @@
 package com.uber.h3core.benchmarking;
 
 import com.uber.h3core.H3Core;
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -48,13 +48,13 @@ public class H3CoreBenchmark {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public Vector2D benchmarkGetCenterCoordinates() {
+    public GeoCoord benchmarkGetCenterCoordinates() {
         return BenchmarkState.h3.h3ToGeo("85283083fffffff");
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<Vector2D> benchmarkGetBoundary() {
+    public List<GeoCoord> benchmarkGetBoundary() {
         return BenchmarkState.h3.h3ToGeoBoundary("85283083fffffff");
     }
 

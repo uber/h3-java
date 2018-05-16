@@ -16,7 +16,7 @@
 package com.uber.h3core;
 
 import com.uber.h3core.exceptions.PentagonEncounteredException;
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -179,10 +179,10 @@ public class H3Core {
     /**
      * Find the latitude, longitude (both in degrees) center point of the cell.
      */
-    public Vector2D h3ToGeo(long h3) {
+    public GeoCoord h3ToGeo(long h3) {
         double[] coords = new double[2];
         h3Api.h3ToGeo(h3, coords);
-        Vector2D out = new Vector2D(
+        GeoCoord out = new GeoCoord(
                 constrainLat(toDegrees(coords[0])),
                 constrainLng(toDegrees(coords[1]))
         );
@@ -192,19 +192,19 @@ public class H3Core {
     /**
      * Find the latitude, longitude (degrees) center point of the cell.
      */
-    public Vector2D h3ToGeo(String h3Address) {
+    public GeoCoord h3ToGeo(String h3Address) {
         return h3ToGeo(stringToH3(h3Address));
     }
 
     /**
      * Find the cell boundary in latitude, longitude (degrees) coordinates for the cell
      */
-    public List<Vector2D> h3ToGeoBoundary(long h3) {
+    public List<GeoCoord> h3ToGeoBoundary(long h3) {
         double[] verts = new double[MAX_CELL_BNDRY_VERTS * 2];
         int numVerts = h3Api.h3ToGeoBoundary(h3, verts);
-        List<Vector2D> out = new ArrayList<>(numVerts);
+        List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
-            Vector2D coord = new Vector2D(
+            GeoCoord coord = new GeoCoord(
                     constrainLat(toDegrees(verts[i * 2])),
                     constrainLng(toDegrees(verts[(i * 2) + 1]))
             );
@@ -216,7 +216,7 @@ public class H3Core {
     /**
      * Find the cell boundary in latitude, longitude (degrees) coordinates for the cell
      */
-    public List<Vector2D> h3ToGeoBoundary(String h3Address) {
+    public List<GeoCoord> h3ToGeoBoundary(String h3Address) {
         return h3ToGeoBoundary(stringToH3(h3Address));
     }
 
@@ -414,8 +414,8 @@ public class H3Core {
      * @param holes Geofences of any internal holes
      * @param res Resolution of the desired indexes
      */
-    public List<String> polyfillAddress(List<Vector2D> points, List<List<Vector2D>> holes, int res) {
-        return polyfillAddress(points, holes, res, false);
+    public List<String> polyfillAddress(List<GeoCoord> points, List<List<GeoCoord>> holes, int res) {
+        return h3ToStringList(polyfill(points, holes, res));
     }
 
     /**
@@ -424,38 +424,14 @@ public class H3Core {
      * @param points Outline geofence
      * @param holes Geofences of any internal holes
      * @param res Resolution of the desired indexes
-     */
-    public List<Long> polyfill(List<Vector2D> points, List<List<Vector2D>> holes, int res) {
-        return polyfill(points, holes, res, false);
-    }
-
-    /**
-     * Finds indexes within the given geofence.
-     *
-     * @param points Outline geofence
-     * @param holes Geofences of any internal holes
-     * @param res Resolution of the desired indexes
-     * @param geoJsonOrder If true, accepts coordinates in (lon, lat) order as in GeoJSON.
-     */
-    public List<String> polyfillAddress(List<Vector2D> points, List<List<Vector2D>> holes, int res, boolean geoJsonOrder) {
-        return h3ToStringList(polyfill(points, holes, res, geoJsonOrder));
-    }
-
-    /**
-     * Finds indexes within the given geofence.
-     *
-     * @param points Outline geofence
-     * @param holes Geofences of any internal holes
-     * @param res Resolution of the desired indexes
-     * @param geoJsonOrder If true, accepts coordinates in (lon, lat) order as in GeoJSON.
      * @throws IllegalArgumentException Invalid resolution
      */
-    public List<Long> polyfill(List<Vector2D> points, List<List<Vector2D>> holes, int res, boolean geoJsonOrder) {
+    public List<Long> polyfill(List<GeoCoord> points, List<List<GeoCoord>> holes, int res) {
         checkResolution(res);
 
         // pack the data for use by the polyfill JNI call
         double[] verts = new double[points.size() * 2];
-        packGeofenceVertices(verts, points, 0, geoJsonOrder);
+        packGeofenceVertices(verts, points, 0);
         int[] holeSizes = new int[0];
         double[] holeVerts = new double[0];
         if (holes != null) {
@@ -469,7 +445,7 @@ public class H3Core {
             holeVerts = new double[totalSize];
             int offset = 0;
             for (int i = 0; i < holes.size(); i++) {
-                offset = packGeofenceVertices(holeVerts, holes.get(i), offset, geoJsonOrder);
+                offset = packGeofenceVertices(holeVerts, holes.get(i), offset);
             }
         }
 
@@ -487,22 +463,14 @@ public class H3Core {
      *
      * @return Next offset to begin filling from
      */
-    private static int packGeofenceVertices(double[] arr, List<Vector2D> original, int offset, boolean geoJsonOrder) {
+    private static int packGeofenceVertices(double[] arr, List<GeoCoord> original, int offset) {
         assert arr.length >= (original.size() * 2) + offset;
 
         for (int i = 0; i < original.size(); i++) {
-            double first, second;
+            GeoCoord coord = original.get(i);
 
-            if (geoJsonOrder) {
-                first = original.get(i).y;
-                second = original.get(i).x;
-            } else {
-                first = original.get(i).x;
-                second = original.get(i).y;
-            }
-
-            arr[(i * 2) + offset] = toRadians(constrainLat(first));
-            arr[(i * 2) + 1 + offset] = toRadians(constrainLng(second));
+            arr[(i * 2) + offset] = toRadians(constrainLat(coord.lat));
+            arr[(i * 2) + 1 + offset] = toRadians(constrainLng(coord.lng));
         }
 
         return (original.size() * 2) + offset;
@@ -511,7 +479,7 @@ public class H3Core {
     /**
      * Create polygons from a set of contiguous indexes
      */
-    public List<List<List<Vector2D>>> h3AddressSetToMultiPolygon(Collection<String> h3Addresses, boolean geoJson) {
+    public List<List<List<GeoCoord>>> h3AddressSetToMultiPolygon(Collection<String> h3Addresses, boolean geoJson) {
         List<Long> indices = stringToH3List(h3Addresses);
 
         return h3SetToMultiPolygon(indices, geoJson);
@@ -520,32 +488,27 @@ public class H3Core {
     /**
      * Create polygons from a set of contiguous indexes
      */
-    public List<List<List<Vector2D>>> h3SetToMultiPolygon(Collection<Long> h3, boolean geoJson) {
+    public List<List<List<GeoCoord>>> h3SetToMultiPolygon(Collection<Long> h3, boolean geoJson) {
         long[] h3AsArray = collectionToLongArray(h3);
 
-        ArrayList<List<List<Vector2D>>> result = new ArrayList<>();
+        ArrayList<List<List<GeoCoord>>> result = new ArrayList<>();
 
         h3Api.h3SetToLinkedGeo(h3AsArray, result);
 
         // For each polygon
-        for (List<List<Vector2D>> loops : result) {
+        for (List<List<GeoCoord>> loops : result) {
             // For each loop within the polygon (first being the outline,
             // further loops being "holes" or exclusions in the polygon.)
-            for (List<Vector2D> loop : loops) {
+            for (List<GeoCoord> loop : loops) {
                 // For each coordinate in the loop, we need to convert to degrees,
                 // constrain it, and ensure the correct ordering (whether geoJson
                 // or not.)
                 for (int vectorInLoop = 0; vectorInLoop < loop.size(); vectorInLoop++) {
-                    Vector2D v = loop.get(vectorInLoop);
-                    double origX = constrainLat(toDegrees(v.x));
-                    double origY = constrainLng(toDegrees(v.y));
+                    final GeoCoord v = loop.get(vectorInLoop);
+                    final double origLat = constrainLat(toDegrees(v.lat));
+                    final double origLng = constrainLng(toDegrees(v.lng));
 
-                    Vector2D replacement;
-                    if (geoJson) {
-                        replacement = new Vector2D(origX, origY);
-                    } else {
-                        replacement = new Vector2D(origY, origX);
-                    }
+                    final GeoCoord replacement = new GeoCoord(origLat, origLng);
 
                     loop.set(vectorInLoop, replacement);
                 }
@@ -898,12 +861,12 @@ public class H3Core {
     /**
      * Returns a list of coordinates representing the given edge.
      */
-    public List<Vector2D> getH3UnidirectionalEdgeBoundary(long h3) {
+    public List<GeoCoord> getH3UnidirectionalEdgeBoundary(long h3) {
         double[] verts = new double[MAX_CELL_BNDRY_VERTS * 2];
         int numVerts = h3Api.getH3UnidirectionalEdgeBoundary(h3, verts);
-        List<Vector2D> out = new ArrayList<>(numVerts);
+        List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
-            Vector2D coord = new Vector2D(
+            GeoCoord coord = new GeoCoord(
                     constrainLat(toDegrees(verts[i * 2])),
                     constrainLng(toDegrees(verts[(i * 2) + 1]))
             );
@@ -915,7 +878,7 @@ public class H3Core {
     /**
      * Returns a list of coordinates representing the given edge.
      */
-    public List<Vector2D> getH3UnidirectionalEdgeBoundary(String h3) {
+    public List<GeoCoord> getH3UnidirectionalEdgeBoundary(String h3) {
         return getH3UnidirectionalEdgeBoundary(stringToH3(h3));
     }
 
