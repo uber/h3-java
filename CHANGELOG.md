@@ -7,10 +7,9 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
-### Changed
+### Breaking Changes
 - Replaced Vector2D with GeoCoord.
-### Removed
-- geoJsonOrder parameter from polyfill functions.
+- Removed the geoJsonOrder parameter from polyfill functions.
 
 ## [3.0.2] - 2018-05-08
 ### Fixed
