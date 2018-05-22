@@ -18,7 +18,7 @@ package com.uber.h3core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -68,31 +68,31 @@ public class TestH3Core {
 
     @Test
     public void testH3ToGeo() {
-        Vector2D coords = h3.h3ToGeo(22758474429497343L | (1L << 59L));
-        assertEquals(coords.x, 67.15092686397713, EPSILON);
-        assertEquals(coords.y, 191.6091114190303 - 360.0, EPSILON);
+        GeoCoord coords = h3.h3ToGeo(22758474429497343L | (1L << 59L));
+        assertEquals(coords.lat, 67.15092686397713, EPSILON);
+        assertEquals(coords.lng, 191.6091114190303 - 360.0, EPSILON);
 
-        Vector2D coords2 = h3.h3ToGeo(Long.toHexString(22758474429497343L | (1L << 59L)));
+        GeoCoord coords2 = h3.h3ToGeo(Long.toHexString(22758474429497343L | (1L << 59L)));
         assertEquals(coords, coords2);
     }
 
     @Test
     public void testH3ToGeoBoundary() {
-        List<Vector2D> boundary = h3.h3ToGeoBoundary(22758474429497343L | (1L << 59L));
-        List<Vector2D> actualBoundary = new ArrayList<>();
-        actualBoundary.add(new Vector2D(67.224749856, 191.476993415 - 360.0));
-        actualBoundary.add(new Vector2D(67.140938355, 191.373085667 - 360.0));
-        actualBoundary.add(new Vector2D(67.067252558, 191.505086715 - 360.0));
-        actualBoundary.add(new Vector2D(67.077062918, 191.740304069 - 360.0));
-        actualBoundary.add(new Vector2D(67.160561948, 191.845198829 - 360.0));
-        actualBoundary.add(new Vector2D(67.234563187, 191.713897218 - 360.0));
+        List<GeoCoord> boundary = h3.h3ToGeoBoundary(22758474429497343L | (1L << 59L));
+        List<GeoCoord> actualBoundary = new ArrayList<>();
+        actualBoundary.add(new GeoCoord(67.224749856, 191.476993415 - 360.0));
+        actualBoundary.add(new GeoCoord(67.140938355, 191.373085667 - 360.0));
+        actualBoundary.add(new GeoCoord(67.067252558, 191.505086715 - 360.0));
+        actualBoundary.add(new GeoCoord(67.077062918, 191.740304069 - 360.0));
+        actualBoundary.add(new GeoCoord(67.160561948, 191.845198829 - 360.0));
+        actualBoundary.add(new GeoCoord(67.234563187, 191.713897218 - 360.0));
 
         for (int i = 0; i < 6; i++) {
-            assertEquals(boundary.get(i).x, actualBoundary.get(i).x, EPSILON);
-            assertEquals(boundary.get(i).y, actualBoundary.get(i).y, EPSILON);
+            assertEquals(boundary.get(i).lat, actualBoundary.get(i).lat, EPSILON);
+            assertEquals(boundary.get(i).lng, actualBoundary.get(i).lng, EPSILON);
         }
 
-        List<Vector2D> boundary2 = h3.h3ToGeoBoundary(Long.toHexString(22758474429497343L | (1L << 59L)));
+        List<GeoCoord> boundary2 = h3.h3ToGeoBoundary(Long.toHexString(22758474429497343L | (1L << 59L)));
         assertEquals(boundary, boundary2);
     }
 
@@ -285,12 +285,12 @@ public class TestH3Core {
     public void testPolyfill() {
         List<Long> hexagons = h3.polyfill(
                 ImmutableList.of(
-                        new Vector2D(37.813318999983238, -122.4089866999972145),
-                        new Vector2D(37.7866302000007224, -122.3805436999997056),
-                        new Vector2D(37.7198061999978478, -122.3544736999993603),
-                        new Vector2D(37.7076131999975672, -122.5123436999983966),
-                        new Vector2D(37.7835871999971715, -122.5247187000021967),
-                        new Vector2D(37.8151571999998453, -122.4798767000009008)
+                        new GeoCoord(37.813318999983238, -122.4089866999972145),
+                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
+                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
+                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
+                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
+                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
                 ), null, 9
         );
 
@@ -300,13 +300,13 @@ public class TestH3Core {
     @Test
     public void testPolyfillAddresses() {
         List<String> hexagons = h3.polyfillAddress(
-                ImmutableList.<Vector2D>of(
-                        new Vector2D(37.813318999983238, -122.4089866999972145),
-                        new Vector2D(37.7866302000007224, -122.3805436999997056),
-                        new Vector2D(37.7198061999978478, -122.3544736999993603),
-                        new Vector2D(37.7076131999975672, -122.5123436999983966),
-                        new Vector2D(37.7835871999971715, -122.5247187000021967),
-                        new Vector2D(37.8151571999998453, -122.4798767000009008)
+                ImmutableList.<GeoCoord>of(
+                        new GeoCoord(37.813318999983238, -122.4089866999972145),
+                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
+                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
+                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
+                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
+                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
                 ), null, 9
         );
 
@@ -316,19 +316,19 @@ public class TestH3Core {
     @Test
     public void testPolyfillWithHole() {
         List<Long> hexagons = h3.polyfill(
-                ImmutableList.<Vector2D>of(
-                        new Vector2D(37.813318999983238, -122.4089866999972145),
-                        new Vector2D(37.7866302000007224, -122.3805436999997056),
-                        new Vector2D(37.7198061999978478, -122.3544736999993603),
-                        new Vector2D(37.7076131999975672, -122.5123436999983966),
-                        new Vector2D(37.7835871999971715, -122.5247187000021967),
-                        new Vector2D(37.8151571999998453, -122.4798767000009008)
+                ImmutableList.<GeoCoord>of(
+                        new GeoCoord(37.813318999983238, -122.4089866999972145),
+                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
+                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
+                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
+                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
+                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
                 ),
-                ImmutableList.<List<Vector2D>>of(
-                        ImmutableList.<Vector2D>of(
-                                new Vector2D(37.7869802, -122.4471197),
-                                new Vector2D(37.7664102, -122.4590777),
-                                new Vector2D(37.7710682, -122.4137097)
+                ImmutableList.<List<GeoCoord>>of(
+                        ImmutableList.<GeoCoord>of(
+                                new GeoCoord(37.7869802, -122.4471197),
+                                new GeoCoord(37.7664102, -122.4590777),
+                                new GeoCoord(37.7710682, -122.4137097)
                         )
                 ),
                 9
@@ -340,24 +340,24 @@ public class TestH3Core {
     @Test
     public void testPolyfillWithTwoHoles() {
         List<Long> hexagons = h3.polyfill(
-                ImmutableList.<Vector2D>of(
-                        new Vector2D(37.813318999983238, -122.4089866999972145),
-                        new Vector2D(37.7866302000007224, -122.3805436999997056),
-                        new Vector2D(37.7198061999978478, -122.3544736999993603),
-                        new Vector2D(37.7076131999975672, -122.5123436999983966),
-                        new Vector2D(37.7835871999971715, -122.5247187000021967),
-                        new Vector2D(37.8151571999998453, -122.4798767000009008)
+                ImmutableList.<GeoCoord>of(
+                        new GeoCoord(37.813318999983238, -122.4089866999972145),
+                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
+                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
+                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
+                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
+                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
                 ),
-                ImmutableList.<List<Vector2D>>of(
-                        ImmutableList.<Vector2D>of(
-                                new Vector2D(37.7869802, -122.4471197),
-                                new Vector2D(37.7664102, -122.4590777),
-                                new Vector2D(37.7710682, -122.4137097)
+                ImmutableList.<List<GeoCoord>>of(
+                        ImmutableList.<GeoCoord>of(
+                                new GeoCoord(37.7869802, -122.4471197),
+                                new GeoCoord(37.7664102, -122.4590777),
+                                new GeoCoord(37.7710682, -122.4137097)
                         ),
-                        ImmutableList.<Vector2D>of(
-                                new Vector2D(37.747976, -122.490025),
-                                new Vector2D(37.731550, -122.503758),
-                                new Vector2D(37.725440, -122.452603)
+                        ImmutableList.<GeoCoord>of(
+                                new GeoCoord(37.747976, -122.490025),
+                                new GeoCoord(37.731550, -122.503758),
+                                new GeoCoord(37.725440, -122.452603)
                         )
                 ),
                 9
@@ -373,10 +373,10 @@ public class TestH3Core {
         inputHexagons.remove(0x85283097fffffffL);
         inputHexagons.remove(0x8528309bfffffffL);
 
-        List<List<Vector2D>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
+        List<List<GeoCoord>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
 
         // TODO: looks like a bug in H3 that this is index 1
-        List<Vector2D> outline = geo.remove(1); // geo is now holes
+        List<GeoCoord> outline = geo.remove(1); // geo is now holes
 
         List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
 
@@ -392,8 +392,8 @@ public class TestH3Core {
     public void testH3SetToMultiPolygonSingle() {
         long testIndex = 0x89283082837ffffL;
 
-        List<Vector2D> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<List<List<Vector2D>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), true);
+        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
+        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), true);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -406,8 +406,8 @@ public class TestH3Core {
         int[] expectedIndices = {2, 3, 4, 5, 0, 1, 2};
 
         for (int i = 0; i < actualBounds.size(); i++) {
-            assertEquals(actualBounds.get(expectedIndices[i]).x, multiBounds.get(0).get(0).get(i).x, EPSILON);
-            assertEquals(actualBounds.get(expectedIndices[i]).y, multiBounds.get(0).get(0).get(i).y, EPSILON);
+            assertEquals(actualBounds.get(expectedIndices[i]).lat, multiBounds.get(0).get(0).get(i).lat, EPSILON);
+            assertEquals(actualBounds.get(expectedIndices[i]).lng, multiBounds.get(0).get(0).get(i).lng, EPSILON);
         }
     }
 
@@ -415,8 +415,8 @@ public class TestH3Core {
     public void testH3SetToMultiPolygonSingleNonGeoJson() {
         long testIndex = 0x89283082837ffffL;
 
-        List<Vector2D> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<List<List<Vector2D>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), false);
+        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
+        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), false);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -429,8 +429,8 @@ public class TestH3Core {
         int[] expectedIndices = {2, 3, 4, 5, 0, 1};
 
         for (int i = 0; i < actualBounds.size(); i++) {
-            assertEquals(actualBounds.get(expectedIndices[i]).y, multiBounds.get(0).get(0).get(i).x, EPSILON);
-            assertEquals(actualBounds.get(expectedIndices[i]).x, multiBounds.get(0).get(0).get(i).y, EPSILON);
+            assertEquals(actualBounds.get(expectedIndices[i]).lat, multiBounds.get(0).get(0).get(i).lat, EPSILON);
+            assertEquals(actualBounds.get(expectedIndices[i]).lng, multiBounds.get(0).get(0).get(i).lng, EPSILON);
         }
     }
 
@@ -439,36 +439,36 @@ public class TestH3Core {
         long testIndex = 0x89283082837ffffL;
         long testIndex2 = 0x89283082833ffffL;
 
-        List<Vector2D> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<Vector2D> actualBounds2 = h3.h3ToGeoBoundary(testIndex2);
+        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
+        List<GeoCoord> actualBounds2 = h3.h3ToGeoBoundary(testIndex2);
 
         // Note this is different than the h3core-js bindings, in that it uses GeoJSON (possible bug)
-        List<List<List<Vector2D>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         assertEquals(1, multiBounds.size());
         assertEquals(1, multiBounds.get(0).size());
         assertEquals(10, multiBounds.get(0).get(0).size());
 
-        assertEquals(actualBounds2.get(0).y, multiBounds.get(0).get(0).get(0).x, EPSILON);
-        assertEquals(actualBounds2.get(1).y, multiBounds.get(0).get(0).get(1).x, EPSILON);
-        assertEquals(actualBounds2.get(2).y, multiBounds.get(0).get(0).get(2).x, EPSILON);
-        assertEquals(actualBounds.get(1).y, multiBounds.get(0).get(0).get(3).x, EPSILON);
-        assertEquals(actualBounds.get(2).y, multiBounds.get(0).get(0).get(4).x, EPSILON);
-        assertEquals(actualBounds.get(3).y, multiBounds.get(0).get(0).get(5).x, EPSILON);
-        assertEquals(actualBounds.get(4).y, multiBounds.get(0).get(0).get(6).x, EPSILON);
-        assertEquals(actualBounds.get(5).y, multiBounds.get(0).get(0).get(7).x, EPSILON);
-        assertEquals(actualBounds2.get(4).y, multiBounds.get(0).get(0).get(8).x, EPSILON);
-        assertEquals(actualBounds2.get(5).y, multiBounds.get(0).get(0).get(9).x, EPSILON);
-        assertEquals(actualBounds2.get(0).x, multiBounds.get(0).get(0).get(0).y, EPSILON);
-        assertEquals(actualBounds2.get(1).x, multiBounds.get(0).get(0).get(1).y, EPSILON);
-        assertEquals(actualBounds2.get(2).x, multiBounds.get(0).get(0).get(2).y, EPSILON);
-        assertEquals(actualBounds.get(1).x, multiBounds.get(0).get(0).get(3).y, EPSILON);
-        assertEquals(actualBounds.get(2).x, multiBounds.get(0).get(0).get(4).y, EPSILON);
-        assertEquals(actualBounds.get(3).x, multiBounds.get(0).get(0).get(5).y, EPSILON);
-        assertEquals(actualBounds.get(4).x, multiBounds.get(0).get(0).get(6).y, EPSILON);
-        assertEquals(actualBounds.get(5).x, multiBounds.get(0).get(0).get(7).y, EPSILON);
-        assertEquals(actualBounds2.get(4).x, multiBounds.get(0).get(0).get(8).y, EPSILON);
-        assertEquals(actualBounds2.get(5).x, multiBounds.get(0).get(0).get(9).y, EPSILON);
+        assertEquals(actualBounds2.get(0).lat, multiBounds.get(0).get(0).get(0).lat, EPSILON);
+        assertEquals(actualBounds2.get(1).lat, multiBounds.get(0).get(0).get(1).lat, EPSILON);
+        assertEquals(actualBounds2.get(2).lat, multiBounds.get(0).get(0).get(2).lat, EPSILON);
+        assertEquals(actualBounds.get(1).lat, multiBounds.get(0).get(0).get(3).lat, EPSILON);
+        assertEquals(actualBounds.get(2).lat, multiBounds.get(0).get(0).get(4).lat, EPSILON);
+        assertEquals(actualBounds.get(3).lat, multiBounds.get(0).get(0).get(5).lat, EPSILON);
+        assertEquals(actualBounds.get(4).lat, multiBounds.get(0).get(0).get(6).lat, EPSILON);
+        assertEquals(actualBounds.get(5).lat, multiBounds.get(0).get(0).get(7).lat, EPSILON);
+        assertEquals(actualBounds2.get(4).lat, multiBounds.get(0).get(0).get(8).lat, EPSILON);
+        assertEquals(actualBounds2.get(5).lat, multiBounds.get(0).get(0).get(9).lat, EPSILON);
+        assertEquals(actualBounds2.get(0).lng, multiBounds.get(0).get(0).get(0).lng, EPSILON);
+        assertEquals(actualBounds2.get(1).lng, multiBounds.get(0).get(0).get(1).lng, EPSILON);
+        assertEquals(actualBounds2.get(2).lng, multiBounds.get(0).get(0).get(2).lng, EPSILON);
+        assertEquals(actualBounds.get(1).lng, multiBounds.get(0).get(0).get(3).lng, EPSILON);
+        assertEquals(actualBounds.get(2).lng, multiBounds.get(0).get(0).get(4).lng, EPSILON);
+        assertEquals(actualBounds.get(3).lng, multiBounds.get(0).get(0).get(5).lng, EPSILON);
+        assertEquals(actualBounds.get(4).lng, multiBounds.get(0).get(0).get(6).lng, EPSILON);
+        assertEquals(actualBounds.get(5).lng, multiBounds.get(0).get(0).get(7).lng, EPSILON);
+        assertEquals(actualBounds2.get(4).lng, multiBounds.get(0).get(0).get(8).lng, EPSILON);
+        assertEquals(actualBounds2.get(5).lng, multiBounds.get(0).get(0).get(9).lng, EPSILON);
     }
 
     @Test
@@ -476,7 +476,7 @@ public class TestH3Core {
         long testIndex = 0x89283082837ffffL;
         long testIndex2 = 0x8928308280fffffL;
 
-        List<List<List<Vector2D>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         // TODO: Update to appropriate expectations when the algorithm correctly
         // returns two polygons
@@ -490,7 +490,7 @@ public class TestH3Core {
     @Test
     public void testH3SetToMultiPolygonHole() {
         // Six hexagons in a ring around a hole
-        List<List<List<Vector2D>>> multiBounds = h3.h3AddressSetToMultiPolygon(ImmutableList.of(
+        List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(ImmutableList.of(
                 "892830828c7ffff", "892830828d7ffff", "8928308289bffff",
                 "89283082813ffff", "8928308288fffff", "89283082883ffff"
         ), false);
@@ -511,7 +511,7 @@ public class TestH3Core {
         }
 
         // Six hexagons in a ring around a hole
-        List<List<List<Vector2D>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
+        List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
 
         assertEquals(numHexes, multiBounds.get(0).size());
     }
@@ -842,7 +842,7 @@ public class TestH3Core {
         assertEquals(6, edges.size());
         assertTrue(edges.contains(edge));
 
-        List<Vector2D> boundary = h3.getH3UnidirectionalEdgeBoundary(edge);
+        List<GeoCoord> boundary = h3.getH3UnidirectionalEdgeBoundary(edge);
         assertEquals(2, boundary.size());
     }
 

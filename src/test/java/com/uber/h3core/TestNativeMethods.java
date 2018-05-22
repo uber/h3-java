@@ -15,7 +15,7 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,9 +40,9 @@ public class TestNativeMethods {
         final AtomicInteger counter = new AtomicInteger(0);
 
         try {
-            nativeMethods.h3SetToLinkedGeo(new long[]{0x8928308280fffffL}, new ArrayList<List<List<Vector2D>>>() {
+            nativeMethods.h3SetToLinkedGeo(new long[]{0x8928308280fffffL}, new ArrayList<List<List<GeoCoord>>>() {
                 @Override
-                public boolean add(List<List<Vector2D>> lists) {
+                public boolean add(List<List<GeoCoord>> lists) {
                     throw new RuntimeException("crashed#" + counter.getAndIncrement());
                 }
             });

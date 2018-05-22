@@ -15,7 +15,7 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.Vector2D;
+import com.uber.h3core.util.GeoCoord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ final class NativeMethods {
     native int maxPolyfillSize(double[] verts, int[] holeSizes, double[] holeVerts, int res);
     native void polyfill(double[] verts, int[] holeSizes, double[] holeVerts, int res, long[] results);
 
-    native void h3SetToLinkedGeo(long[] h3, ArrayList<List<List<Vector2D>>> results);
+    native void h3SetToLinkedGeo(long[] h3, ArrayList<List<List<GeoCoord>>> results);
 
     native int compact(long[] h3, long[] results);
     native int maxUncompactSize(long[] h3, int res);
