@@ -15,14 +15,14 @@ Add it to your pom.xml:
 <dependency>
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
 </dependency>
 ```
 
 Or, using Gradle:
 
 ```gradle
-compile("com.uber:h3:3.0.2")
+compile("com.uber:h3:3.0.3")
 ```
 
 Encode a location into a hexagon address:
@@ -40,7 +40,7 @@ String hexAddr = h3.geoToH3Address(lat, lng, res);
 Decode a hexagon address into coordinates:
 
 ```java
-Vector2D[] geoCoords = h3.h3ToGeoBoundary(hexAddr);
+List<GeoCoord> geoCoords = h3.h3ToGeoBoundary(hexAddr);
 ```
 
 ## Supported Operating Systems
