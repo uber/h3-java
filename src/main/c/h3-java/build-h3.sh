@@ -64,41 +64,51 @@ pushd h3-java-build
 mkdir -p build
 pushd build
 
-cmake -DBUILD_SHARED_LIBS=OFF \
+cmake -G "Visual Studio 15 2017 Win64" \
+    -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     ../../h3
-make h3 binding-functions
+cmake --build . --target h3 --config Release
+cmake --build . --target binding-functions --config Release
 H3_BUILD_ROOT="$(pwd)"
 
 popd
 
-cmake -DUSE_NATIVE_JNI=ON \
+cmake -G "Visual Studio 15 2017 Win64" \
+    -DUSE_NATIVE_JNI=ON \
     -DBUILD_SHARED_LIBS=ON \
     "-DH3_SRC_ROOT=$H3_SRC_ROOT" \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
     ../../src/main/c/h3-java
-make h3-java
+cmake --build . --target h3-java --config Release
 
 popd
 popd
 
 # Copy the built artifact for this platform.
+IS_WINDOWS=false
 case "$(uname -sm)" in
-    "Linux x86_64")  LIBRARY_DIR=linux-x64 ;;
-    "Linux i386")    LIBRARY_DIR=linux-x86 ;;
-    "Linux i486")    LIBRARY_DIR=linux-x86 ;;
-    "Linux i586")    LIBRARY_DIR=linux-x86 ;;
-    "Linux i686")    LIBRARY_DIR=linux-x86 ;;
-    "Linux i786")    LIBRARY_DIR=linux-x86 ;;
-    "Linux i886")    LIBRARY_DIR=linux-x86 ;;
-    "Darwin x86_64") LIBRARY_DIR=darwin-x64 ;;
+    "Linux x86_64")           LIBRARY_DIR=linux-x64 ;;
+    "Linux i386")             LIBRARY_DIR=linux-x86 ;;
+    "Linux i486")             LIBRARY_DIR=linux-x86 ;;
+    "Linux i586")             LIBRARY_DIR=linux-x86 ;;
+    "Linux i686")             LIBRARY_DIR=linux-x86 ;;
+    "Linux i786")             LIBRARY_DIR=linux-x86 ;;
+    "Linux i886")             LIBRARY_DIR=linux-x86 ;;
+    "Darwin x86_64")          LIBRARY_DIR=darwin-x64 ;;
+    CYGWIN*)                  LIBRARY_DIR=windows-x64 ; IS_WINDOWS=true ;;
+    MINGW*)                   LIBRARY_DIR=windows-x64 ; IS_WINDOWS=true ;;
     # TODO: Detect others
-    *)               LIBRARY_DIR="" ;;
+    *)                        LIBRARY_DIR="" ;;
 esac
 
 mkdir -p src/main/resources/$LIBRARY_DIR
-cp target/h3-java-build/lib/libh3-java* src/main/resources/$LIBRARY_DIR
+if $IS_WINDOWS; then
+    cp target/h3-java-build/lib/Release/h3-java.dll src/main/resources/$LIBRARY_DIR/libh3-java.dll
+else
+    cp target/h3-java-build/lib/libh3-java* src/main/resources/$LIBRARY_DIR
+fi
 
 #
 # Now that H3 is downloaded, build H3-Java's native library for other platforms.

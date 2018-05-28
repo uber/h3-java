@@ -49,7 +49,11 @@ set(JNI_SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/com_uber_h3core_NativeMethods.h)
 
 add_library(h3-java SHARED ${JNI_SOURCE_FILES})
-target_link_libraries(h3-java ${H3_BUILD_ROOT}/lib/libh3${CMAKE_STATIC_LIBRARY_SUFFIX})
+if(WIN32)
+    target_link_libraries(h3-java ${H3_BUILD_ROOT}/bin/Release/h3${CMAKE_STATIC_LIBRARY_SUFFIX})
+else()
+    target_link_libraries(h3-java ${H3_BUILD_ROOT}/lib/libh3${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
 
 find_program(CLANG_FORMAT_PATH clang-format)
 cmake_dependent_option(

@@ -69,6 +69,7 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
+        <h3.build.success>0</h3.build.success>
     </properties>
 
     <profiles>
@@ -92,6 +93,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+	    <properties>
+                <h3.use.docker>false</h3.use.docker>
+                <h3.build.success>-1073741819</h3.build.success>
+            </properties>
         </profile>
     </profiles>
 
@@ -200,6 +213,9 @@
                                 <argument>${h3.git.reference}</argument>
                                 <argument>${h3.use.docker}</argument>
                             </arguments>
+                            <successCodes>
+                                <successCode>${h3.build.success}</successCode>
+                            </successCodes>
                         </configuration>
                     </execution>
                 </executions>
