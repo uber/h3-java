@@ -69,7 +69,7 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
-        <h3.build.success>0</h3.build.success>
+        <h3.build.command>${basedir}/src/main/c/h3-java/build-h3.sh</h3.build.command>
     </properties>
 
     <profiles>
@@ -102,8 +102,7 @@
                 </os>
             </activation>
 	    <properties>
-                <h3.use.docker>false</h3.use.docker>
-                <h3.build.success>-1073741819</h3.build.success>
+                <h3.build.command>${basedir}/src/main/c/h3-java/build-h3-windows.sh</h3.build.command>
             </properties>
         </profile>
     </profiles>
@@ -207,15 +206,12 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/src/main/c/h3-java/build-h3.sh</executable>
+                            <executable>${h3.build.command}</executable>
                             <arguments>
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>
                                 <argument>${h3.use.docker}</argument>
                             </arguments>
-                            <successCodes>
-                                <successCode>${h3.build.success}</successCode>
-                            </successCodes>
                         </configuration>
                     </execution>
                 </executions>
