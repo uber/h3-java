@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# Arguments: [git-remote] [git-ref] [use-docker]
+# Arguments: [git-remote] [git-ref]
 # git-remote - The git remote to pull from. An existing cloned repository
 #              will not be deleted if a new remote is specified.
 # git-ref    - A specific git ref to build, or "default" to use
