@@ -601,9 +601,24 @@ public class TestH3Core {
         h3.geoToH3(0, 0, 1000);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
+    public void testHostileInputLatLng() {
+        try {
+            // Don't crash
+            h3.geoToH3(1e45, 1e45, 0);
+        } catch (IllegalArgumentException e) {
+            // Acceptable result
+        }
+    }
+
+    @Test
     public void testHostileInputMaximum() {
-        h3.geoToH3(Double.MAX_VALUE, Double.MAX_VALUE, 0);
+        try {
+            // Don't crash
+            h3.geoToH3(Double.MAX_VALUE, Double.MAX_VALUE, 0);
+        } catch (IllegalArgumentException e) {
+            // Acceptable result
+        }
     }
 
     @Test
