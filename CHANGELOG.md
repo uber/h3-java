@@ -6,6 +6,10 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
+## [Unreleased]
+### Changed
+- Updated the core library to v3.0.8, fixing a possible segfault. (#19)
+
 ## [3.0.3] - 2018-05-22
 ### Breaking Changes
 - Replaced Vector2D with GeoCoord.
