@@ -408,6 +408,39 @@ public class H3Core {
     }
 
     /**
+     * Returns the distance between <code>a</code> and <code>b</code>.
+     *
+     * @param a An H3 index
+     * @param b Another H3 index
+     * @return Distance between the two in grid cells
+     * @throws IllegalArgumentException H3 cannot compute the distance, e.g. due to pentagonal
+     * distortion or too great a distance.
+     */
+    public int h3Distance(String a, String b) {
+        return h3Distance(stringToH3(a), stringToH3(b));
+    }
+
+    /**
+     * Returns the distance between <code>a</code> and <code>b</code>.
+     *
+     * @param a An H3 index
+     * @param b Another H3 index
+     * @return Distance between the two in grid cells
+     * @throws IllegalArgumentException H3 cannot compute the distance, e.g. due to pentagonal
+     * distortion or too great a distance.
+     */
+    public int h3Distance(long a, long b) {
+        final int distance = h3Api.h3Distance(a, b);
+
+        if (distance < 0) {
+            throw new IllegalArgumentException("Could not find distance e.g. because of pentagonal distortion "
+                    + "or the distance was too great.");
+        }
+
+        return distance;
+    }
+
+    /**
      * Finds indexes within the given geofence.
      *
      * @param points Outline geofence

@@ -856,4 +856,43 @@ public class TestH3Core {
     public void testUnidirectionalEdgesNotNeighbors() {
         h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testH3DistanceFailedDistance() {
+        h3.h3Distance("8029fffffffffff", "8079fffffffffff");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testH3DistanceFailedResolution() {
+        h3.h3Distance("81283ffffffffff", "8029fffffffffff");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testH3DistanceFailedPentagonDistortion() {
+        // Opposite sides of a pentagon
+        h3.h3Distance("821c37fffffffff", "822837fffffffff");
+    }
+
+    @Test
+    public void testH3Distance() {
+        // Resolution 0 to some neighbors
+        assertEquals(0, h3.h3Distance("8029fffffffffff", "8029fffffffffff"));
+        assertEquals(1, h3.h3Distance("8029fffffffffff", "801dfffffffffff"));
+        assertEquals(1, h3.h3Distance("8029fffffffffff", "8037fffffffffff"));
+
+        // Resolution 1 from a base cell onto a pentagon
+        assertEquals(2, h3.h3Distance("81283ffffffffff", "811d7ffffffffff"));
+        assertEquals(2, h3.h3Distance("81283ffffffffff", "811cfffffffffff"));
+        assertEquals(3, h3.h3Distance("81283ffffffffff", "811c3ffffffffff"));
+        // Opposite sides of a pentagon
+        assertEquals(4, h3.h3Distance("81283ffffffffff", "811dbffffffffff"));
+
+        // Resolution 5 within the same base cell
+        assertEquals(0, h3.h3Distance("85283083fffffff", "85283083fffffff"));
+        assertEquals(1, h3.h3Distance("85283083fffffff", "85283093fffffff"));
+        assertEquals(2, h3.h3Distance("85283083fffffff", "8528342bfffffff"));
+        assertEquals(3, h3.h3Distance("85283083fffffff", "85283477fffffff"));
+        assertEquals(4, h3.h3Distance("85283083fffffff", "85283473fffffff"));
+        assertEquals(5, h3.h3Distance("85283083fffffff", "85283447fffffff"));
+    }
 }

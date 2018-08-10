@@ -333,6 +333,16 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_hexRing(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    h3Distance
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3Distance(
+    JNIEnv *env, jobject thiz, jlong a, jlong b) {
+    return h3Distance(a, b);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    maxPolyfillSize
  * Signature: ([D[I[DI)I
  */
