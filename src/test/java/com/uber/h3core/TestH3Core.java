@@ -17,6 +17,7 @@ package com.uber.h3core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.uber.h3core.exceptions.DistanceUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.GeoCoord;
 import org.junit.BeforeClass;
@@ -857,24 +858,24 @@ public class TestH3Core {
         h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testH3DistanceFailedDistance() {
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedDistance() throws DistanceUndefinedException {
         h3.h3Distance("8029fffffffffff", "8079fffffffffff");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testH3DistanceFailedResolution() {
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedResolution() throws DistanceUndefinedException {
         h3.h3Distance("81283ffffffffff", "8029fffffffffff");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testH3DistanceFailedPentagonDistortion() {
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedPentagonDistortion() throws DistanceUndefinedException {
         // Opposite sides of a pentagon
         h3.h3Distance("821c37fffffffff", "822837fffffffff");
     }
 
     @Test
-    public void testH3Distance() {
+    public void testH3Distance() throws DistanceUndefinedException {
         // Resolution 0 to some neighbors
         assertEquals(0, h3.h3Distance("8029fffffffffff", "8029fffffffffff"));
         assertEquals(1, h3.h3Distance("8029fffffffffff", "801dfffffffffff"));

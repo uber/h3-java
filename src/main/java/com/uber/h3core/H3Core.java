@@ -15,6 +15,7 @@
  */
 package com.uber.h3core;
 
+import com.uber.h3core.exceptions.DistanceUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.GeoCoord;
 
@@ -409,32 +410,49 @@ public class H3Core {
 
     /**
      * Returns the distance between <code>a</code> and <code>b</code>.
+     * This is the grid distance, or distance expressed in number of H3 cells.
+     *
+     * <p>In some cases H3 cannot compute the distance between two indexes.
+     * This can happen cause:
+     * <ul>
+     *     <li>The indexes are not comparable (difference resolutions, etc)</li>
+     *     <li>The distance is greater than the H3 core library supports</li>
+     *     <li>The H3 library does not support finding the distance between
+     *     the two cells, because of pentagonal distortion.</li>
+     * </ul>
      *
      * @param a An H3 index
      * @param b Another H3 index
      * @return Distance between the two in grid cells
-     * @throws IllegalArgumentException H3 cannot compute the distance, e.g. due to pentagonal
-     * distortion or too great a distance.
+     * @throws DistanceUndefinedException H3 cannot compute the distance.
      */
-    public int h3Distance(String a, String b) {
+    public int h3Distance(String a, String b) throws DistanceUndefinedException {
         return h3Distance(stringToH3(a), stringToH3(b));
     }
 
     /**
      * Returns the distance between <code>a</code> and <code>b</code>.
+     * This is the grid distance, or distance expressed in number of H3 cells.
+     *
+     * <p>In some cases H3 cannot compute the distance between two indexes.
+     * This can happen cause:
+     * <ul>
+     *     <li>The indexes are not comparable (difference resolutions, etc)</li>
+     *     <li>The distance is greater than the H3 core library supports</li>
+     *     <li>The H3 library does not support finding the distance between
+     *     the two cells, because of pentagonal distortion.</li>
+     * </ul>
      *
      * @param a An H3 index
      * @param b Another H3 index
      * @return Distance between the two in grid cells
-     * @throws IllegalArgumentException H3 cannot compute the distance, e.g. due to pentagonal
-     * distortion or too great a distance.
+     * @throws DistanceUndefinedException H3 cannot compute the distance.
      */
-    public int h3Distance(long a, long b) {
+    public int h3Distance(long a, long b) throws DistanceUndefinedException {
         final int distance = h3Api.h3Distance(a, b);
 
         if (distance < 0) {
-            throw new IllegalArgumentException("Could not find distance e.g. because of pentagonal distortion "
-                    + "or the distance was too great.");
+            throw new DistanceUndefinedException("Distance not defined between the two indexes.");
         }
 
         return distance;
