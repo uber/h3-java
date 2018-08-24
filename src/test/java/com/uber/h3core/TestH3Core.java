@@ -860,17 +860,23 @@ public class TestH3Core {
 
     @Test(expected = DistanceUndefinedException.class)
     public void testH3DistanceFailedDistance() throws DistanceUndefinedException {
+        // This fails because of a limitation in the H3 core library.
+        // It cannot find distances when spanning more than one base cell.
+        // Expected correct result is 2.
         h3.h3Distance("8029fffffffffff", "8079fffffffffff");
     }
 
     @Test(expected = DistanceUndefinedException.class)
     public void testH3DistanceFailedResolution() throws DistanceUndefinedException {
+        // Cannot find distances when the indexes are not comparable (different resolutions)
         h3.h3Distance("81283ffffffffff", "8029fffffffffff");
     }
 
     @Test(expected = DistanceUndefinedException.class)
     public void testH3DistanceFailedPentagonDistortion() throws DistanceUndefinedException {
-        // Opposite sides of a pentagon
+        // This fails because of a limitation in the H3 core library.
+        // It cannot find distances from opposite sides of a pentagon.
+        // Expected correct result is 9.
         h3.h3Distance("821c37fffffffff", "822837fffffffff");
     }
 

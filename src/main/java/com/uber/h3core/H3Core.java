@@ -413,7 +413,7 @@ public class H3Core {
      * This is the grid distance, or distance expressed in number of H3 cells.
      *
      * <p>In some cases H3 cannot compute the distance between two indexes.
-     * This can happen cause:
+     * This can happen because:
      * <ul>
      *     <li>The indexes are not comparable (difference resolutions, etc)</li>
      *     <li>The distance is greater than the H3 core library supports</li>
@@ -435,7 +435,7 @@ public class H3Core {
      * This is the grid distance, or distance expressed in number of H3 cells.
      *
      * <p>In some cases H3 cannot compute the distance between two indexes.
-     * This can happen cause:
+     * This can happen because:
      * <ul>
      *     <li>The indexes are not comparable (difference resolutions, etc)</li>
      *     <li>The distance is greater than the H3 core library supports</li>
