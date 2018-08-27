@@ -17,6 +17,7 @@ package com.uber.h3core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.uber.h3core.exceptions.DistanceUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.GeoCoord;
 import org.junit.BeforeClass;
@@ -855,5 +856,50 @@ public class TestH3Core {
     @Test(expected = IllegalArgumentException.class)
     public void testUnidirectionalEdgesNotNeighbors() {
         h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");
+    }
+
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedDistance() throws DistanceUndefinedException {
+        // This fails because of a limitation in the H3 core library.
+        // It cannot find distances when spanning more than one base cell.
+        // Expected correct result is 2.
+        h3.h3Distance("8029fffffffffff", "8079fffffffffff");
+    }
+
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedResolution() throws DistanceUndefinedException {
+        // Cannot find distances when the indexes are not comparable (different resolutions)
+        h3.h3Distance("81283ffffffffff", "8029fffffffffff");
+    }
+
+    @Test(expected = DistanceUndefinedException.class)
+    public void testH3DistanceFailedPentagonDistortion() throws DistanceUndefinedException {
+        // This fails because of a limitation in the H3 core library.
+        // It cannot find distances from opposite sides of a pentagon.
+        // Expected correct result is 9.
+        h3.h3Distance("821c37fffffffff", "822837fffffffff");
+    }
+
+    @Test
+    public void testH3Distance() throws DistanceUndefinedException {
+        // Resolution 0 to some neighbors
+        assertEquals(0, h3.h3Distance("8029fffffffffff", "8029fffffffffff"));
+        assertEquals(1, h3.h3Distance("8029fffffffffff", "801dfffffffffff"));
+        assertEquals(1, h3.h3Distance("8029fffffffffff", "8037fffffffffff"));
+
+        // Resolution 1 from a base cell onto a pentagon
+        assertEquals(2, h3.h3Distance("81283ffffffffff", "811d7ffffffffff"));
+        assertEquals(2, h3.h3Distance("81283ffffffffff", "811cfffffffffff"));
+        assertEquals(3, h3.h3Distance("81283ffffffffff", "811c3ffffffffff"));
+        // Opposite sides of a pentagon
+        assertEquals(4, h3.h3Distance("81283ffffffffff", "811dbffffffffff"));
+
+        // Resolution 5 within the same base cell
+        assertEquals(0, h3.h3Distance("85283083fffffff", "85283083fffffff"));
+        assertEquals(1, h3.h3Distance("85283083fffffff", "85283093fffffff"));
+        assertEquals(2, h3.h3Distance("85283083fffffff", "8528342bfffffff"));
+        assertEquals(3, h3.h3Distance("85283083fffffff", "85283477fffffff"));
+        assertEquals(4, h3.h3Distance("85283083fffffff", "85283473fffffff"));
+        assertEquals(5, h3.h3Distance("85283083fffffff", "85283447fffffff"));
     }
 }

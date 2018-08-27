@@ -6,6 +6,12 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
+## [Unreleased]
+### Added
+- `h3Distance` function. (#21)
+### Changed
+- Updated the core library to v3.1.0. (#21)
+
 ## [3.0.4] - 2018-07-25
 ### Changed
 - Updated the core library to v3.0.8, fixing a possible segfault. (#19)

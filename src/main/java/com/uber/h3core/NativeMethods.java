@@ -45,6 +45,8 @@ final class NativeMethods {
     native int hexRange(long h3, int k, long[] results);
     native int hexRing(long h3, int k, long[] results);
 
+    native int h3Distance(long a, long b);
+
     native int maxPolyfillSize(double[] verts, int[] holeSizes, double[] holeVerts, int res);
     native void polyfill(double[] verts, int[] holeSizes, double[] holeVerts, int res, long[] results);
 
