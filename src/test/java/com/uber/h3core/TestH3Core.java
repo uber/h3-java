@@ -50,9 +50,22 @@ public class TestH3Core {
         assertNotNull(h3);
 
         H3Core another = H3Core.newInstance();
+        assertNotNull(another);
 
         // Doesn't override equals.
         assertNotEquals(h3, another);
+    }
+
+    @Test
+    public void testConstructSpecific() throws IOException {
+        // This uses the same logic as H3CoreLoader for detecting
+        // the OS and architecture, to avoid issues with CI.
+        final H3CoreLoader.OperatingSystem os = H3CoreLoader.detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
+        final String arch = H3CoreLoader.detectArch(System.getProperty("os.arch"));
+
+        H3Core another = H3Core.newInstance(os, arch);
+
+        assertNotNull(another);
     }
 
     @Test

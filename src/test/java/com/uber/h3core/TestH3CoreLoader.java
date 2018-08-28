@@ -61,6 +61,9 @@ public class TestH3CoreLoader {
         assertEquals(H3CoreLoader.ARCH_X86, H3CoreLoader.detectArch("i786"));
         assertEquals(H3CoreLoader.ARCH_X86, H3CoreLoader.detectArch("i886"));
 
+        assertEquals(H3CoreLoader.ARCH_ARM64, H3CoreLoader.detectArch("arm64"));
+        assertEquals(H3CoreLoader.ARCH_ARM64, H3CoreLoader.detectArch("aarch64"));
+
         assertEquals("anything", H3CoreLoader.detectArch("anything"));
         assertEquals("i986", H3CoreLoader.detectArch("i986"));
         assertEquals("i286", H3CoreLoader.detectArch("i286"));
