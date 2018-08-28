@@ -9,7 +9,7 @@ for the Linux x64 and Darwin x64 platforms.
 ## [Unreleased]
 ### Added
 - `h3Distance` function. (#21)
-- `newInstance` override that accepts specific operating system and architecture values.
+- `newInstance` override that accepts specific operating system and architecture values. (#24)
 ### Changed
 - Updated the core library to v3.1.0. (#21)
 
