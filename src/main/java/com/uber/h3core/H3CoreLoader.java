@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * Extracts the native H3 core library to the local filesystem and loads it.
  */
-final class H3CoreLoader {
+public final class H3CoreLoader {
     H3CoreLoader() {
         // Prevent instantiation
     }

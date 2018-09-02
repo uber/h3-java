@@ -51,6 +51,11 @@ set(JNI_SOURCE_FILES
 add_library(h3-java SHARED ${JNI_SOURCE_FILES})
 target_link_libraries(h3-java ${H3_BUILD_ROOT}/lib/libh3${CMAKE_STATIC_LIBRARY_SUFFIX})
 
+find_library(M_LIB m)
+if(M_LIB)
+    target_link_libraries(h3-java ${M_LIB})
+endif()
+
 find_program(CLANG_FORMAT_PATH clang-format)
 cmake_dependent_option(
     ENABLE_FORMAT "Enable running clang-format before compiling" ON
