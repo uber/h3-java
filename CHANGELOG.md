@@ -11,6 +11,7 @@ for the Linux x64 and Darwin x64 platforms.
 - `h3Distance` function. (#21)
 ### Changed
 - Updated the core library to v3.1.0. (#21)
+- Updated the core library to v3.1.1.
 
 ## [3.0.4] - 2018-07-25
 ### Changed

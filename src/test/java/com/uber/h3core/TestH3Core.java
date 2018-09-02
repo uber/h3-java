@@ -376,8 +376,7 @@ public class TestH3Core {
 
         List<List<GeoCoord>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
 
-        // TODO: looks like a bug in H3 that this is index 1
-        List<GeoCoord> outline = geo.remove(1); // geo is now holes
+        List<GeoCoord> outline = geo.remove(0); // geo is now holes
 
         List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
 
@@ -479,13 +478,11 @@ public class TestH3Core {
 
         List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
-        // TODO: Update to appropriate expectations when the algorithm correctly
-        // returns two polygons
-
-        assertEquals(1, multiBounds.size());
-        assertEquals(2, multiBounds.get(0).size());
+        assertEquals(2, multiBounds.size());
+        assertEquals(1, multiBounds.get(0).size());
         assertEquals(6, multiBounds.get(0).get(0).size());
-        assertEquals(6, multiBounds.get(0).get(1).size());
+        assertEquals(1, multiBounds.get(1).size());
+        assertEquals(6, multiBounds.get(1).get(0).size());
     }
 
     @Test
