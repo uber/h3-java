@@ -82,6 +82,7 @@ for CONFIGURATION in "x64" "x86"; do
         -DBUILD_SHARED_LIBS=ON \
         "-DH3_SRC_ROOT=$H3_SRC_ROOT" \
         "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
+        "-DH3_CORE_LIBRARY_PATH=bin/Release/h3" \
         -DCMAKE_BUILD_TYPE=Release \
         ../../src/main/c/h3-java
     cmake --build . --target h3-java --config Release
