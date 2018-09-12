@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * Extracts the native H3 core library to the local filesystem and loads it.
  */
-final class H3CoreLoader {
+public final class H3CoreLoader {
     H3CoreLoader() {
         // Prevent instantiation
     }
@@ -32,6 +32,7 @@ final class H3CoreLoader {
     // Supported H3 architectures
     static final String ARCH_X64 = "x64";
     static final String ARCH_X86 = "x86";
+    static final String ARCH_ARM64 = "arm64";
 
     private static volatile File libraryFile = null;
 
@@ -81,14 +82,34 @@ final class H3CoreLoader {
      * @throws UnsatisfiedLinkError The library could not be loaded
      * @throws IOException Failed to unpack the library
      */
-    public synchronized static NativeMethods loadNatives() throws IOException {
+    public static NativeMethods loadNatives() throws IOException {
+        final OperatingSystem os = detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
+        final String arch = detectArch(System.getProperty("os.arch"));
+
+        return loadNatives(os, arch);
+    }
+
+    /**
+     * For use when the H3 library should be unpacked from the JAR and loaded.
+     * The native library for the specified operating system and architecture
+     * will be extract.
+     *
+     * <p>H3 will only successfully extract the library once, even if different
+     * operating system and architecture are specified, or if {@link #loadNatives()}
+     * was used instead.
+     *
+     * @throws SecurityException Loading the library was not allowed by the
+     *                           SecurityManager.
+     * @throws UnsatisfiedLinkError The library could not be loaded
+     * @throws IOException Failed to unpack the library
+     * @param os Operating system whose lobrary should be used
+     * @param arch Architecture name, as packaged in the H3 library
+     */
+    public synchronized static NativeMethods loadNatives(OperatingSystem os, String arch) throws IOException {
         // This is synchronized because if multiple threads were writing and
         // loading the shared object at the same time, bad things could happen.
 
         if (libraryFile == null) {
-            final OperatingSystem os = detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
-            final String arch = detectArch(System.getProperty("os.arch"));
-
             final String dirName = String.format("%s-%s", os.getDirName(), arch);
             final String libName = String.format("libh3-java%s", os.getSuffix());
 
@@ -122,7 +143,7 @@ final class H3CoreLoader {
     /**
      * Operating systems supported by H3-Java.
      */
-    enum OperatingSystem {
+    public enum OperatingSystem {
         ANDROID(".so"),
         DARWIN(".dylib"),
         WINDOWS(".dll"),
@@ -188,6 +209,8 @@ final class H3CoreLoader {
                    osArch.equals("i786") ||
                    osArch.equals("i886")) {
             return ARCH_X86;
+        } else if (osArch.equals("aarch64")) {
+            return ARCH_ARM64;
         } else {
             return osArch;
         }

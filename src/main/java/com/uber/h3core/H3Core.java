@@ -59,6 +59,8 @@ public class H3Core {
 
     /**
      * Create by unpacking the H3 native library to disk and loading it.
+     * The library will attempt to detect the correct operating system
+     * and architecture of native library to unpack.
      *
      * @throws SecurityException Loading the library was not allowed by the
      *                           SecurityManager.
@@ -67,6 +69,21 @@ public class H3Core {
      */
     public static H3Core newInstance() throws IOException {
         NativeMethods h3Api = H3CoreLoader.loadNatives();
+        return new H3Core(h3Api);
+    }
+
+    /**
+     * Create by unpacking the H3 native library to disk and loading it.
+     * The library will attempt to extract the native library matching
+     * the given arguments to disk.
+     *
+     * @throws SecurityException Loading the library was not allowed by the
+     *                           SecurityManager.
+     * @throws UnsatisfiedLinkError The library could not be loaded
+     * @throws IOException The library could not be extracted to disk.
+     */
+    public static H3Core newInstance(H3CoreLoader.OperatingSystem os, String arch) throws IOException {
+        NativeMethods h3Api = H3CoreLoader.loadNatives(os, arch);
         return new H3Core(h3Api);
     }
 
