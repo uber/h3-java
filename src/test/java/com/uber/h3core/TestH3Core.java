@@ -503,15 +503,14 @@ public class TestH3Core {
     public void testH3SetToMultiPolygonLarge() {
         int numHexes = 20000;
 
-        List<String> addresses = new ArrayList<>();
+        List<String> addresses = new ArrayList<>(numHexes);
         for (int i = 0; i < numHexes; i++) {
-            addresses.add(h3.geoToH3Address(i * 0.01, 0, 15));
+            addresses.add(h3.geoToH3Address(0, i * 0.01, 15));
         }
 
         List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
 
-        // TODO: why -1?
-        assertEquals(numHexes - 1, multiBounds.size());
+        assertEquals(numHexes, multiBounds.size());
         for (int i = 0; i < multiBounds.size(); i++) {
             assertEquals(1, multiBounds.get(i).size());
             assertEquals(6, multiBounds.get(i).get(0).size());
