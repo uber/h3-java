@@ -52,7 +52,7 @@ add_library(h3-java SHARED ${JNI_SOURCE_FILES})
 
 # This is cached so the Windows build can indicate a different location
 # for the native core library.
-set(H3_CORE_LIBRARY_PATH "/lib/libh3" CACHE STRING "Path to the built core lubrary, without suffix")
+set(H3_CORE_LIBRARY_PATH "/lib/libh3" CACHE STRING "Path to the built core library, without suffix")
 mark_as_advanced(H3_CORE_LIBRARY_PATH)
 
 target_link_libraries(h3-java "${H3_BUILD_ROOT}/${H3_CORE_LIBRARY_PATH}${CMAKE_STATIC_LIBRARY_SUFFIX}")

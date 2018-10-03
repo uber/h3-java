@@ -69,6 +69,7 @@ for CONFIGURATION in "x64" "x86"; do
 
     cmake -G "$GENERATOR" \
         -DBUILD_SHARED_LIBS=OFF \
+        -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCMAKE_BUILD_TYPE=Release \
         ../../h3
     cmake --build . --target h3 --config Release
