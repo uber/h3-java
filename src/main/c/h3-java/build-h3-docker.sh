@@ -31,6 +31,8 @@ mkdir -p build
 pushd build
 
 cmake -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_C_STANDARD_REQUIRED=ON \
+    -DCMAKE_C_STANDARD=99 \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DCMAKE_BUILD_TYPE=Release \
     ../../h3
