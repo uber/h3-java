@@ -12,13 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Try to work around appveyor/ci#1956 by removing 32-bit cygwin
-init:
-  - rmdir c:\cygwin /s /q
-  - rmdir c:\cygwin64 /s /q
-
+# Try to work around appveyor/ci#1956 by invoking Cygwin64 shell instead
+# of Git bash.
 build_script:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
-test_script:
-  - mvn test -B
+  - mvn install -Dmaven.javadoc.skip=true -B -V "-Dh3.build.command=C:\\cygwin64\\bin\\sh src/main/c/h3-java/build-h3.sh"
