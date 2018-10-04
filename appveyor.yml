@@ -15,6 +15,7 @@
 # Try to work around appveyor/ci#1956 by removing 32-bit cygwin
 init:
   - rmdir c:\cygwin /s /q
+  - rmdir c:\cygwin64 /s /q
 
 build_script:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
