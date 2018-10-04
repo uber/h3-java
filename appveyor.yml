@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+init:
+  - rmdir c:\cygwin /s /q
+
 # Try to work around appveyor/ci#1956 by invoking Cygwin64 shell instead
 # of Git bash.
 # TODO: If this approach is used, don't hard code the H3 version.
