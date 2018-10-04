@@ -389,8 +389,7 @@ public class TestH3Core {
 
         List<List<GeoCoord>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
 
-        // TODO: looks like a bug in H3 that this is index 1
-        List<GeoCoord> outline = geo.remove(1); // geo is now holes
+        List<GeoCoord> outline = geo.remove(0); // geo is now holes
 
         List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
 
@@ -417,7 +416,7 @@ public class TestH3Core {
         assertEquals(1, multiBounds.get(0).size());
         assertEquals(actualBounds.size() + 1, multiBounds.get(0).get(0).size());
 
-        int[] expectedIndices = {2, 3, 4, 5, 0, 1, 2};
+        int[] expectedIndices = {0, 1, 2, 3, 4, 5, 0};
 
         for (int i = 0; i < actualBounds.size(); i++) {
             assertEquals(actualBounds.get(expectedIndices[i]).lat, multiBounds.get(0).get(0).get(i).lat, EPSILON);
@@ -440,7 +439,7 @@ public class TestH3Core {
         assertEquals(1, multiBounds.get(0).size());
         assertEquals(actualBounds.size(), multiBounds.get(0).get(0).size());
 
-        int[] expectedIndices = {2, 3, 4, 5, 0, 1};
+        int[] expectedIndices = {0, 1, 2, 3, 4, 5};
 
         for (int i = 0; i < actualBounds.size(); i++) {
             assertEquals(actualBounds.get(expectedIndices[i]).lat, multiBounds.get(0).get(0).get(i).lat, EPSILON);
@@ -463,26 +462,26 @@ public class TestH3Core {
         assertEquals(1, multiBounds.get(0).size());
         assertEquals(10, multiBounds.get(0).get(0).size());
 
-        assertEquals(actualBounds2.get(0).lat, multiBounds.get(0).get(0).get(0).lat, EPSILON);
-        assertEquals(actualBounds2.get(1).lat, multiBounds.get(0).get(0).get(1).lat, EPSILON);
-        assertEquals(actualBounds2.get(2).lat, multiBounds.get(0).get(0).get(2).lat, EPSILON);
-        assertEquals(actualBounds.get(1).lat, multiBounds.get(0).get(0).get(3).lat, EPSILON);
-        assertEquals(actualBounds.get(2).lat, multiBounds.get(0).get(0).get(4).lat, EPSILON);
-        assertEquals(actualBounds.get(3).lat, multiBounds.get(0).get(0).get(5).lat, EPSILON);
-        assertEquals(actualBounds.get(4).lat, multiBounds.get(0).get(0).get(6).lat, EPSILON);
-        assertEquals(actualBounds.get(5).lat, multiBounds.get(0).get(0).get(7).lat, EPSILON);
-        assertEquals(actualBounds2.get(4).lat, multiBounds.get(0).get(0).get(8).lat, EPSILON);
-        assertEquals(actualBounds2.get(5).lat, multiBounds.get(0).get(0).get(9).lat, EPSILON);
-        assertEquals(actualBounds2.get(0).lng, multiBounds.get(0).get(0).get(0).lng, EPSILON);
-        assertEquals(actualBounds2.get(1).lng, multiBounds.get(0).get(0).get(1).lng, EPSILON);
-        assertEquals(actualBounds2.get(2).lng, multiBounds.get(0).get(0).get(2).lng, EPSILON);
-        assertEquals(actualBounds.get(1).lng, multiBounds.get(0).get(0).get(3).lng, EPSILON);
-        assertEquals(actualBounds.get(2).lng, multiBounds.get(0).get(0).get(4).lng, EPSILON);
-        assertEquals(actualBounds.get(3).lng, multiBounds.get(0).get(0).get(5).lng, EPSILON);
-        assertEquals(actualBounds.get(4).lng, multiBounds.get(0).get(0).get(6).lng, EPSILON);
-        assertEquals(actualBounds.get(5).lng, multiBounds.get(0).get(0).get(7).lng, EPSILON);
-        assertEquals(actualBounds2.get(4).lng, multiBounds.get(0).get(0).get(8).lng, EPSILON);
-        assertEquals(actualBounds2.get(5).lng, multiBounds.get(0).get(0).get(9).lng, EPSILON);
+        assertEquals(actualBounds.get(1).lat, multiBounds.get(0).get(0).get(0).lat, EPSILON);
+        assertEquals(actualBounds.get(2).lat, multiBounds.get(0).get(0).get(1).lat, EPSILON);
+        assertEquals(actualBounds.get(3).lat, multiBounds.get(0).get(0).get(2).lat, EPSILON);
+        assertEquals(actualBounds.get(4).lat, multiBounds.get(0).get(0).get(3).lat, EPSILON);
+        assertEquals(actualBounds.get(5).lat, multiBounds.get(0).get(0).get(4).lat, EPSILON);
+        assertEquals(actualBounds2.get(4).lat, multiBounds.get(0).get(0).get(5).lat, EPSILON);
+        assertEquals(actualBounds2.get(5).lat, multiBounds.get(0).get(0).get(6).lat, EPSILON);
+        assertEquals(actualBounds2.get(0).lat, multiBounds.get(0).get(0).get(7).lat, EPSILON);
+        assertEquals(actualBounds2.get(1).lat, multiBounds.get(0).get(0).get(8).lat, EPSILON);
+        assertEquals(actualBounds2.get(2).lat, multiBounds.get(0).get(0).get(9).lat, EPSILON);
+        assertEquals(actualBounds.get(1).lng, multiBounds.get(0).get(0).get(0).lng, EPSILON);
+        assertEquals(actualBounds.get(2).lng, multiBounds.get(0).get(0).get(1).lng, EPSILON);
+        assertEquals(actualBounds.get(3).lng, multiBounds.get(0).get(0).get(2).lng, EPSILON);
+        assertEquals(actualBounds.get(4).lng, multiBounds.get(0).get(0).get(3).lng, EPSILON);
+        assertEquals(actualBounds.get(5).lng, multiBounds.get(0).get(0).get(4).lng, EPSILON);
+        assertEquals(actualBounds2.get(4).lng, multiBounds.get(0).get(0).get(5).lng, EPSILON);
+        assertEquals(actualBounds2.get(5).lng, multiBounds.get(0).get(0).get(6).lng, EPSILON);
+        assertEquals(actualBounds2.get(0).lng, multiBounds.get(0).get(0).get(7).lng, EPSILON);
+        assertEquals(actualBounds2.get(1).lng, multiBounds.get(0).get(0).get(8).lng, EPSILON);
+        assertEquals(actualBounds2.get(2).lng, multiBounds.get(0).get(0).get(9).lng, EPSILON);
     }
 
     @Test
@@ -492,13 +491,11 @@ public class TestH3Core {
 
         List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
-        // TODO: Update to appropriate expectations when the algorithm correctly
-        // returns two polygons
-
-        assertEquals(1, multiBounds.size());
-        assertEquals(2, multiBounds.get(0).size());
+        assertEquals(2, multiBounds.size());
+        assertEquals(1, multiBounds.get(0).size());
         assertEquals(6, multiBounds.get(0).get(0).size());
-        assertEquals(6, multiBounds.get(0).get(1).size());
+        assertEquals(1, multiBounds.get(1).size());
+        assertEquals(6, multiBounds.get(1).get(0).size());
     }
 
     @Test
@@ -519,15 +516,18 @@ public class TestH3Core {
     public void testH3SetToMultiPolygonLarge() {
         int numHexes = 20000;
 
-        List<String> addresses = new ArrayList<>();
+        List<String> addresses = new ArrayList<>(numHexes);
         for (int i = 0; i < numHexes; i++) {
-            addresses.add(h3.geoToH3Address(i * 0.01, 0, 15));
+            addresses.add(h3.geoToH3Address(0, i * 0.01, 15));
         }
 
-        // Six hexagons in a ring around a hole
         List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
 
-        assertEquals(numHexes, multiBounds.get(0).size());
+        assertEquals(numHexes, multiBounds.size());
+        for (int i = 0; i < multiBounds.size(); i++) {
+            assertEquals(1, multiBounds.get(i).size());
+            assertEquals(6, multiBounds.get(i).get(0).size());
+        }
     }
 
     @Test

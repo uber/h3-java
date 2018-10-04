@@ -12,6 +12,7 @@ for the Linux x64 and Darwin x64 platforms.
 - `newInstance` override that accepts specific operating system and architecture values. (#24)
 ### Changed
 - Updated the core library to v3.1.0. (#21)
+- Updated the core library to v3.1.1. (#28)
 
 ## [3.0.4] - 2018-07-25
 ### Changed

@@ -106,20 +106,6 @@ public class H3Core {
     }
 
     /**
-     * Constrain a latitude to -90 degrees to 90 degrees.
-     */
-    private static double constrainLat(double lat) {
-        return lat > 90.0 ? lat - 180.0 : lat;
-    }
-
-    /**
-     * Constrain a longitude to -180 degrees to 180 degrees.
-     */
-    private static double constrainLng(double lng) {
-        return lng > 180.0 ? lng - 360.0 : lng;
-    }
-
-    /**
      * Returns true if this is a valid H3 index.
      */
     public boolean h3IsValid(long h3) {
@@ -201,8 +187,8 @@ public class H3Core {
         double[] coords = new double[2];
         h3Api.h3ToGeo(h3, coords);
         GeoCoord out = new GeoCoord(
-                constrainLat(toDegrees(coords[0])),
-                constrainLng(toDegrees(coords[1]))
+                toDegrees(coords[0]),
+                toDegrees(coords[1])
         );
         return out;
     }
@@ -223,8 +209,8 @@ public class H3Core {
         List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
             GeoCoord coord = new GeoCoord(
-                    constrainLat(toDegrees(verts[i * 2])),
-                    constrainLng(toDegrees(verts[(i * 2) + 1]))
+                    toDegrees(verts[i * 2]),
+                    toDegrees(verts[(i * 2) + 1])
             );
             out.add(coord);
         }
@@ -537,8 +523,8 @@ public class H3Core {
         for (int i = 0; i < original.size(); i++) {
             GeoCoord coord = original.get(i);
 
-            arr[(i * 2) + offset] = toRadians(constrainLat(coord.lat));
-            arr[(i * 2) + 1 + offset] = toRadians(constrainLng(coord.lng));
+            arr[(i * 2) + offset] = toRadians(coord.lat);
+            arr[(i * 2) + 1 + offset] = toRadians(coord.lng);
         }
 
         return (original.size() * 2) + offset;
@@ -569,12 +555,11 @@ public class H3Core {
             // further loops being "holes" or exclusions in the polygon.)
             for (List<GeoCoord> loop : loops) {
                 // For each coordinate in the loop, we need to convert to degrees,
-                // constrain it, and ensure the correct ordering (whether geoJson
-                // or not.)
+                // and ensure the correct ordering (whether geoJson or not.)
                 for (int vectorInLoop = 0; vectorInLoop < loop.size(); vectorInLoop++) {
                     final GeoCoord v = loop.get(vectorInLoop);
-                    final double origLat = constrainLat(toDegrees(v.lat));
-                    final double origLng = constrainLng(toDegrees(v.lng));
+                    final double origLat = toDegrees(v.lat);
+                    final double origLng = toDegrees(v.lng);
 
                     final GeoCoord replacement = new GeoCoord(origLat, origLng);
 
@@ -935,8 +920,8 @@ public class H3Core {
         List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
             GeoCoord coord = new GeoCoord(
-                    constrainLat(toDegrees(verts[i * 2])),
-                    constrainLng(toDegrees(verts[(i * 2) + 1]))
+                    toDegrees(verts[i * 2]),
+                    toDegrees(verts[(i * 2) + 1])
             );
             out.add(coord);
         }
