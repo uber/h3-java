@@ -14,5 +14,7 @@
 
 # Try to work around appveyor/ci#1956 by invoking Cygwin64 shell instead
 # of Git bash.
+# TODO: If this approach is used, don't hard code the H3 version.
 build_script:
-  - mvn install -Dmaven.javadoc.skip=true -B -V "-Dh3.build.command=C:\\cygwin64\\bin\\sh src/main/c/h3-java/build-h3.sh"
+  - C:\cygwin64\bin\sh src/main/c/h3-java/build-h3-windows.sh https//github.com/uber/h3.git v3.0.8 false
+  - mvn install -Dmaven.javadoc.skip=true -B -V -Dh3.build.command=echo
