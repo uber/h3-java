@@ -69,7 +69,6 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
-        <h3.build.command>${basedir}/src/main/c/h3-java/build-h3.sh</h3.build.command>
     </properties>
 
     <profiles>
@@ -101,9 +100,36 @@
                     <family>Windows</family>
                 </os>
             </activation>
-	    <properties>
-                <h3.build.command>${basedir}/src/main/c/h3-java/build-h3-windows.sh</h3.build.command>
-            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1.1</version>
+                        <executions>
+                            <execution>
+                                <!-- Override when building on Windows to use PowerShell & MSVC -->
+                                <id>build-h3-c</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>powershell</executable>
+                                    <arguments>
+                                        <argument>-ExecutionPolicy</argument>
+                                        <argument>Bypass</argument>
+                                        <argument>-File</argument>
+                                        <argument>${basedir}/src/main/c/h3-java/build-h3-windows.ps1</argument>
+                                        <argument>${h3.git.remote}</argument>
+                                        <argument>${h3.git.reference}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -206,7 +232,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${h3.build.command}</executable>
+                            <executable>${basedir}/src/main/c/h3-java/build-h3.sh</executable>
                             <arguments>
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>
