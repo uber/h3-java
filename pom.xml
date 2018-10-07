@@ -69,6 +69,7 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
+        <h3.build.command>${basedir}/src/main/c/h3-java/build-h3.sh</h3.build.command>
     </properties>
 
     <profiles>
@@ -92,6 +93,17 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+	    <properties>
+                <h3.build.command>${basedir}/src/main/c/h3-java/build-h3-windows.sh</h3.build.command>
+            </properties>
         </profile>
     </profiles>
 
@@ -194,7 +206,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/src/main/c/h3-java/build-h3.sh</executable>
+                            <executable>${h3.build.command}</executable>
                             <arguments>
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>

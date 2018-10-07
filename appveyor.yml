@@ -1,0 +1,23 @@
+# Copyright 2018 Uber Technologies, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+init:
+  - rmdir c:\cygwin /s /q
+
+# Try to work around appveyor/ci#1956 by invoking Cygwin64 shell instead
+# of Git bash.
+# TODO: If this approach is used, don't hard code the H3 version.
+build_script:
+  - C:\cygwin64\bin\sh src/main/c/h3-java/build-h3-windows.sh https//github.com/uber/h3.git v3.0.8 false
+  - mvn install -Dmaven.javadoc.skip=true -B -V -Dh3.build.command=echo
