@@ -54,9 +54,10 @@ Pop-Location #h3
 # Now that H3 is downloaded, build H3-Java's native library for this platform.
 #
 
+# For different MSVC versions, change the generators used for x64 and x86 here.
 ForEach ($Configuration in
-    (New-Object "tuple[String,String]" "x64", "Visual Studio 15 2017 Win64"),
-    (New-object "tuple[String,String]" "x86", "Visual Studio 15 2017")) {
+    (New-Object "tuple[String,String]" "x64", "Visual Studio 12 Win64"),
+    (New-object "tuple[String,String]" "x86", "Visual Studio 12")) {
 
     $buildDirectory = "h3-java-build$($Configuration.Item1)"
     New-Item -ItemType Directory -Name $buildDirectory
