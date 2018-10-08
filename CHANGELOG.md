@@ -7,8 +7,10 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+### Added
+- Support for building on Windows. (#26)
 ### Fixed
-- Don't require a C++ compiler.
+- Don't require a C++ compiler. (#30)
 
 ## [3.1.0] - 2018-10-04
 ### Added
