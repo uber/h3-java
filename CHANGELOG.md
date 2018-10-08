@@ -9,6 +9,9 @@ for the Linux x64 and Darwin x64 platforms.
 ## [Unreleased]
 ### Added
 - Support for building on Windows. (#26)
+- `experimentalH3ToLocalIj` and `experimentalLocalIjToH3` functions. (#32)
+### Changed
+- Updated the core library to v3.2.0. (#32)
 ### Fixed
 - Don't require a C++ compiler. (#30)
 

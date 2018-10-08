@@ -343,6 +343,61 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3Distance(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    experimentalH3ToLocalIj
+ * Signature: (JJ[I)I
+ */
+JNIEXPORT int JNICALL
+Java_com_uber_h3core_NativeMethods_experimentalH3ToLocalIj(
+    JNIEnv *env, jobject thiz, jlong origin, jlong h3, jintArray coords) {
+    CoordIJ ij = {0};
+    int result = experimentalH3ToLocalIj(origin, h3, &ij);
+    if (result != 0) {
+        return result;
+    }
+
+    jsize sz = (**env).GetArrayLength(env, coords);
+    jint *coordsElements = (**env).GetIntArrayElements(env, coords, 0);
+
+    if (coordsElements != NULL) {
+        // if sz is too small, we will fail to write all the elements
+        if (sz >= 2) {
+            coordsElements[0] = ij.i;
+            coordsElements[1] = ij.j;
+        }
+
+        // 0 is the mode
+        // reference
+        // https://developer.android.com/training/articles/perf-jni.html
+        (**env).ReleaseIntArrayElements(env, coords, coordsElements, 0);
+        return 0;
+    } else {
+        ThrowOutOfMemoryError(env);
+        return -1;
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    experimentalLocalIjToH3
+ * Signature: (JII)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_uber_h3core_NativeMethods_experimentalLocalIjToH3(JNIEnv *env,
+                                                           jobject thiz,
+                                                           jlong origin, jint i,
+                                                           jint j) {
+    CoordIJ ij = {.i = i, .j = j};
+    H3Index index;
+    int result = experimentalLocalIjToH3(origin, &ij, &index);
+    if (result != 0) {
+        // Exact error is not preserved, just that the operation failed.
+        return 0;
+    }
+    return index;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    maxPolyfillSize
  * Signature: ([D[I[DI)I
  */
