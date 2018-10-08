@@ -52,7 +52,7 @@ git checkout "$GIT_REVISION"
 
 H3_SRC_ROOT="$(pwd)"
 
-popd
+popd # h3
 
 #
 # Now that H3 is downloaded, build H3-Java's native library for this platform.
@@ -68,10 +68,11 @@ cmake -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DCMAKE_BUILD_TYPE=Release \
     ../../h3
-make h3 binding-functions
+cmake --build . --target h3 --config Release
+cmake --build . --target binding-functions --config Release
 H3_BUILD_ROOT="$(pwd)"
 
-popd
+popd # build
 
 cmake -DUSE_NATIVE_JNI=ON \
     -DBUILD_SHARED_LIBS=ON \
@@ -79,10 +80,13 @@ cmake -DUSE_NATIVE_JNI=ON \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
     ../../src/main/c/h3-java
-make h3-java
+cmake --build . --target h3-java --config Release
 
-popd
-popd
+popd # h3-java-build
+
+cp h3-java-build/build/binding-functions .
+
+popd # target
 
 # Copy the built artifact for this platform.
 case "$(uname -sm)" in
