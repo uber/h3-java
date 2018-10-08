@@ -29,7 +29,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 set(LIBRARY_OUTPUT_PATH lib)
 set(H3_SOVERSION 1)
 
-project(h3-java)
+project(h3-java LANGUAGES C)
 
 include_directories(${H3_SRC_ROOT}/src/h3lib/include)
 
