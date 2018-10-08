@@ -49,7 +49,13 @@ set(JNI_SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/com_uber_h3core_NativeMethods.h)
 
 add_library(h3-java SHARED ${JNI_SOURCE_FILES})
-target_link_libraries(h3-java ${H3_BUILD_ROOT}/lib/libh3${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+# This is cached so the Windows build can indicate a different location
+# for the native core library.
+set(H3_CORE_LIBRARY_PATH "/lib/libh3" CACHE STRING "Path to the built core library, without suffix")
+mark_as_advanced(H3_CORE_LIBRARY_PATH)
+
+target_link_libraries(h3-java "${H3_BUILD_ROOT}/${H3_CORE_LIBRARY_PATH}${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 find_library(M_LIB m)
 if(M_LIB)

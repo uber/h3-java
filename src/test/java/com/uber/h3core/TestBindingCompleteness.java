@@ -51,7 +51,7 @@ public class TestBindingCompleteness {
             exposed.add(m.getName());
         }
 
-        try (Scanner in = new Scanner(new File("./target/h3-java-build/build/binding-functions"), "UTF-8")) {
+        try (Scanner in = new Scanner(new File("./target/binding-functions"), "UTF-8")) {
             while (in.hasNext()) {
                 String function = in.next();
 
