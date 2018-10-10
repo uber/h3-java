@@ -25,7 +25,7 @@ matrix:
       env: NAME="Coverage report"
       jdk: oraclejdk8
       script:
-        - mvn clean test jacoco:report coveralls:report
+        - mvn clean test jacoco:report coveralls:report -Dh3.test.system=true -Dh3.additional.argLine="-Djava.library.path=./src/main/resources/linux-x64/"
     - os: linux
       jdk: openjdk8
     - os: linux

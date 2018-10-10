@@ -69,6 +69,10 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
+        <!-- Used for passing additional arguments to surefire when using JaCoCo -->
+        <h3.additional.argLine></h3.additional.argLine>
+
+        <argLine>${h3.additional.argLine}</argLine>
     </properties>
 
     <profiles>
