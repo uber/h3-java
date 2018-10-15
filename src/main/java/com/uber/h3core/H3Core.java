@@ -483,20 +483,21 @@ public class H3Core {
     public CoordIJ experimentalH3ToLocalIj(long origin, long h3) throws PentagonEncounteredException, LocalIjUndefinedException {
         final int[] coords = new int[2];
         final int result = h3Api.experimentalH3ToLocalIj(origin, h3, coords);
-        if (result != 0) {
-            switch (result) {
-                case 1:
-                    throw new IllegalArgumentException("Incompatible origin and index.");
-                default:
-                case 2:
-                    throw new LocalIjUndefinedException("Local IJ coordinates undefined for this origin and index pair (index may be too far from origin.)");
-                case 3:
-                case 4:
-                case 5:
-                    throw new PentagonEncounteredException("Encountered possible pentagon distortion");
-            }
+        // The definition of these cases is in experimentalH3ToLocalIj in localij.c in the C library.
+        // 0 is success, anything else is a failure of some kind.
+        switch (result) {
+            case 0:
+                return new CoordIJ(coords[0], coords[1]);
+            case 1:
+                throw new IllegalArgumentException("Incompatible origin and index.");
+            default:
+            case 2:
+                throw new LocalIjUndefinedException("Local IJ coordinates undefined for this origin and index pair. The index may be too far from the origin.");
+            case 3:
+            case 4:
+            case 5:
+                throw new PentagonEncounteredException("Encountered possible pentagon distortion");
         }
-        return new CoordIJ(coords[0], coords[1]);
     }
 
     /**
