@@ -16,7 +16,9 @@
 package com.uber.h3core;
 
 import com.uber.h3core.exceptions.DistanceUndefinedException;
+import com.uber.h3core.exceptions.LocalIjUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
+import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.GeoCoord;
 
 import java.io.IOException;
@@ -459,6 +461,108 @@ public class H3Core {
         }
 
         return distance;
+    }
+
+    /**
+     * Converts <code>h3</code> to IJ coordinates in a local coordinate space defined by
+     * <code>origin</code>.
+     *
+     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
+     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     *
+     * <p>This function is experimental, and its output is not guaranteed
+     * to be compatible across different versions of H3.
+     *
+     * @param origin Anchoring index for the local coordinate space.
+     * @param h3 Index to find the coordinates of.
+     * @return Coordinates for <code>h3</code> in the local coordinate space.
+     * @throws IllegalArgumentException The two indexes are not comparable.
+     * @throws PentagonEncounteredException The two indexes are separated by pentagonal distortion.
+     * @throws LocalIjUndefinedException The two indexes are too far apart.
+     */
+    public CoordIJ experimentalH3ToLocalIj(long origin, long h3) throws PentagonEncounteredException, LocalIjUndefinedException {
+        final int[] coords = new int[2];
+        final int result = h3Api.experimentalH3ToLocalIj(origin, h3, coords);
+        // The definition of these cases is in experimentalH3ToLocalIj in localij.c in the C library.
+        // 0 is success, anything else is a failure of some kind.
+        switch (result) {
+            case 0:
+                return new CoordIJ(coords[0], coords[1]);
+            case 1:
+                throw new IllegalArgumentException("Incompatible origin and index.");
+            default:
+            case 2:
+                throw new LocalIjUndefinedException("Local IJ coordinates undefined for this origin and index pair. The index may be too far from the origin.");
+            case 3:
+            case 4:
+            case 5:
+                throw new PentagonEncounteredException("Encountered possible pentagon distortion");
+        }
+    }
+
+    /**
+     * Converts <code>h3Address</code> to IJ coordinates in a local coordinate space defined by
+     * <code>originAddress</code>.
+     *
+     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
+     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     *
+     * <p>This function is experimental, and its output is not guaranteed
+     * to be compatible across different versions of H3.
+     *
+     * @param originAddress Anchoring index for the local coordinate space.
+     * @param h3Address Index to find the coordinates of.
+     * @return Coordinates for <code>h3</code> in the local coordinate space.
+     * @throws IllegalArgumentException The two indexes are not comparable.
+     * @throws PentagonEncounteredException The two indexes are separated by pentagonal distortion.
+     * @throws LocalIjUndefinedException The two indexes are too far apart.
+     */
+    public CoordIJ experimentalH3ToLocalIj(String originAddress, String h3Address) throws PentagonEncounteredException, LocalIjUndefinedException {
+        return experimentalH3ToLocalIj(stringToH3(originAddress), stringToH3(h3Address));
+    }
+
+    /**
+     * Converts the IJ coordinates to an index, using a local IJ coordinate space anchored by
+     * <code>origin</code>.
+     *
+     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
+     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     *
+     * <p>This function is experimental, and its output is not guaranteed
+     * to be compatible across different versions of H3.
+     *
+     * @param origin Anchoring index for the local coordinate space.
+     * @param ij Coordinates in the local IJ coordinate space.
+     * @return Index represented by <code>ij</code>
+     * @throws LocalIjUndefinedException No index is defined at the given location, for example
+     * because the coordinates are too far away from the origin, or pentagon distortion is encountered.
+     */
+    public long experimentalLocalIjToH3(long origin, CoordIJ ij) throws LocalIjUndefinedException {
+        final long result = h3Api.experimentalLocalIjToH3(origin, ij.i, ij.j);
+        if (result == 0) {
+            throw new LocalIjUndefinedException("Index not defined for this origin and IJ coordinates pair. IJ coordinates may be too far from origin, or pentagon distortion was encountered.");
+        }
+        return result;
+    }
+
+    /**
+     * Converts the IJ coordinates to an index, using a local IJ coordinate space anchored by
+     * <code>origin</code>.
+     *
+     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
+     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     *
+     * <p>This function is experimental, and its output is not guaranteed
+     * to be compatible across different versions of H3.
+     *
+     * @param originAddress Anchoring index for the local coordinate space.
+     * @param ij Coordinates in the local IJ coordinate space.
+     * @return Index represented by <code>ij</code>
+     * @throws LocalIjUndefinedException No index is defined at the given location, for example
+     * because the coordinates are too far away from the origin, or pentagon distortion is encountered.
+     */
+    public String experimentalLocalIjToH3(String originAddress, CoordIJ ij) throws LocalIjUndefinedException {
+        return h3ToString(experimentalLocalIjToH3(stringToH3(originAddress), ij));
     }
 
     /**

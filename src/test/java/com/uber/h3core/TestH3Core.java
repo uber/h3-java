@@ -18,7 +18,9 @@ package com.uber.h3core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.exceptions.DistanceUndefinedException;
+import com.uber.h3core.exceptions.LocalIjUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
+import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.GeoCoord;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestH3Core {
-    public double EPSILON = 1e-6;
+    public static final double EPSILON = 1e-6;
 
     private static H3Core h3;
 
@@ -914,5 +916,49 @@ public class TestH3Core {
         assertEquals(3, h3.h3Distance("85283083fffffff", "85283477fffffff"));
         assertEquals(4, h3.h3Distance("85283083fffffff", "85283473fffffff"));
         assertEquals(5, h3.h3Distance("85283083fffffff", "85283447fffffff"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testExperimentalH3ToLocalIjNoncomparable() throws PentagonEncounteredException, LocalIjUndefinedException {
+        h3.experimentalH3ToLocalIj("832830fffffffff", "822837fffffffff");
+    }
+
+    @Test(expected = LocalIjUndefinedException.class)
+    public void testExperimentalH3ToLocalIjTooFar() throws PentagonEncounteredException, LocalIjUndefinedException {
+        h3.experimentalH3ToLocalIj("822a17fffffffff", "822837fffffffff");
+    }
+
+    @Test(expected = PentagonEncounteredException.class)
+    public void testExperimentalH3ToLocalIjPentagonDistortion() throws PentagonEncounteredException, LocalIjUndefinedException {
+        h3.experimentalH3ToLocalIj("81283ffffffffff", "811cbffffffffff");
+    }
+
+    @Test
+    public void testExperimentalH3ToLocalIjPentagon() throws PentagonEncounteredException, LocalIjUndefinedException {
+        final String origin = "811c3ffffffffff";
+        assertEquals(new CoordIJ(0, 0), h3.experimentalH3ToLocalIj(origin, origin));
+        assertEquals(new CoordIJ(1, 0), h3.experimentalH3ToLocalIj(origin, "811d3ffffffffff"));
+        assertEquals(new CoordIJ(-1, 0), h3.experimentalH3ToLocalIj(origin, "811cfffffffffff"));
+    }
+
+    @Test
+    public void testExperimentalH3ToLocalIjHexagons() throws PentagonEncounteredException, LocalIjUndefinedException {
+        final String origin = "8828308281fffff";
+        assertEquals(new CoordIJ(392, 336), h3.experimentalH3ToLocalIj(origin, origin));
+        assertEquals(new CoordIJ(387, 336), h3.experimentalH3ToLocalIj(origin, "88283080c3fffff"));
+        assertEquals(new CoordIJ(392, -14), h3.experimentalH3ToLocalIj(origin, "8828209581fffff"));
+    }
+
+    @Test
+    public void testExperimentalLocalIjToH3Pentagon() throws LocalIjUndefinedException {
+        final String origin = "811c3ffffffffff";
+        assertEquals(origin, h3.experimentalLocalIjToH3(origin, new CoordIJ(0, 0)));
+        assertEquals("811d3ffffffffff", h3.experimentalLocalIjToH3(origin, new CoordIJ(1, 0)));
+        assertEquals("811cfffffffffff", h3.experimentalLocalIjToH3(origin, new CoordIJ(-1, 0)));
+    }
+
+    @Test(expected = LocalIjUndefinedException.class)
+    public void testExperimentalLocalIjToH3TooFar() throws LocalIjUndefinedException {
+        h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
     }
 }

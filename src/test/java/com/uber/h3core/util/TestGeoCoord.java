@@ -15,6 +15,7 @@
  */
 package com.uber.h3core.util;
 
+import com.uber.h3core.TestH3Core;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,11 +32,18 @@ public class TestGeoCoord {
         GeoCoord v2 = new GeoCoord(1, 0);
         GeoCoord v3 = new GeoCoord(0, 1);
 
-        assertNotEquals(null, v1);
-        assertNotEquals(0, v1);
+        assertEquals(0, v1.lat, TestH3Core.EPSILON);
+        assertEquals(1, v1.lng, TestH3Core.EPSILON);
+        assertEquals(1, v2.lat, TestH3Core.EPSILON);
+        assertEquals(0, v2.lng, TestH3Core.EPSILON);
+        assertEquals(0, v3.lat, TestH3Core.EPSILON);
+        assertEquals(1, v3.lng, TestH3Core.EPSILON);
+
         assertNotEquals(v1, v2);
         assertNotEquals(v3, v2);
         assertEquals(v1, v3);
+        assertEquals(v1, v1);
+        assertNotEquals(v1, null);
 
         assertEquals(v1.hashCode(), v3.hashCode());
         // Not strictly needed, but likely
