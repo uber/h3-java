@@ -16,14 +16,14 @@ Add it to your pom.xml:
 <dependency>
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
 Or, using Gradle:
 
 ```gradle
-compile("com.uber:h3:3.1.0")
+compile("com.uber:h3:3.2.0")
 ```
 
 Encode a location into a hexagon address:
