@@ -18,6 +18,7 @@ package com.uber.h3core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.exceptions.DistanceUndefinedException;
+import com.uber.h3core.exceptions.LineUndefinedException;
 import com.uber.h3core.exceptions.LocalIjUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.CoordIJ;
@@ -963,8 +964,8 @@ public class TestH3Core {
     }
 
     @Test
-    public void testH3Line() throws LocalIjUndefinedException, DistanceUndefinedException {
-        for (int res = 0; res < 5; res++) {
+    public void testH3Line() throws LineUndefinedException, DistanceUndefinedException {
+        for (int res = 0; res < 12; res++) {
             String origin = h3.geoToH3Address(37.5, -122, res);
             String destination = h3.geoToH3Address(25, -120, res);
 
@@ -980,8 +981,8 @@ public class TestH3Core {
         }
     }
 
-    @Test(expected = LocalIjUndefinedException.class)
-    public void testH3LineFailed() throws LocalIjUndefinedException {
+    @Test(expected = LineUndefinedException.class)
+    public void testH3LineFailed() throws LineUndefinedException {
         long origin = h3.geoToH3(37.5, -122, 9);
         long destination = h3.geoToH3(37.5, -122, 10);
 
