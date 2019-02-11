@@ -961,4 +961,30 @@ public class TestH3Core {
     public void testExperimentalLocalIjToH3TooFar() throws LocalIjUndefinedException {
         h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
     }
+
+    @Test
+    public void testH3Line() throws LocalIjUndefinedException, DistanceUndefinedException {
+        for (int res = 0; res < 5; res++) {
+            String origin = h3.geoToH3Address(37.5, -122, res);
+            String destination = h3.geoToH3Address(25, -120, res);
+
+            List<String> line = h3.h3Line(origin, destination);
+            int distance = h3.h3Distance(origin, destination);
+
+            // Need to add 1 to account for the origin as well
+            assertEquals("Distance matches expected", distance + 1, line.size());
+
+            for (int i = 1; i < line.size(); i++) {
+                assertTrue("Every index in the line is a neighbor of the previous", h3.h3IndexesAreNeighbors(line.get(i - 1), line.get(i)));
+            }
+        }
+    }
+
+    @Test(expected = LocalIjUndefinedException.class)
+    public void testH3LineFailed() throws LocalIjUndefinedException {
+        long origin = h3.geoToH3(37.5, -122, 9);
+        long destination = h3.geoToH3(37.5, -122, 10);
+
+        h3.h3Line(origin, destination);
+    }
 }

@@ -565,6 +565,26 @@ public class H3Core {
         return h3ToString(experimentalLocalIjToH3(stringToH3(originAddress), ij));
     }
 
+    public List<String> h3Line(String startAddress, String endAddress) throws LocalIjUndefinedException {
+        return h3ToStringList(h3Line(stringToH3(startAddress), stringToH3(endAddress)));
+    }
+
+    public List<Long> h3Line(long start, long end) throws LocalIjUndefinedException {
+        int size = h3Api.h3LineSize(start, end);
+
+        if (size < 0) {
+            throw new LocalIjUndefinedException("Could not compute line between cells");
+        }
+
+        long[] results = new long[size];
+        int result = h3Api.h3Line(start, end, results);
+        if (result != 0) {
+            throw new LocalIjUndefinedException("Could not compute line between cells");
+        }
+
+        return nonZeroLongArrayToList(results);
+    }
+
     /**
      * Finds indexes within the given geofence.
      *
