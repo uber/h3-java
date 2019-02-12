@@ -104,7 +104,7 @@ public class H3Core {
     /**
      * Construct with the given NativeMethods, from {@link H3CoreLoader}.
      */
-    H3Core(NativeMethods h3Api) {
+    private H3Core(NativeMethods h3Api) {
         this.h3Api = h3Api;
     }
 

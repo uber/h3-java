@@ -991,21 +991,4 @@ public class TestH3Core {
 
         h3.h3Line(origin, destination);
     }
-
-    @Test(expected = LineUndefinedException.class)
-    public void testH3LineFailedInLine() throws LineUndefinedException {
-        String origin = h3.geoToH3Address(37.5, -122, 9);
-        String destination = h3.geoToH3Address(25, -120, 9);
-
-        // The only case in v3.3.0 that h3Line fails requires that h3Distance
-        // fails. h3Distance should not have different results between calls.
-        H3Core mockedH3 = new H3Core(new NativeMethods() {
-            @Override
-            int h3Line(long start, long end, long[] results) {
-                return -1;
-            }
-        });
-
-        mockedH3.h3Line(origin, destination);
-    }
 }

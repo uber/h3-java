@@ -24,7 +24,7 @@ import java.util.List;
  * Interface to native code. Implementation of these functions is in
  * <code>src/main/c/h3-java/src/jniapi.c</code>.
  */
-class NativeMethods {
+final class NativeMethods {
     NativeMethods() {
         // Prevent instantiation
     }
