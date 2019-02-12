@@ -27,12 +27,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestH3CoreLoader {
     @Test
-    public void testConstructor() {
-        new H3CoreLoader();
-        // Nothing else to test here
-    }
-
-    @Test
     public void testDetectOs() {
         assertEquals(H3CoreLoader.OperatingSystem.ANDROID,
                 H3CoreLoader.detectOs("Android", "anything"));

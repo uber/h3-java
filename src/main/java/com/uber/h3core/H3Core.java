@@ -702,7 +702,6 @@ public class H3Core {
      * @throws IllegalArgumentException <code>res</code> is not between 0 and the resolution of <code>h3</code>, inclusive.
      */
     public long h3ToParent(long h3, int res) {
-        checkResolution(res);
         // This is a ported version of h3ToParent from h3core.
 
         int childRes = (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);

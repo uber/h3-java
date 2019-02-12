@@ -587,6 +587,15 @@ public class TestH3Core {
     }
 
     @Test
+    public void testHexRingSingle() throws PentagonEncounteredException {
+        String origin = "8928308280fffff";
+        List<String> hexagons = h3.hexRing(origin, 0);
+
+        assertEquals(1, hexagons.size());
+        assertEquals("8928308280fffff", hexagons.get(0));
+    }
+
+    @Test
     public void testHostileInput() {
         assertNotEquals(0, h3.geoToH3(-987654321, 987654321, 5));
         assertNotEquals(0, h3.geoToH3(987654321, -987654321, 5));
