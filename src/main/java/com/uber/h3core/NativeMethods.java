@@ -27,7 +27,7 @@ import java.util.List;
  */
 final class NativeMethods {
     NativeMethods() {
-        // Prevent instantiation
+        // Only H3CoreLoader is expected to instantiate
     }
 
     native int maxH3ToChildrenSize(long h3, int childRes);
