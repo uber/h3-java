@@ -1004,7 +1004,7 @@ public class TestH3Core {
             int h3Line(long start, long end, long[] results) {
                 return -1;
             }
-        })
+        });
 
         mockedH3.h3Line(origin, destination);
     }
