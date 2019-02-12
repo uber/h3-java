@@ -15,7 +15,6 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.GeoCoord;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.List;
  * Interface to native code. Implementation of these functions is in
  * <code>src/main/c/h3-java/src/jniapi.c</code>.
  */
-final class NativeMethods {
+class NativeMethods {
     NativeMethods() {
         // Prevent instantiation
     }
