@@ -16,6 +16,7 @@
 package com.uber.h3core;
 
 import com.uber.h3core.exceptions.DistanceUndefinedException;
+import com.uber.h3core.exceptions.LineUndefinedException;
 import com.uber.h3core.exceptions.LocalIjUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.CoordIJ;
@@ -563,6 +564,77 @@ public class H3Core {
      */
     public String experimentalLocalIjToH3(String originAddress, CoordIJ ij) throws LocalIjUndefinedException {
         return h3ToString(experimentalLocalIjToH3(stringToH3(originAddress), ij));
+    }
+
+    /**
+     * Given two H3 indexes, return the line of indexes between them (inclusive
+     * of endpoints).
+     *
+     * <p>This function may fail to find the line between two indexes, for
+     * example if they are very far apart. It may also fail when finding
+     * distances for indexes on opposite sides of a pentagon.
+     *
+     * <p>Notes:
+     *
+     * <ul>
+     *     <li>The specific output of this function should not be considered stable
+     *         across library versions. The only guarantees the library provides are
+     *         that the line length will be `h3Distance(start, end) + 1` and that
+     *         every index in the line will be a neighbor of the preceding index.</li>
+     *     <li>Lines are drawn in grid space, and may not correspond exactly to either
+     *         Cartesian lines or great arcs.</li>
+     * </ul>
+     *
+     * @param startAddress Start index of the line
+     * @param endAddress End index of the line
+     * @return Indexes making up the line.
+     * @throws LineUndefinedException The line could not be computed.
+     */
+    public List<String> h3Line(String startAddress, String endAddress) throws LineUndefinedException {
+        return h3ToStringList(h3Line(stringToH3(startAddress), stringToH3(endAddress)));
+    }
+
+    /**
+     * Given two H3 indexes, return the line of indexes between them (inclusive
+     * of endpoints).
+     *
+     * <p>This function may fail to find the line between two indexes, for
+     * example if they are very far apart. It may also fail when finding
+     * distances for indexes on opposite sides of a pentagon.
+     *
+     * <p>Notes:
+     *
+     * <ul>
+     *     <li>The specific output of this function should not be considered stable
+     *         across library versions. The only guarantees the library provides are
+     *         that the line length will be `h3Distance(start, end) + 1` and that
+     *         every index in the line will be a neighbor of the preceding index.</li>
+     *     <li>Lines are drawn in grid space, and may not correspond exactly to either
+     *         Cartesian lines or great arcs.</li>
+     * </ul>
+     *
+     * @param start Start index of the line
+     * @param end End index of the line
+     * @return Indexes making up the line.
+     * @throws LineUndefinedException The line could not be computed.
+     */
+    public List<Long> h3Line(long start, long end) throws LineUndefinedException {
+        int size = h3Api.h3LineSize(start, end);
+
+        if (size < 0) {
+            throw new LineUndefinedException("Could not compute line size between cells");
+        }
+
+        long[] results = new long[size];
+        int result = h3Api.h3Line(start, end, results);
+        if (result != 0) {
+            // This should be unreachable since the only case in the library
+            // that could return non-zero would require h3Distance to return
+            // different results between calls.
+            throw new LineUndefinedException("Could not compute line between cells");
+        }
+
+        return nonZeroLongArrayToList(results);
     }
 
     /**

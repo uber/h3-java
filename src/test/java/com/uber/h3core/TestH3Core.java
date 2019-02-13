@@ -18,6 +18,7 @@ package com.uber.h3core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.uber.h3core.exceptions.DistanceUndefinedException;
+import com.uber.h3core.exceptions.LineUndefinedException;
 import com.uber.h3core.exceptions.LocalIjUndefinedException;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
 import com.uber.h3core.util.CoordIJ;
@@ -969,5 +970,34 @@ public class TestH3Core {
     @Test(expected = LocalIjUndefinedException.class)
     public void testExperimentalLocalIjToH3TooFar() throws LocalIjUndefinedException {
         h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
+    }
+
+    @Test
+    public void testH3Line() throws LineUndefinedException, DistanceUndefinedException {
+        for (int res = 0; res < 12; res++) {
+            String origin = h3.geoToH3Address(37.5, -122, res);
+            String destination = h3.geoToH3Address(25, -120, res);
+
+            List<String> line = h3.h3Line(origin, destination);
+            int distance = h3.h3Distance(origin, destination);
+
+            // Need to add 1 to account for the origin as well
+            assertEquals("Distance matches expected", distance + 1, line.size());
+
+            for (int i = 1; i < line.size(); i++) {
+                assertTrue("Every index in the line is a neighbor of the previous", h3.h3IndexesAreNeighbors(line.get(i - 1), line.get(i)));
+            }
+
+            assertTrue("Line contains start", line.contains(origin));
+            assertTrue("Line contains destination", line.contains(destination));
+        }
+    }
+
+    @Test(expected = LineUndefinedException.class)
+    public void testH3LineFailed() throws LineUndefinedException {
+        long origin = h3.geoToH3(37.5, -122, 9);
+        long destination = h3.geoToH3(37.5, -122, 10);
+
+        h3.h3Line(origin, destination);
     }
 }

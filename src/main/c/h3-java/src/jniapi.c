@@ -398,6 +398,37 @@ Java_com_uber_h3core_NativeMethods_experimentalLocalIjToH3(JNIEnv *env,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    h3LineSize
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3LineSize(
+    JNIEnv *env, jobject thiz, jlong start, jlong end) {
+    return h3LineSize(start, end);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    h3Line
+ * Signature: (JJ[J)I
+ */
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3Line(
+    JNIEnv *env, jobject thiz, jlong start, jlong end, jlongArray results) {
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+
+    if (resultsElements != NULL) {
+        // if sz is too small, bad things will happen
+        int status = h3Line(start, end, resultsElements);
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        return status;
+    } else {
+        ThrowOutOfMemoryError(env);
+        return 1;
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    maxPolyfillSize
  * Signature: ([D[I[DI)I
  */

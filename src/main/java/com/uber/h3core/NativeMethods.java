@@ -15,7 +15,6 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.GeoCoord;
 
 import java.util.ArrayList;
@@ -49,6 +48,8 @@ final class NativeMethods {
     native int h3Distance(long a, long b);
     native int experimentalH3ToLocalIj(long origin, long h3, int[] coords);
     native long experimentalLocalIjToH3(long origin, int i, int j);
+    native int h3LineSize(long start, long end);
+    native int h3Line(long start, long end, long[] results);
 
     native int maxPolyfillSize(double[] verts, int[] holeSizes, double[] holeVerts, int res);
     native void polyfill(double[] verts, int[] holeSizes, double[] holeVerts, int res, long[] results);
