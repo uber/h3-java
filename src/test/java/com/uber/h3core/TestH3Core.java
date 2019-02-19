@@ -774,16 +774,13 @@ public class TestH3Core {
         Collection<String> indexesAddresses = h3.getRes0IndexesAddresses();
         Collection<Long> indexes = h3.getRes0Indexes();
 
-        assertEquals(indexes.size(), indexesAddresses.size());
+        assertEquals("Both signatures return the same results (size)", indexes.size(), indexesAddresses.size());
 
         for (Long index : indexes) {
-            // Check that the index is unique.
-            assertEquals(1, indexes.stream().filter(i -> i.equals(index)).count());
-            // CHeck that the index is valid and res 0.
-            assertTrue(h3.h3IsValid(index));
-            assertEquals(0, h3.h3GetResolution(index));
-            // Both signatures return the same thing.
-            assertTrue(indexesAddresses.contains(h3.h3ToString(index)));
+            assertEquals("Index is unique", 1, indexes.stream().filter(i -> i.equals(index)).count());
+            assertTrue("Index is valid", h3.h3IsValid(index));
+            assertEquals("Index is res 0", 0, h3.h3GetResolution(index));
+            assertTrue("Both signatures return the same results", indexesAddresses.contains(h3.h3ToString(index)));
         }
     }
 
