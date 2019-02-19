@@ -777,7 +777,12 @@ public class TestH3Core {
         assertEquals(indexes.size(), indexesAddresses.size());
 
         for (Long index : indexes) {
+            // Check that the index is unique.
+            assertEquals(1, indexes.stream().filter(i -> i.equals(index)).count());
+            // CHeck that the index is valid and res 0.
+            assertTrue(h3.h3IsValid(index));
             assertEquals(0, h3.h3GetResolution(index));
+            // Both signatures return the same thing.
             assertTrue(indexesAddresses.contains(h3.h3ToString(index)));
         }
     }
