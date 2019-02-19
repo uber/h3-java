@@ -43,6 +43,7 @@ public class H3Core {
      * Maximum number of vertices for an H3 index
      */
     private static final int MAX_CELL_BNDRY_VERTS = 10;
+    private static final int NUM_BASE_CELLS = 122;
 
     // Constants for the resolution bits in an H3 index.
     private static final long H3_RES_OFFSET = 52L;
@@ -968,6 +969,22 @@ public class H3Core {
     }
 
     /**
+     * Returns a collection of all base cells (H3 indexes are resolution 0).
+     */
+    public Collection<String> getRes0IndexesAddresses() {
+        return h3ToStringList(getRes0Indexes());
+    }
+
+    /**
+     * Returns a collection of all base cells (H3 indexes are resolution 0).
+     */
+    public Collection<Long> getRes0Indexes() {
+        long[] indexes = new long[NUM_BASE_CELLS];
+        h3Api.getRes0Indexes(indexes);
+        return nonZeroLongArrayToList(indexes);
+    }
+
+    /**
      * Returns <code>true</code> if the two indexes are neighbors.
      */
     public boolean h3IndexesAreNeighbors(long a, long b) {
@@ -1124,8 +1141,8 @@ public class H3Core {
      * Transforms a list of H3 indexes in long form to a list of H3
      * indexes in string form.
      */
-    private List<String> h3ToStringList(List<Long> list) {
-        return list.stream()
+    private List<String> h3ToStringList(Collection<Long> collection) {
+        return collection.stream()
                 .map(this::h3ToString)
                 .collect(Collectors.toList());
     }

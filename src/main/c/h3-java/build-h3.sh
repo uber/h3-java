@@ -50,8 +50,6 @@ git fetch origin --tags
 echo Using revision "$GIT_REVISION"
 git checkout "$GIT_REVISION"
 
-H3_SRC_ROOT="$(pwd)"
-
 popd # h3
 
 #
@@ -76,7 +74,6 @@ popd # build
 
 cmake -DUSE_NATIVE_JNI=ON \
     -DBUILD_SHARED_LIBS=ON \
-    "-DH3_SRC_ROOT=$H3_SRC_ROOT" \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
     ../../src/main/c/h3-java

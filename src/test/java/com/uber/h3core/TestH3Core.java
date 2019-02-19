@@ -769,6 +769,19 @@ public class TestH3Core {
         }
     }
 
+    @Test
+    public void testGetRes0Indexes() {
+        Collection<String> indexesAddresses = h3.getRes0IndexesAddresses();
+        Collection<Long> indexes = h3.getRes0Indexes();
+
+        assertEquals(indexes.size(), indexesAddresses.size());
+
+        for (Long index : indexes) {
+            assertEquals(0, h3.h3GetResolution(index));
+            assertTrue(indexesAddresses.contains(h3.h3ToString(index)));
+        }
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstantsInvalid() {
         h3.hexArea(-1, AreaUnit.km2);

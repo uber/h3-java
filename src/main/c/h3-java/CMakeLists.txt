@@ -31,7 +31,7 @@ set(H3_SOVERSION 1)
 
 project(h3-java LANGUAGES C)
 
-include_directories(${H3_SRC_ROOT}/src/h3lib/include)
+include_directories(${H3_BUILD_ROOT}/src/h3lib/include)
 
 if(USE_NATIVE_JNI)
     find_package(JNI REQUIRED)
