@@ -51,6 +51,7 @@ public class TestBindingCompleteness {
             exposed.add(m.getName());
         }
 
+        int checkedFunctions = 0;
         try (Scanner in = new Scanner(new File("./target/binding-functions"), "UTF-8")) {
             while (in.hasNext()) {
                 String function = in.next();
@@ -60,7 +61,9 @@ public class TestBindingCompleteness {
                 }
 
                 assertTrue(function + " is exposed in binding", exposed.contains(function));
+                checkedFunctions++;
             }
         }
+        assertTrue("Checked that the API exists", checkedFunctions > 10);
     }
 }

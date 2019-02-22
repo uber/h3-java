@@ -80,7 +80,6 @@ ForEach ($Configuration in
     cmake -G $Configuration.Item2 `
         -DUSE_NATIVE_JNI=ON `
         -DBUILD_SHARED_LIBS=ON `
-        "-DH3_SRC_ROOT=$h3SrcRoot" `
         "-DH3_BUILD_ROOT=$h3BuildRoot" `
         "-DH3_CORE_LIBRARY_PATH=bin/Release/h3" `
         -DCMAKE_BUILD_TYPE=Release `

@@ -42,7 +42,6 @@ H3_BUILD_ROOT="$(pwd)"
 popd
 
 cmake -DBUILD_SHARED_LIBS=ON \
-    -DH3_SRC_ROOT=/work/target/h3 \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
     /work/src/main/c/h3-java

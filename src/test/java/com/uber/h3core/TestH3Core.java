@@ -769,6 +769,21 @@ public class TestH3Core {
         }
     }
 
+    @Test
+    public void testGetRes0Indexes() {
+        Collection<String> indexesAddresses = h3.getRes0IndexesAddresses();
+        Collection<Long> indexes = h3.getRes0Indexes();
+
+        assertEquals("Both signatures return the same results (size)", indexes.size(), indexesAddresses.size());
+
+        for (Long index : indexes) {
+            assertEquals("Index is unique", 1, indexes.stream().filter(i -> i.equals(index)).count());
+            assertTrue("Index is valid", h3.h3IsValid(index));
+            assertEquals("Index is res 0", 0, h3.h3GetResolution(index));
+            assertTrue("Both signatures return the same results", indexesAddresses.contains(h3.h3ToString(index)));
+        }
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstantsInvalid() {
         h3.hexArea(-1, AreaUnit.km2);

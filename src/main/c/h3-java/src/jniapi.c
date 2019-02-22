@@ -449,6 +449,25 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxPolyfillSize(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    getRes0Indexes
+ * Signature: ([J)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
+    JNIEnv *env, jobject thiz, jlongArray results) {
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+
+    if (resultsElements != NULL) {
+        getRes0Indexes(resultsElements);
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
+        return;
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    polyfill
  * Signature: ([D[I[DI[J)V
  */

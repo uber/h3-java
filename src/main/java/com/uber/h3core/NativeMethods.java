@@ -65,6 +65,7 @@ final class NativeMethods {
     native double edgeLengthKm(int res);
     native double edgeLengthM(int res);
     native long numHexagons(int res);
+    native void getRes0Indexes(long[] indexes);
 
     native boolean h3IndexesAreNeighbors(long a, long b);
     native long getH3UnidirectionalEdge(long a, long b);
