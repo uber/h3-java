@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeTrue;
 
 /**
- * Test that {@see H3Core.newSystemInstance} can load the H3 library. This test is only
+ * Test that {@link H3Core#newSystemInstance()} can load the H3 library. This test is only
  * run if the system property <code>h3.test.system</code> has the value <code>true</code>.
  * It is expected that when running this test, the JVM has been setup to find the native
  * library, either by installing it in a place it can be found, or setting the
