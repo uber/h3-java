@@ -56,8 +56,8 @@ Pop-Location #h3
 
 # For different MSVC versions, change the generators used for x64 and x86 here.
 ForEach ($Configuration in
-    (New-Object "tuple[String,String]" "x64", "Visual Studio 12 Win64"),
-    (New-object "tuple[String,String]" "x86", "Visual Studio 12")) {
+    (New-Object "tuple[String,String]" "x64", "x64"),
+    (New-object "tuple[String,String]" "x86", "Win32")) {
 
     $buildDirectory = "h3-java-build$($Configuration.Item1)"
     New-Item -ItemType Directory -Name $buildDirectory
@@ -66,7 +66,7 @@ ForEach ($Configuration in
     New-Item -ItemType Directory -Name build
     Push-Location build
 
-    cmake -G $Configuration.Item2 `
+    cmake -A $Configuration.Item2 `
         -DBUILD_SHARED_LIBS=OFF `
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
         -DCMAKE_BUILD_TYPE=Release `
@@ -77,7 +77,7 @@ ForEach ($Configuration in
 
     Pop-Location #build
 
-    cmake -G $Configuration.Item2 `
+    cmake -A $Configuration.Item2 `
         -DUSE_NATIVE_JNI=ON `
         -DBUILD_SHARED_LIBS=ON `
         "-DH3_BUILD_ROOT=$h3BuildRoot" `
