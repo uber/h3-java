@@ -18,8 +18,7 @@
 # Arguments: [git-remote] [git-ref] [use-docker]
 # git-remote - The git remote to pull from. An existing cloned repository
 #              will not be deleted if a new remote is specified.
-# git-ref    - A specific git ref to build, or "default" to use
-#              the H3 version (next argument) to determine the tag.
+# git-ref    - Specific git ref of H3 to build.
 # use-docker - "true" to perform cross compilation via Docker, "false" to
 #              skip that step.
 #

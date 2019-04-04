@@ -17,8 +17,7 @@
 # Arguments: [git-remote] [git-ref]
 # git-remote - The git remote to pull from. An existing cloned repository
 #              will not be deleted if a new remote is specified.
-# git-ref    - A specific git ref to build, or "default" to use
-#              the H3 version (next argument) to determine the tag.
+# git-ref    - Specific git ref of H3 to build.
 #
 # This script downloads H3, builds H3 and the H3-Java native library for
 # 32-bit and 64-bit Windows.
@@ -54,7 +53,8 @@ Pop-Location #h3
 # Now that H3 is downloaded, build H3-Java's native library for this platform.
 #
 
-# For different MSVC versions, change the generators used for x64 and x86 here.
+# Tuple is h3-java name for the platform as the first item, and Visual 
+# Studio name for the architecture as the second item.
 ForEach ($Configuration in
     (New-Object "tuple[String,String]" "x64", "x64"),
     (New-object "tuple[String,String]" "x86", "Win32")) {
