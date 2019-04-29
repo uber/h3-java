@@ -1,6 +1,6 @@
 # H3-Java
 
-[![Build Status](https://travis-ci.org/uber/h3-java.svg?branch=master)](https://travis-ci.org/uber/h3-java)
+[![Build Status](https://travis-ci.com/uber/h3-java.svg?branch=master)](https://travis-ci.com/uber/h3-java)
 [![Build status](https://ci.appveyor.com/api/projects/status/pjp4m666p9c24jyd/branch/master?svg=true)](https://ci.appveyor.com/project/Uber/h3-java/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
