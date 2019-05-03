@@ -861,6 +861,11 @@ public class TestH3Core {
         assertEquals(0, h3.uncompactAddress(ImmutableList.of("0"), 3).size());
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testUncompactInvalid() {
+        h3.uncompactAddress(ImmutableList.of("85283473fffffff"), 4);
+    }
+
     @Test
     public void testUnidirectionalEdges() {
         String start = "891ea6d6533ffff";
