@@ -36,3 +36,9 @@ matrix:
       script:
         - mvn test -B -Dh3.use.docker=false
     - os: osx
+
+before_script:
+  - "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
+
+script:
+  - fossa
