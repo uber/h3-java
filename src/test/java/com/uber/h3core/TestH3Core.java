@@ -856,9 +856,14 @@ public class TestH3Core {
                 .forEach(h -> assertEquals(3, h3.h3GetResolution(h)));
     }
 
+    @Test
+    public void testUncompactZero() {
+        assertEquals(0, h3.uncompactAddress(ImmutableList.of("0"), 3).size());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testUncompactInvalid() {
-        h3.uncompactAddress(ImmutableList.of("0"), 3);
+        h3.uncompactAddress(ImmutableList.of("85283473fffffff"), 4);
     }
 
     @Test

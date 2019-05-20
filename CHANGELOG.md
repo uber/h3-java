@@ -6,6 +6,10 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
+## [3.4.1] - 2019-05-03
+### Changed
+- Updated the core library to v3.4.3. (#44)
+
 ## [3.4.0] - 2019-02-22
 ### Added
 - `getRes0Indexes` function. (#38)
