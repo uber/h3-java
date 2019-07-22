@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2019 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,4 +75,7 @@ final class NativeMethods {
     native void getH3IndexesFromUnidirectionalEdge(long h3, long[] results);
     native void getH3UnidirectionalEdgesFromHexagon(long h3, long[] results);
     native int getH3UnidirectionalEdgeBoundary(long h3, double[] verts);
+
+    native int maxFaceCount(long h3);
+    native void h3GetFaces(long h3, int[] faces);
 }
