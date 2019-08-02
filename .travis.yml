@@ -1,4 +1,4 @@
-# Copyright 2018 Uber Technologies, Inc.
+# Copyright 2018-2019 Uber Technologies, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ language: java
 
 sudo: required
 
+dist: xenial
+
 services:
   - docker
 
@@ -23,11 +25,13 @@ matrix:
   include:
     - os: linux
       env: NAME="Coverage report"
-      jdk: oraclejdk8
+      jdk: openjdk8
       script:
         - mvn clean test jacoco:report coveralls:report -Dh3.test.system=true -Dh3.additional.argLine="-Djava.library.path=./src/main/resources/linux-x64/"
     - os: linux
-      jdk: openjdk8
+      jdk: openjdk10
+    - os: linux
+      jdk: openjdk11
     - os: linux
       env: NAME="Linux without Docker"
       jdk: oraclejdk9
