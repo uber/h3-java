@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2019 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
@@ -1125,6 +1126,36 @@ public class H3Core {
      */
     public List<GeoCoord> getH3UnidirectionalEdgeBoundary(String h3) {
         return getH3UnidirectionalEdgeBoundary(stringToH3(h3));
+    }
+
+    /**
+     * Find all icosahedron faces intersected by a given H3 index, represented
+     * as integers from 0-19.
+     *
+     * @param h3 Index to find icosahedron faces for.
+     * @return A collection of faces intersected by the index.
+     */
+    public Collection<Integer> h3GetFaces(String h3) {
+        return h3GetFaces(stringToH3(h3));
+    }
+
+    /**
+     * Find all icosahedron faces intersected by a given H3 index, represented
+     * as integers from 0-19.
+     *
+     * @param h3 Index to find icosahedron faces for.
+     * @return A collection of faces intersected by the index.
+     */
+    public Collection<Integer> h3GetFaces(long h3) {
+        int maxFaces = h3Api.maxFaceCount(h3);
+        int[] faces = new int[maxFaces];
+
+        h3Api.h3GetFaces(h3, faces);
+
+        return IntStream.of(faces)
+                .filter(f -> f != -1)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     /**

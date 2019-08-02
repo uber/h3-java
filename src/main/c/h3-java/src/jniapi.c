@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2019 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -904,5 +904,34 @@ Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgeBoundary(
     } else {
         ThrowOutOfMemoryError(env);
         return -1;
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    maxFaceCount
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxFaceCount(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return maxFaceCount(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    h3GetFaces
+ * Signature: (J[I)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3GetFaces(
+    JNIEnv *env, jobject thiz, jlong h3, jintArray faces) {
+    jsize sz = (**env).GetArrayLength(env, faces);
+    jint *facesElements = (**env).GetIntArrayElements(env, faces, 0);
+
+    if (facesElements != NULL) {
+        h3GetFaces(h3, facesElements);
+
+        (**env).ReleaseIntArrayElements(env, faces, facesElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
     }
 }
