@@ -8,7 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [3.6.0] - 2019-08-13
 ### Changed
-- Updated the core library to v3.6.0.
+- Updated the core library to v3.6.0. (#49)
 
 ## [3.5.0] - 2019-07-22
 ### Changed
