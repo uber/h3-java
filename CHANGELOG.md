@@ -7,8 +7,11 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [3.6.0] - 2019-08-13
+### Added
+- `getPentagonIndexes` and `h3ToCenterChild` functions. (#49)
 ### Changed
 - Updated the core library to v3.6.0. (#49)
+- Native implementations of `getRes0Indexes` and `getPentagonIndexes` changed to throw `OutOfMemoryError` if output array sizes are too small. (#49)
 
 ## [3.5.0] - 2019-07-22
 ### Changed
