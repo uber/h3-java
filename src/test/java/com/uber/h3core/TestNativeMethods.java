@@ -16,6 +16,7 @@
 package com.uber.h3core;
 
 import com.uber.h3core.util.GeoCoord;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,13 +31,18 @@ import static org.junit.Assert.assertTrue;
  * Tests for JNI code without going through {@link H3Core}.
  */
 public class TestNativeMethods {
+    protected static NativeMethods nativeMethods;
+
+    @BeforeClass
+    public static void setup() throws IOException {
+        nativeMethods = H3CoreLoader.loadNatives();
+    }
+
     /**
      * Test that h3SetToLinkedGeo properly propagates an exception
      */
     @Test
-    public void testH3SetToLinkedGeoException() throws IOException {
-        NativeMethods nativeMethods = H3CoreLoader.loadNatives();
-
+    public void testH3SetToLinkedGeoException() {
         final AtomicInteger counter = new AtomicInteger(0);
 
         try {
@@ -51,5 +57,15 @@ public class TestNativeMethods {
             assertEquals("crashed#0", ex.getMessage());
         }
         assertEquals(1, counter.get());
+    }
+
+    @Test(expected = OutOfMemoryError.class)
+    public void getRes0IndexesTooSmall() {
+        nativeMethods.getRes0Indexes(new long[1]);
+    }
+
+    @Test(expected = OutOfMemoryError.class)
+    public void getPentagonIndexes() {
+        nativeMethods.getPentagonIndexes(1, new long[1]);
     }
 }

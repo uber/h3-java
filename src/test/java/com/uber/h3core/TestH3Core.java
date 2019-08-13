@@ -98,6 +98,35 @@ public class TestH3Core extends BaseTestH3Core {
         }
     }
 
+    @Test
+    public void testGetPentagonIndexes() {
+        for (int res = 0; res < 16; res++) {
+            Collection<String> indexesAddresses = h3.getPentagonIndexesAddresses(res);
+            Collection<Long> indexes = h3.getPentagonIndexes(res);
+
+            assertEquals("Both signatures return the same results (size)", indexes.size(), indexesAddresses.size());
+            assertEquals("There are 12 pentagons per resolution", 12, indexes.size());
+
+            for (Long index : indexes) {
+                assertEquals("Index is unique", 1, indexes.stream().filter(i -> i.equals(index)).count());
+                assertTrue("Index is valid", h3.h3IsValid(index));
+                assertEquals(String.format("Index is res %d", res), res, h3.h3GetResolution(index));
+                assertTrue("Both signatures return the same results", indexesAddresses.contains(h3.h3ToString(index)));
+                assertTrue("Index is a pentagon", h3.h3IsPentagon(index));
+            }
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPentagonIndexesNegativeRes() {
+        h3.getPentagonIndexesAddresses(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPentagonIndexesOutOfRangeRes() {
+        h3.getPentagonIndexesAddresses(20);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstantsInvalid() {
         h3.hexArea(-1, AreaUnit.km2);

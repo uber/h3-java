@@ -31,6 +31,7 @@ final class NativeMethods {
 
     native int maxH3ToChildrenSize(long h3, int childRes);
     native void h3ToChildren(long h3, int childRes, long[] results);
+    native long h3ToCenterChild(long h3, int childRes);
 
     native boolean h3IsValid(long h3);
     native int h3GetBaseCell(long h3);
@@ -66,6 +67,7 @@ final class NativeMethods {
     native double edgeLengthM(int res);
     native long numHexagons(int res);
     native void getRes0Indexes(long[] indexes);
+    native void getPentagonIndexes(int res, long[] h3);
 
     native boolean h3IndexesAreNeighbors(long a, long b);
     native long getH3UnidirectionalEdge(long a, long b);

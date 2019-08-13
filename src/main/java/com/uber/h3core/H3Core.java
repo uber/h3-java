@@ -45,6 +45,7 @@ public class H3Core {
      */
     private static final int MAX_CELL_BNDRY_VERTS = 10;
     private static final int NUM_BASE_CELLS = 122;
+    private static final int NUM_PENTAGONS = 12;
 
     // Constants for the resolution bits in an H3 index.
     private static final long H3_RES_OFFSET = 52L;
@@ -56,6 +57,8 @@ public class H3Core {
      * <p>The digits are offset by 0, so no shift is needed in the constant.
      */
     private static final long H3_DIGIT_MASK = 0x1fffffffffffL;
+
+    private static final long INVALID_INDEX = 0L;
 
     /**
      * Native implementation of the H3 library.
@@ -164,7 +167,7 @@ public class H3Core {
     public long geoToH3(double lat, double lng, int res) {
         checkResolution(res);
         long result = h3Api.geoToH3(toRadians(lat), toRadians(lng), res);
-        if (result == 0) {
+        if (result == INVALID_INDEX) {
             // Must be latitude or longitude that's wrong, since we already
             // check the resolution before calling geoToH3.
             throw new IllegalArgumentException("Latitude or longitude were invalid.");
@@ -311,7 +314,7 @@ public class H3Core {
 
         for (int i = 0; i < sz; i++) {
             long nextH3 = out[i];
-            if (nextH3 != 0) {
+            if (nextH3 != INVALID_INDEX) {
                 ret.get(distances[i])
                         .add(nextH3);
             }
@@ -542,7 +545,7 @@ public class H3Core {
      */
     public long experimentalLocalIjToH3(long origin, CoordIJ ij) throws LocalIjUndefinedException {
         final long result = h3Api.experimentalLocalIjToH3(origin, ij.i, ij.j);
-        if (result == 0) {
+        if (result == INVALID_INDEX) {
             throw new LocalIjUndefinedException("Index not defined for this origin and IJ coordinates pair. IJ coordinates may be too far from origin, or pentagon distortion was encountered.");
         }
         return result;
@@ -835,6 +838,40 @@ public class H3Core {
     }
 
     /**
+     * Returns the center child at the given resolution.
+     *
+     * @param h3 Parent H3 index
+     * @param childRes Resolution of the child
+     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the parent)
+     */
+    public String h3ToCenterChild(String h3, int childRes) {
+        return h3ToString(h3ToCenterChild(stringToH3(h3), childRes));
+    }
+
+    /**
+     * Returns the center child at the given resolution.
+     *
+     * @param h3 Parent H3 index
+     * @param childRes Resolution of the child
+     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the parent)
+     */
+    public long h3ToCenterChild(long h3, int childRes) {
+        checkResolution(childRes);
+
+        long result = h3Api.h3ToCenterChild(h3, childRes);
+
+        if (result == INVALID_INDEX) {
+            // This occurs when the child resolution is out of range for this index.
+            throw new IllegalArgumentException(
+                    String.format("resolution %d is out of range (must be %d <= childRes <= %d)",
+                            childRes, h3GetResolution(h3))
+            );
+        }
+
+        return result;
+    }
+
+    /**
      * Determines if an index is Class III or Class II.
      *
      * @return <code>true</code> if the index is Class III
@@ -986,6 +1023,27 @@ public class H3Core {
     }
 
     /**
+     * Returns a collection of all topologically pentagonal cells at the given resolution.
+     *
+     * @throws IllegalArgumentException Invalid resolution.
+     */
+    public Collection<String> getPentagonIndexesAddresses(int res) {
+        return h3ToStringList(getPentagonIndexes(res));
+    }
+
+    /**
+     * Returns a collection of all topologically pentagonal cells at the given resolution.
+     *
+     * @throws IllegalArgumentException Invalid resolution.
+     */
+    public Collection<Long> getPentagonIndexes(int res) {
+        checkResolution(res);
+        long[] indexes = new long[NUM_PENTAGONS];
+        h3Api.getPentagonIndexes(res, indexes);
+        return nonZeroLongArrayToList(indexes);
+    }
+
+    /**
      * Returns <code>true</code> if the two indexes are neighbors.
      */
     public boolean h3IndexesAreNeighbors(long a, long b) {
@@ -1007,7 +1065,7 @@ public class H3Core {
     public long getH3UnidirectionalEdge(long a, long b) {
         long index = h3Api.getH3UnidirectionalEdge(a, b);
 
-        if (index == 0) {
+        if (index == INVALID_INDEX) {
             throw new IllegalArgumentException("Given indexes are not neighbors.");
         }
 
