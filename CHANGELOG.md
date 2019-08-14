@@ -11,7 +11,7 @@ for the Linux x64 and Darwin x64 platforms.
 - `getPentagonIndexes` and `h3ToCenterChild` functions. (#49)
 ### Changed
 - Updated the core library to v3.6.0. (#49)
-- Native implementations of `getRes0Indexes` and `getPentagonIndexes` changed to throw `OutOfMemoryError` if output array sizes are too small. (#49)
+- Native implementations of `getRes0Indexes` and `getPentagonIndexes` changed to throw `OutOfMemoryError` if the output array size is too small. (#49)
 
 ## [3.5.0] - 2019-07-22
 ### Changed

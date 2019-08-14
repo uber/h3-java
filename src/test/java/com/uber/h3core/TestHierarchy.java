@@ -149,14 +149,14 @@ public class TestHierarchy extends BaseTestH3Core {
 
     @Test
     public void testH3ToCenterChild() {
-        assertEquals("8928308280fffff", h3.h3ToCenterChild("8928308280fffff", 9));
-        assertEquals(0x8928308280fffffL, h3.h3ToCenterChild(0x8928308280fffffL, 9));
+        assertEquals("Same resolution as parent results in same index", "8928308280fffff", h3.h3ToCenterChild("8928308280fffff", 9));
+        assertEquals("Same resolution as parent results in same index", 0x8928308280fffffL, h3.h3ToCenterChild(0x8928308280fffffL, 9));
 
-        assertEquals("8a28308280c7fff", h3.h3ToCenterChild("8928308280fffff", 10));
-        assertEquals(0x8a28308280c7fffL, h3.h3ToCenterChild(0x8928308280fffffL, 10));
+        assertEquals("Direct center child is correct", "8a28308280c7fff", h3.h3ToCenterChild("8928308280fffff", 10));
+        assertEquals("Direct center child is correct", 0x8a28308280c7fffL, h3.h3ToCenterChild(0x8928308280fffffL, 10));
 
-        assertEquals("8b28308280c0fff", h3.h3ToCenterChild("8928308280fffff", 11));
-        assertEquals(0x8b28308280c0fffL, h3.h3ToCenterChild(0x8928308280fffffL, 11));
+        assertEquals("Center child skipping a resolution is correct", "8b28308280c0fff", h3.h3ToCenterChild("8928308280fffff", 11));
+        assertEquals("Center child skipping a resolution is correct", 0x8b28308280c0fffL, h3.h3ToCenterChild(0x8928308280fffffL, 11));
     }
 
     @Test(expected = IllegalArgumentException.class)
