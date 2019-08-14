@@ -863,7 +863,7 @@ public class H3Core {
         if (result == INVALID_INDEX) {
             // This occurs when the child resolution is out of range for this index.
             throw new IllegalArgumentException(
-                    String.format("resolution %d is out of range (must be %d <= childRes <= %d)",
+                    String.format("childRes %d must be between %d and 15, inclusive",
                             childRes, h3GetResolution(h3))
             );
         }
