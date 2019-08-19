@@ -468,7 +468,6 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
         ThrowOutOfMemoryError(env);
-        return;
     }
 }
 
@@ -493,7 +492,6 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagonIndexes(
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
         ThrowOutOfMemoryError(env);
-        return;
     }
 }
 
