@@ -454,6 +454,12 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxPolyfillSize(
  */
 JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
     JNIEnv *env, jobject thiz, jlongArray results) {
+    jsize size = (**env).GetArrayLength(env, results);
+    if (size < res0IndexCount()) {
+        ThrowOutOfMemoryError(env);
+        return;
+    }
+
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
@@ -462,7 +468,30 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
         ThrowOutOfMemoryError(env);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    getPentagonIndexes
+ * Signature: (I[J)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagonIndexes(
+    JNIEnv *env, jobject thiz, jint res, jlongArray results) {
+    jsize size = (**env).GetArrayLength(env, results);
+    if (size < pentagonIndexCount()) {
+        ThrowOutOfMemoryError(env);
         return;
+    }
+
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+
+    if (resultsElements != NULL) {
+        getPentagonIndexes(res, resultsElements);
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
     }
 }
 
@@ -637,6 +666,16 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToChildren(
     } else {
         ThrowOutOfMemoryError(env);
     }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    h3ToCenterChild
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_h3ToCenterChild(
+    JNIEnv *env, jobject thiz, jlong h3, jint childRes) {
+    return h3ToCenterChild(h3, childRes);
 }
 
 /*
