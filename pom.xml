@@ -18,7 +18,7 @@
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
     <packaging>jar</packaging>
-    <version>3.5.1-SNAPSHOT</version>
+    <version>3.6.0</version>
     <name>h3</name>
     <url>https://github.com/uber/h3-java</url>
     <description>Java bindings for H3, a hierarchical hexagonal geospatial indexing system.</description>
@@ -40,7 +40,7 @@
         <connection>scm:git:git://github.com/uber/h3-java.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/uber/h3-java.git</developerConnection>
         <url>http://github.com/uber/h3-java/tree/master</url>
-      <tag>HEAD</tag>
+      <tag>v3.6.0</tag>
   </scm>
 
     <developers>
