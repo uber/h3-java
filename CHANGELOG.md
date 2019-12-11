@@ -8,7 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
 ### Changed
-- Updated the core library to v3.6.2, fixing some regressions in `polyfill`.
+- Updated the core library to v3.6.2, fixing some regressions in `polyfill`. (#56)
 
 ## [3.6.1] - 2019-11-21
 ### Changed
