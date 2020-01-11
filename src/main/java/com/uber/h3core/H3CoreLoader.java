@@ -119,7 +119,7 @@ public final class H3CoreLoader {
 
             copyResource(String.format("/%s/%s", dirName, libName), newLibraryFile);
 
-            System.load(libraryFile.getCanonicalPath());
+            System.load(newLibraryFile.getCanonicalPath());
 
             libraryFile = newLibraryFile;
         }
