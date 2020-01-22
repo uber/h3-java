@@ -34,6 +34,11 @@ public class TestInspection extends BaseTestH3Core {
         assertTrue(h3.h3IsValid(22758474429497343L | (1L << 59L)));
         assertFalse(h3.h3IsValid(-1L));
         assertTrue(h3.h3IsValid("8f28308280f18f2"));
+        assertTrue(h3.h3IsValid("8F28308280F18F2"));
+        assertTrue(h3.h3IsValid("08f28308280f18f2"));
+
+        assertFalse(h3.h3IsValid(0x8f28308280f18f2L | (1L << 63L)));
+        assertFalse(h3.h3IsValid(0x8f28308280f18f2L | (1L << 58L)));
     }
 
     @Test
