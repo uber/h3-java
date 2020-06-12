@@ -122,7 +122,7 @@ public class TestHierarchy extends BaseTestH3Core {
         String starting = h3.geoToH3Address(30, 20, 6);
 
         List<String> expanded = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             expanded.add(starting);
         }
 
