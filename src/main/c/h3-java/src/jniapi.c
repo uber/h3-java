@@ -15,6 +15,7 @@
  */
 
 #include <stdbool.h>
+
 #include "com_uber_h3core_NativeMethods.h"
 #include "h3api.h"
 
