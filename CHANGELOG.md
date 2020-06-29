@@ -8,6 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
 ### Changed
+- Updated the core library to v3.6.4. (#64)
 - Updated the core library to v3.6.3. (#61)
 
 ## [3.6.3] - 2020-01-10
