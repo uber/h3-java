@@ -7,12 +7,14 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+
+## [3.6.4] - 2020-06-29
 ### Changed
 - Updated the core library to v3.6.4. (#64)
 - Updated the core library to v3.6.3. (#61)
 
 ## [3.6.3] - 2020-01-10
-## Changed
+### Changed
 - Avoid reloading the native library once loaded (#58)
 
 ## [3.6.2] - 2019-12-16
