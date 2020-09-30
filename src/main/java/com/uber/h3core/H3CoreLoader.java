@@ -146,6 +146,7 @@ public final class H3CoreLoader {
     public enum OperatingSystem {
         ANDROID(".so"),
         DARWIN(".dylib"),
+        FREEBSD(".so"),
         WINDOWS(".dll"),
         LINUX(".so");
 
@@ -188,6 +189,8 @@ public final class H3CoreLoader {
             return OperatingSystem.DARWIN;
         } else if (javaOs.contains("win")) {
             return OperatingSystem.WINDOWS;
+        } else if (javaOs.contains("freebsd")) {
+            return OperatingSystem.FREEBSD;
         } else {
             // Only other supported platform
             return OperatingSystem.LINUX;
