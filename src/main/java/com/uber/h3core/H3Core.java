@@ -36,7 +36,9 @@ import static java.lang.Math.toRadians;
 /**
  * H3Core provides all functions of the H3 API.
  *
- * <p>This class is thread safe and can be used as a singleton.</p>
+ * <p>
+ * This class is thread safe and can be used as a singleton.
+ * </p>
  */
 public class H3Core {
     // These constants are from h3api.h and h3Index.h
@@ -54,7 +56,8 @@ public class H3Core {
     /**
      * Mask for the indexing digits in an H3 index.
      *
-     * <p>The digits are offset by 0, so no shift is needed in the constant.
+     * <p>
+     * The digits are offset by 0, so no shift is needed in the constant.
      */
     private static final long H3_DIGIT_MASK = 0x1fffffffffffL;
 
@@ -66,14 +69,14 @@ public class H3Core {
     private final NativeMethods h3Api;
 
     /**
-     * Create by unpacking the H3 native library to disk and loading it.
-     * The library will attempt to detect the correct operating system
-     * and architecture of native library to unpack.
+     * Create by unpacking the H3 native library to disk and loading it. The library
+     * will attempt to detect the correct operating system and architecture of
+     * native library to unpack.
      *
-     * @throws SecurityException Loading the library was not allowed by the
-     *                           SecurityManager.
+     * @throws SecurityException    Loading the library was not allowed by the
+     *                              SecurityManager.
      * @throws UnsatisfiedLinkError The library could not be loaded
-     * @throws IOException The library could not be extracted to disk.
+     * @throws IOException          The library could not be extracted to disk.
      */
     public static H3Core newInstance() throws IOException {
         NativeMethods h3Api = H3CoreLoader.loadNatives();
@@ -81,14 +84,14 @@ public class H3Core {
     }
 
     /**
-     * Create by unpacking the H3 native library to disk and loading it.
-     * The library will attempt to extract the native library matching
-     * the given arguments to disk.
+     * Create by unpacking the H3 native library to disk and loading it. The library
+     * will attempt to extract the native library matching the given arguments to
+     * disk.
      *
-     * @throws SecurityException Loading the library was not allowed by the
-     *                           SecurityManager.
+     * @throws SecurityException    Loading the library was not allowed by the
+     *                              SecurityManager.
      * @throws UnsatisfiedLinkError The library could not be loaded
-     * @throws IOException The library could not be extracted to disk.
+     * @throws IOException          The library could not be extracted to disk.
      */
     public static H3Core newInstance(H3CoreLoader.OperatingSystem os, String arch) throws IOException {
         NativeMethods h3Api = H3CoreLoader.loadNatives(os, arch);
@@ -98,7 +101,7 @@ public class H3Core {
     /**
      * Create by using the H3 native library already installed on the system.
      *
-     * @throws SecurityException The library could not be loaded
+     * @throws SecurityException    The library could not be loaded
      * @throws UnsatisfiedLinkError The library could not be loaded
      */
     public static H3Core newSystemInstance() {
@@ -142,27 +145,31 @@ public class H3Core {
     }
 
     /**
-     * Returns <code>true</code> if this index is one of twelve pentagons per resolution.
+     * Returns <code>true</code> if this index is one of twelve pentagons per
+     * resolution.
      */
     public boolean h3IsPentagon(long h3) {
         return h3Api.h3IsPentagon(h3);
     }
 
     /**
-     * Returns <code>true</code> if this index is one of twelve pentagons per resolution.
+     * Returns <code>true</code> if this index is one of twelve pentagons per
+     * resolution.
      */
     public boolean h3IsPentagon(String h3Address) {
         return h3IsPentagon(stringToH3(h3Address));
     }
 
     /**
-     * Find the H3 index of the resolution <code>res</code> cell containing the lat/lon (in degrees)
+     * Find the H3 index of the resolution <code>res</code> cell containing the
+     * lat/lon (in degrees)
      *
      * @param lat Latitude in degrees.
      * @param lng Longitude in degrees.
      * @param res Resolution, 0 &lt;= res &lt;= 15
      * @return The H3 index.
-     * @throws IllegalArgumentException latitude, longitude, or resolution are out of range.
+     * @throws IllegalArgumentException latitude, longitude, or resolution are out
+     *                                  of range.
      */
     public long geoToH3(double lat, double lng, int res) {
         checkResolution(res);
@@ -176,13 +183,15 @@ public class H3Core {
     }
 
     /**
-     * Find the H3 index of the resolution <code>res</code> cell containing the lat/lon (in degrees)
+     * Find the H3 index of the resolution <code>res</code> cell containing the
+     * lat/lon (in degrees)
      *
      * @param lat Latitude in degrees.
      * @param lng Longitude in degrees.
      * @param res Resolution, 0 &lt;= res &lt;= 15
      * @return The H3 index.
-     * @throws IllegalArgumentException Latitude, longitude, or resolution is out of range.
+     * @throws IllegalArgumentException Latitude, longitude, or resolution is out of
+     *                                  range.
      */
     public String geoToH3Address(double lat, double lng, int res) {
         return h3ToString(geoToH3(lat, lng, res));
@@ -194,10 +203,7 @@ public class H3Core {
     public GeoCoord h3ToGeo(long h3) {
         double[] coords = new double[2];
         h3Api.h3ToGeo(h3, coords);
-        GeoCoord out = new GeoCoord(
-                toDegrees(coords[0]),
-                toDegrees(coords[1])
-        );
+        GeoCoord out = new GeoCoord(toDegrees(coords[0]), toDegrees(coords[1]));
         return out;
     }
 
@@ -209,24 +215,23 @@ public class H3Core {
     }
 
     /**
-     * Find the cell boundary in latitude, longitude (degrees) coordinates for the cell
+     * Find the cell boundary in latitude, longitude (degrees) coordinates for the
+     * cell
      */
     public List<GeoCoord> h3ToGeoBoundary(long h3) {
         double[] verts = new double[MAX_CELL_BNDRY_VERTS * 2];
         int numVerts = h3Api.h3ToGeoBoundary(h3, verts);
         List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
-            GeoCoord coord = new GeoCoord(
-                    toDegrees(verts[i * 2]),
-                    toDegrees(verts[(i * 2) + 1])
-            );
+            GeoCoord coord = new GeoCoord(toDegrees(verts[i * 2]), toDegrees(verts[(i * 2) + 1]));
             out.add(coord);
         }
         return out;
     }
 
     /**
-     * Find the cell boundary in latitude, longitude (degrees) coordinates for the cell
+     * Find the cell boundary in latitude, longitude (degrees) coordinates for the
+     * cell
      */
     public List<GeoCoord> h3ToGeoBoundary(String h3Address) {
         return h3ToGeoBoundary(stringToH3(h3Address));
@@ -275,28 +280,28 @@ public class H3Core {
     }
 
     /**
-     * Neighboring indexes in all directions, ordered by distance from the origin index.
+     * Neighboring indexes in all directions, ordered by distance from the origin
+     * index.
      *
      * @param h3Address Origin index
      * @param k         Number of rings around the origin
-     * @return A list of rings, each of which is a list of addresses. The rings are in order
-     *         from closest to origin to farthest.
+     * @return A list of rings, each of which is a list of addresses. The rings are
+     *         in order from closest to origin to farthest.
      */
     public List<List<String>> kRingDistances(String h3Address, int k) {
         List<List<Long>> rings = kRingDistances(stringToH3(h3Address), k);
 
-        return rings.stream()
-                .map(this::h3ToStringList)
-                .collect(Collectors.toList());
+        return rings.stream().map(this::h3ToStringList).collect(Collectors.toList());
     }
 
     /**
-     * Neighboring indexes in all directions, ordered by distance from the origin index.
+     * Neighboring indexes in all directions, ordered by distance from the origin
+     * index.
      *
      * @param h3 Origin index
      * @param k  Number of rings around the origin
-     * @return A list of rings, each of which is a list of addresses. The rings are in order
-     *         from closest to origin to farthest.
+     * @return A list of rings, each of which is a list of addresses. The rings are
+     *         in order from closest to origin to farthest.
      */
     public List<List<Long>> kRingDistances(long h3, int k) {
         int sz = h3Api.maxKringSize(k);
@@ -315,8 +320,7 @@ public class H3Core {
         for (int i = 0; i < sz; i++) {
             long nextH3 = out[i];
             if (nextH3 != INVALID_INDEX) {
-                ret.get(distances[i])
-                        .add(nextH3);
+                ret.get(distances[i]).add(nextH3);
             }
         }
 
@@ -328,16 +332,15 @@ public class H3Core {
      *
      * @param h3Address Origin hexagon index
      * @param k         Number of rings around the origin
-     * @return A list of rings, each of which is a list of addresses. The rings are in order
-     *         from closest to origin to farthest.
-     * @throws PentagonEncounteredException A pentagon was encountered while iterating the rings
+     * @return A list of rings, each of which is a list of addresses. The rings are
+     *         in order from closest to origin to farthest.
+     * @throws PentagonEncounteredException A pentagon was encountered while
+     *                                      iterating the rings
      */
     public List<List<String>> hexRange(String h3Address, int k) throws PentagonEncounteredException {
         List<List<Long>> rings = hexRange(stringToH3(h3Address), k);
 
-        return rings.stream()
-                .map(this::h3ToStringList)
-                .collect(Collectors.toList());
+        return rings.stream().map(this::h3ToStringList).collect(Collectors.toList());
     }
 
     /**
@@ -345,9 +348,10 @@ public class H3Core {
      *
      * @param h3 Origin hexagon index
      * @param k  Number of rings around the origin
-     * @return A list of rings, each of which is a list of addresses. The rings are in order
-     *         from closest to origin to farthest.
-     * @throws PentagonEncounteredException A pentagon was encountered while iterating the rings
+     * @return A list of rings, each of which is a list of addresses. The rings are
+     *         in order from closest to origin to farthest.
+     * @throws PentagonEncounteredException A pentagon was encountered while
+     *                                      iterating the rings
      */
     public List<List<Long>> hexRange(long h3, int k) throws PentagonEncounteredException {
         int sz = h3Api.maxKringSize(k);
@@ -388,24 +392,28 @@ public class H3Core {
     }
 
     /**
-     * Returns in order neighbor traversal, of indexes with distance of <code>k</code>.
+     * Returns in order neighbor traversal, of indexes with distance of
+     * <code>k</code>.
      *
      * @param h3Address Origin index
      * @param k         Number of rings around the origin
      * @return All indexes <code>k</code> away from the origin
-     * @throws PentagonEncounteredException A pentagon or pentagonal distortion was encountered.
+     * @throws PentagonEncounteredException A pentagon or pentagonal distortion was
+     *                                      encountered.
      */
     public List<String> hexRing(String h3Address, int k) throws PentagonEncounteredException {
         return h3ToStringList(hexRing(stringToH3(h3Address), k));
     }
 
     /**
-     * Returns in order neighbor traversal, of indexes with distance of <code>k</code>.
+     * Returns in order neighbor traversal, of indexes with distance of
+     * <code>k</code>.
      *
      * @param h3 Origin index
      * @param k  Number of rings around the origin
      * @return All indexes <code>k</code> away from the origin
-     * @throws PentagonEncounteredException A pentagon or pentagonal distortion was encountered.
+     * @throws PentagonEncounteredException A pentagon or pentagonal distortion was
+     *                                      encountered.
      */
     public List<Long> hexRing(long h3, int k) throws PentagonEncounteredException {
         int sz = k == 0 ? 1 : 6 * k;
@@ -420,16 +428,17 @@ public class H3Core {
     }
 
     /**
-     * Returns the distance between <code>a</code> and <code>b</code>.
-     * This is the grid distance, or distance expressed in number of H3 cells.
+     * Returns the distance between <code>a</code> and <code>b</code>. This is the
+     * grid distance, or distance expressed in number of H3 cells.
      *
-     * <p>In some cases H3 cannot compute the distance between two indexes.
-     * This can happen because:
+     * <p>
+     * In some cases H3 cannot compute the distance between two indexes. This can
+     * happen because:
      * <ul>
-     *     <li>The indexes are not comparable (difference resolutions, etc)</li>
-     *     <li>The distance is greater than the H3 core library supports</li>
-     *     <li>The H3 library does not support finding the distance between
-     *     the two cells, because of pentagonal distortion.</li>
+     * <li>The indexes are not comparable (difference resolutions, etc)</li>
+     * <li>The distance is greater than the H3 core library supports</li>
+     * <li>The H3 library does not support finding the distance between the two
+     * cells, because of pentagonal distortion.</li>
      * </ul>
      *
      * @param a An H3 index
@@ -442,16 +451,17 @@ public class H3Core {
     }
 
     /**
-     * Returns the distance between <code>a</code> and <code>b</code>.
-     * This is the grid distance, or distance expressed in number of H3 cells.
+     * Returns the distance between <code>a</code> and <code>b</code>. This is the
+     * grid distance, or distance expressed in number of H3 cells.
      *
-     * <p>In some cases H3 cannot compute the distance between two indexes.
-     * This can happen because:
+     * <p>
+     * In some cases H3 cannot compute the distance between two indexes. This can
+     * happen because:
      * <ul>
-     *     <li>The indexes are not comparable (difference resolutions, etc)</li>
-     *     <li>The distance is greater than the H3 core library supports</li>
-     *     <li>The H3 library does not support finding the distance between
-     *     the two cells, because of pentagonal distortion.</li>
+     * <li>The indexes are not comparable (difference resolutions, etc)</li>
+     * <li>The distance is greater than the H3 core library supports</li>
+     * <li>The H3 library does not support finding the distance between the two
+     * cells, because of pentagonal distortion.</li>
      * </ul>
      *
      * @param a An H3 index
@@ -470,26 +480,32 @@ public class H3Core {
     }
 
     /**
-     * Converts <code>h3</code> to IJ coordinates in a local coordinate space defined by
-     * <code>origin</code>.
+     * Converts <code>h3</code> to IJ coordinates in a local coordinate space
+     * defined by <code>origin</code>.
      *
-     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
-     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     * <p>
+     * The local IJ coordinate space may have deleted regions and warping due to
+     * pentagon distortion. IJ coordinates are only comparable if they came from the
+     * same origin.
      *
-     * <p>This function is experimental, and its output is not guaranteed
-     * to be compatible across different versions of H3.
+     * <p>
+     * This function is experimental, and its output is not guaranteed to be
+     * compatible across different versions of H3.
      *
      * @param origin Anchoring index for the local coordinate space.
-     * @param h3 Index to find the coordinates of.
+     * @param h3     Index to find the coordinates of.
      * @return Coordinates for <code>h3</code> in the local coordinate space.
-     * @throws IllegalArgumentException The two indexes are not comparable.
-     * @throws PentagonEncounteredException The two indexes are separated by pentagonal distortion.
-     * @throws LocalIjUndefinedException The two indexes are too far apart.
+     * @throws IllegalArgumentException     The two indexes are not comparable.
+     * @throws PentagonEncounteredException The two indexes are separated by
+     *                                      pentagonal distortion.
+     * @throws LocalIjUndefinedException    The two indexes are too far apart.
      */
-    public CoordIJ experimentalH3ToLocalIj(long origin, long h3) throws PentagonEncounteredException, LocalIjUndefinedException {
+    public CoordIJ experimentalH3ToLocalIj(long origin, long h3)
+            throws PentagonEncounteredException, LocalIjUndefinedException {
         final int[] coords = new int[2];
         final int result = h3Api.experimentalH3ToLocalIj(origin, h3, coords);
-        // The definition of these cases is in experimentalH3ToLocalIj in localij.c in the C library.
+        // The definition of these cases is in experimentalH3ToLocalIj in localij.c in
+        // the C library.
         // 0 is success, anything else is a failure of some kind.
         switch (result) {
             case 0:
@@ -498,7 +514,8 @@ public class H3Core {
                 throw new IllegalArgumentException("Incompatible origin and index.");
             default:
             case 2:
-                throw new LocalIjUndefinedException("Local IJ coordinates undefined for this origin and index pair. The index may be too far from the origin.");
+                throw new LocalIjUndefinedException(
+                        "Local IJ coordinates undefined for this origin and index pair. The index may be too far from the origin.");
             case 3:
             case 4:
             case 5:
@@ -507,91 +524,109 @@ public class H3Core {
     }
 
     /**
-     * Converts <code>h3Address</code> to IJ coordinates in a local coordinate space defined by
-     * <code>originAddress</code>.
+     * Converts <code>h3Address</code> to IJ coordinates in a local coordinate space
+     * defined by <code>originAddress</code>.
      *
-     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
-     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     * <p>
+     * The local IJ coordinate space may have deleted regions and warping due to
+     * pentagon distortion. IJ coordinates are only comparable if they came from the
+     * same origin.
      *
-     * <p>This function is experimental, and its output is not guaranteed
-     * to be compatible across different versions of H3.
+     * <p>
+     * This function is experimental, and its output is not guaranteed to be
+     * compatible across different versions of H3.
      *
      * @param originAddress Anchoring index for the local coordinate space.
-     * @param h3Address Index to find the coordinates of.
+     * @param h3Address     Index to find the coordinates of.
      * @return Coordinates for <code>h3</code> in the local coordinate space.
-     * @throws IllegalArgumentException The two indexes are not comparable.
-     * @throws PentagonEncounteredException The two indexes are separated by pentagonal distortion.
-     * @throws LocalIjUndefinedException The two indexes are too far apart.
+     * @throws IllegalArgumentException     The two indexes are not comparable.
+     * @throws PentagonEncounteredException The two indexes are separated by
+     *                                      pentagonal distortion.
+     * @throws LocalIjUndefinedException    The two indexes are too far apart.
      */
-    public CoordIJ experimentalH3ToLocalIj(String originAddress, String h3Address) throws PentagonEncounteredException, LocalIjUndefinedException {
+    public CoordIJ experimentalH3ToLocalIj(String originAddress, String h3Address)
+            throws PentagonEncounteredException, LocalIjUndefinedException {
         return experimentalH3ToLocalIj(stringToH3(originAddress), stringToH3(h3Address));
     }
 
     /**
-     * Converts the IJ coordinates to an index, using a local IJ coordinate space anchored by
-     * <code>origin</code>.
+     * Converts the IJ coordinates to an index, using a local IJ coordinate space
+     * anchored by <code>origin</code>.
      *
-     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
-     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     * <p>
+     * The local IJ coordinate space may have deleted regions and warping due to
+     * pentagon distortion. IJ coordinates are only comparable if they came from the
+     * same origin.
      *
-     * <p>This function is experimental, and its output is not guaranteed
-     * to be compatible across different versions of H3.
+     * <p>
+     * This function is experimental, and its output is not guaranteed to be
+     * compatible across different versions of H3.
      *
      * @param origin Anchoring index for the local coordinate space.
-     * @param ij Coordinates in the local IJ coordinate space.
+     * @param ij     Coordinates in the local IJ coordinate space.
      * @return Index represented by <code>ij</code>
-     * @throws LocalIjUndefinedException No index is defined at the given location, for example
-     * because the coordinates are too far away from the origin, or pentagon distortion is encountered.
+     * @throws LocalIjUndefinedException No index is defined at the given location,
+     *                                   for example because the coordinates are too
+     *                                   far away from the origin, or pentagon
+     *                                   distortion is encountered.
      */
     public long experimentalLocalIjToH3(long origin, CoordIJ ij) throws LocalIjUndefinedException {
         final long result = h3Api.experimentalLocalIjToH3(origin, ij.i, ij.j);
         if (result == INVALID_INDEX) {
-            throw new LocalIjUndefinedException("Index not defined for this origin and IJ coordinates pair. IJ coordinates may be too far from origin, or pentagon distortion was encountered.");
+            throw new LocalIjUndefinedException(
+                    "Index not defined for this origin and IJ coordinates pair. IJ coordinates may be too far from origin, or pentagon distortion was encountered.");
         }
         return result;
     }
 
     /**
-     * Converts the IJ coordinates to an index, using a local IJ coordinate space anchored by
-     * <code>origin</code>.
+     * Converts the IJ coordinates to an index, using a local IJ coordinate space
+     * anchored by <code>origin</code>.
      *
-     * <p>The local IJ coordinate space may have deleted regions and warping due to pentagon
-     * distortion. IJ coordinates are only comparable if they came from the same origin.
+     * <p>
+     * The local IJ coordinate space may have deleted regions and warping due to
+     * pentagon distortion. IJ coordinates are only comparable if they came from the
+     * same origin.
      *
-     * <p>This function is experimental, and its output is not guaranteed
-     * to be compatible across different versions of H3.
+     * <p>
+     * This function is experimental, and its output is not guaranteed to be
+     * compatible across different versions of H3.
      *
      * @param originAddress Anchoring index for the local coordinate space.
-     * @param ij Coordinates in the local IJ coordinate space.
+     * @param ij            Coordinates in the local IJ coordinate space.
      * @return Index represented by <code>ij</code>
-     * @throws LocalIjUndefinedException No index is defined at the given location, for example
-     * because the coordinates are too far away from the origin, or pentagon distortion is encountered.
+     * @throws LocalIjUndefinedException No index is defined at the given location,
+     *                                   for example because the coordinates are too
+     *                                   far away from the origin, or pentagon
+     *                                   distortion is encountered.
      */
     public String experimentalLocalIjToH3(String originAddress, CoordIJ ij) throws LocalIjUndefinedException {
         return h3ToString(experimentalLocalIjToH3(stringToH3(originAddress), ij));
     }
 
     /**
-     * Given two H3 indexes, return the line of indexes between them (inclusive
-     * of endpoints).
+     * Given two H3 indexes, return the line of indexes between them (inclusive of
+     * endpoints).
      *
-     * <p>This function may fail to find the line between two indexes, for
-     * example if they are very far apart. It may also fail when finding
-     * distances for indexes on opposite sides of a pentagon.
+     * <p>
+     * This function may fail to find the line between two indexes, for example if
+     * they are very far apart. It may also fail when finding distances for indexes
+     * on opposite sides of a pentagon.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
      * <ul>
-     *     <li>The specific output of this function should not be considered stable
-     *         across library versions. The only guarantees the library provides are
-     *         that the line length will be `h3Distance(start, end) + 1` and that
-     *         every index in the line will be a neighbor of the preceding index.</li>
-     *     <li>Lines are drawn in grid space, and may not correspond exactly to either
-     *         Cartesian lines or great arcs.</li>
+     * <li>The specific output of this function should not be considered stable
+     * across library versions. The only guarantees the library provides are that
+     * the line length will be `h3Distance(start, end) + 1` and that every index in
+     * the line will be a neighbor of the preceding index.</li>
+     * <li>Lines are drawn in grid space, and may not correspond exactly to either
+     * Cartesian lines or great arcs.</li>
      * </ul>
      *
      * @param startAddress Start index of the line
-     * @param endAddress End index of the line
+     * @param endAddress   End index of the line
      * @return Indexes making up the line.
      * @throws LineUndefinedException The line could not be computed.
      */
@@ -600,26 +635,28 @@ public class H3Core {
     }
 
     /**
-     * Given two H3 indexes, return the line of indexes between them (inclusive
-     * of endpoints).
+     * Given two H3 indexes, return the line of indexes between them (inclusive of
+     * endpoints).
      *
-     * <p>This function may fail to find the line between two indexes, for
-     * example if they are very far apart. It may also fail when finding
-     * distances for indexes on opposite sides of a pentagon.
+     * <p>
+     * This function may fail to find the line between two indexes, for example if
+     * they are very far apart. It may also fail when finding distances for indexes
+     * on opposite sides of a pentagon.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
      * <ul>
-     *     <li>The specific output of this function should not be considered stable
-     *         across library versions. The only guarantees the library provides are
-     *         that the line length will be `h3Distance(start, end) + 1` and that
-     *         every index in the line will be a neighbor of the preceding index.</li>
-     *     <li>Lines are drawn in grid space, and may not correspond exactly to either
-     *         Cartesian lines or great arcs.</li>
+     * <li>The specific output of this function should not be considered stable
+     * across library versions. The only guarantees the library provides are that
+     * the line length will be `h3Distance(start, end) + 1` and that every index in
+     * the line will be a neighbor of the preceding index.</li>
+     * <li>Lines are drawn in grid space, and may not correspond exactly to either
+     * Cartesian lines or great arcs.</li>
      * </ul>
      *
      * @param start Start index of the line
-     * @param end End index of the line
+     * @param end   End index of the line
      * @return Indexes making up the line.
      * @throws LineUndefinedException The line could not be computed.
      */
@@ -646,8 +683,8 @@ public class H3Core {
      * Finds indexes within the given geofence.
      *
      * @param points Outline geofence
-     * @param holes Geofences of any internal holes
-     * @param res Resolution of the desired indexes
+     * @param holes  Geofences of any internal holes
+     * @param res    Resolution of the desired indexes
      */
     public List<String> polyfillAddress(List<GeoCoord> points, List<List<GeoCoord>> holes, int res) {
         return h3ToStringList(polyfill(points, holes, res));
@@ -657,8 +694,8 @@ public class H3Core {
      * Finds indexes within the given geofence.
      *
      * @param points Outline geofence
-     * @param holes Geofences of any internal holes
-     * @param res Resolution of the desired indexes
+     * @param holes  Geofences of any internal holes
+     * @param res    Resolution of the desired indexes
      * @throws IllegalArgumentException Invalid resolution
      */
     public List<Long> polyfill(List<GeoCoord> points, List<List<GeoCoord>> holes, int res) {
@@ -774,16 +811,19 @@ public class H3Core {
     /**
      * Returns the parent of the index at the given resolution.
      *
-     * @param h3 H3 index.
-     * @param res Resolution of the parent, <code>0 &lt;= res &lt;= h3GetResolution(h3)</code>
-     * @throws IllegalArgumentException <code>res</code> is not between 0 and the resolution of <code>h3</code>, inclusive.
+     * @param h3  H3 index.
+     * @param res Resolution of the parent,
+     *            <code>0 &lt;= res &lt;= h3GetResolution(h3)</code>
+     * @throws IllegalArgumentException <code>res</code> is not between 0 and the
+     *                                  resolution of <code>h3</code>, inclusive.
      */
     public long h3ToParent(long h3, int res) {
         // This is a ported version of h3ToParent from h3core.
 
         int childRes = (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
         if (res < 0 || res > childRes) {
-            throw new IllegalArgumentException(String.format("res (%d) must be between 0 and %d, inclusive", res, childRes));
+            throw new IllegalArgumentException(
+                    String.format("res (%d) must be between 0 and %d, inclusive", res, childRes));
         } else if (res == childRes) {
             return h3;
         }
@@ -802,7 +842,8 @@ public class H3Core {
      * Returns the parent of the index at the given resolution.
      *
      * @param h3Address H3 index.
-     * @param res Resolution of the parent, <code>0 &lt;= res &lt;= h3GetResolution(h3)</code>
+     * @param res       Resolution of the parent,
+     *                  <code>0 &lt;= res &lt;= h3GetResolution(h3)</code>
      */
     public String h3ToParentAddress(String h3Address, int res) {
         long parent = h3ToParent(stringToH3(h3Address), res);
@@ -821,7 +862,7 @@ public class H3Core {
     /**
      * Provides the children of the index at the given resolution.
      *
-     * @param h3 H3 index.
+     * @param h3       H3 index.
      * @param childRes Resolution of the children
      * @throws IllegalArgumentException Invalid resolution
      */
@@ -840,9 +881,10 @@ public class H3Core {
     /**
      * Returns the center child at the given resolution.
      *
-     * @param h3 Parent H3 index
+     * @param h3       Parent H3 index
      * @param childRes Resolution of the child
-     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the parent)
+     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the
+     *                                  parent)
      */
     public String h3ToCenterChild(String h3, int childRes) {
         return h3ToString(h3ToCenterChild(stringToH3(h3), childRes));
@@ -851,9 +893,10 @@ public class H3Core {
     /**
      * Returns the center child at the given resolution.
      *
-     * @param h3 Parent H3 index
+     * @param h3       Parent H3 index
      * @param childRes Resolution of the child
-     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the parent)
+     * @throws IllegalArgumentException Invalid resolution (e.g. coarser than the
+     *                                  parent)
      */
     public long h3ToCenterChild(long h3, int childRes) {
         checkResolution(childRes);
@@ -863,9 +906,7 @@ public class H3Core {
         if (result == INVALID_INDEX) {
             // This occurs when the child resolution is out of range for this index.
             throw new IllegalArgumentException(
-                    String.format("childRes %d must be between %d and 15, inclusive",
-                            childRes, h3GetResolution(h3))
-            );
+                    String.format("childRes %d must be between %d and 15, inclusive", childRes, h3GetResolution(h3)));
         }
 
         return result;
@@ -932,7 +973,8 @@ public class H3Core {
     /**
      * Uncompacts all the given indexes to resolution <code>res</code>.
      *
-     * @throws IllegalArgumentException Invalid input, such as indexes finer than <code>res</code>.
+     * @throws IllegalArgumentException Invalid input, such as indexes finer than
+     *                                  <code>res</code>.
      */
     public List<Long> uncompact(Collection<Long> h3, int res) {
         checkResolution(res);
@@ -953,21 +995,70 @@ public class H3Core {
     }
 
     /**
-     * Converts from <code>long</code> representation of an index to <code>String</code> representation.
+     * Converts from <code>long</code> representation of an index to
+     * <code>String</code> representation.
      */
     public String h3ToString(long h3) {
         return Long.toHexString(h3);
     }
 
     /**
-     * Converts from <code>String</code> representation of an index to <code>long</code> representation.
+     * Converts from <code>String</code> representation of an index to
+     * <code>long</code> representation.
      */
     public long stringToH3(String h3Address) {
         return Long.parseUnsignedLong(h3Address, 16);
     }
 
+    public double cellArea(String h3Address, AreaUnit unit) {
+        return cellArea(stringToH3(h3Address), unit);
+    }
+
+    public double cellArea(long h3, AreaUnit unit) {
+        if (unit == AreaUnit.rads2)
+            return h3Api.cellAreaRads2(h3);
+        else if (unit == AreaUnit.km2)
+            return h3Api.cellAreaKm2(h3);
+        else if (unit == AreaUnit.m2)
+            return h3Api.cellAreaM2(h3);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
+    public double pointDist(GeoCoord a, GeoCoord b, LengthUnit unit) {
+        double lat1 = toRadians(a.lat);
+        double lng1 = toRadians(a.lng);
+        double lat2 = toRadians(b.lat);
+        double lng2 = toRadians(b.lng);
+        
+        if (unit == LengthUnit.rads)
+            return h3Api.pointDistRads(lat1, lng1, lat2, lng2);
+        else if (unit == LengthUnit.km)
+            return h3Api.pointDistKm(lat1, lng1, lat2, lng2);
+        else if (unit == LengthUnit.m)
+            return h3Api.pointDistM(lat1, lng1, lat2, lng2);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
+    public double exactEdgeLength(String h3Address, LengthUnit unit) {
+        return exactEdgeLength(stringToH3(h3Address), unit);
+    }
+
+    public double exactEdgeLength(long h3, LengthUnit unit) {
+        if (unit == LengthUnit.rads)
+            return h3Api.exactEdgeLengthRads(h3);
+        else if (unit == LengthUnit.km)
+            return h3Api.exactEdgeLengthKm(h3);
+        else if (unit == LengthUnit.m)
+            return h3Api.exactEdgeLengthM(h3);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
     /**
-     * Returns the average area in <code>unit</code> for indexes at resolution <code>res</code>.
+     * Returns the average area in <code>unit</code> for indexes at resolution
+     * <code>res</code>.
      *
      * @throws IllegalArgumentException Invalid parameter value
      */
@@ -982,7 +1073,8 @@ public class H3Core {
     }
 
     /**
-     * Returns the average edge length in <code>unit</code> for indexes at resolution <code>res</code>.
+     * Returns the average edge length in <code>unit</code> for indexes at
+     * resolution <code>res</code>.
      *
      * @throws IllegalArgumentException Invalid parameter value
      */
@@ -1023,7 +1115,8 @@ public class H3Core {
     }
 
     /**
-     * Returns a collection of all topologically pentagonal cells at the given resolution.
+     * Returns a collection of all topologically pentagonal cells at the given
+     * resolution.
      *
      * @throws IllegalArgumentException Invalid resolution.
      */
@@ -1032,7 +1125,8 @@ public class H3Core {
     }
 
     /**
-     * Returns a collection of all topologically pentagonal cells at the given resolution.
+     * Returns a collection of all topologically pentagonal cells at the given
+     * resolution.
      *
      * @throws IllegalArgumentException Invalid resolution.
      */
@@ -1058,7 +1152,8 @@ public class H3Core {
     }
 
     /**
-     * Returns a unidirectional edge index representing <code>a</code> towards <code>b</code>.
+     * Returns a unidirectional edge index representing <code>a</code> towards
+     * <code>b</code>.
      *
      * @throws IllegalArgumentException The indexes are not neighbors.
      */
@@ -1073,7 +1168,8 @@ public class H3Core {
     }
 
     /**
-     * Returns a unidirectional edge index representing <code>a</code> towards <code>b</code>.
+     * Returns a unidirectional edge index representing <code>a</code> towards
+     * <code>b</code>.
      *
      * @throws IllegalArgumentException The indexes are not neighbors.
      */
@@ -1170,10 +1266,7 @@ public class H3Core {
         int numVerts = h3Api.getH3UnidirectionalEdgeBoundary(h3, verts);
         List<GeoCoord> out = new ArrayList<>(numVerts);
         for (int i = 0; i < numVerts; i++) {
-            GeoCoord coord = new GeoCoord(
-                    toDegrees(verts[i * 2]),
-                    toDegrees(verts[(i * 2) + 1])
-            );
+            GeoCoord coord = new GeoCoord(toDegrees(verts[i * 2]), toDegrees(verts[(i * 2) + 1]));
             out.add(coord);
         }
         return out;
@@ -1187,8 +1280,8 @@ public class H3Core {
     }
 
     /**
-     * Find all icosahedron faces intersected by a given H3 index, represented
-     * as integers from 0-19.
+     * Find all icosahedron faces intersected by a given H3 index, represented as
+     * integers from 0-19.
      *
      * @param h3 Index to find icosahedron faces for.
      * @return A collection of faces intersected by the index.
@@ -1198,8 +1291,8 @@ public class H3Core {
     }
 
     /**
-     * Find all icosahedron faces intersected by a given H3 index, represented
-     * as integers from 0-19.
+     * Find all icosahedron faces intersected by a given H3 index, represented as
+     * integers from 0-19.
      *
      * @param h3 Index to find icosahedron faces for.
      * @return A collection of faces intersected by the index.
@@ -1210,30 +1303,23 @@ public class H3Core {
 
         h3Api.h3GetFaces(h3, faces);
 
-        return IntStream.of(faces)
-                .filter(f -> f != -1)
-                .boxed()
-                .collect(Collectors.toList());
+        return IntStream.of(faces).filter(f -> f != -1).boxed().collect(Collectors.toList());
     }
 
     /**
-     * Transforms a collection of H3 indexes in string form to a list of H3
-     * indexes in long form.
+     * Transforms a collection of H3 indexes in string form to a list of H3 indexes
+     * in long form.
      */
     private List<Long> stringToH3List(Collection<String> collection) {
-        return collection.stream()
-                .map(this::stringToH3)
-                .collect(Collectors.toList());
+        return collection.stream().map(this::stringToH3).collect(Collectors.toList());
     }
 
     /**
-     * Transforms a list of H3 indexes in long form to a list of H3
-     * indexes in string form.
+     * Transforms a list of H3 indexes in long form to a list of H3 indexes in
+     * string form.
      */
     private List<String> h3ToStringList(Collection<Long> collection) {
-        return collection.stream()
-                .map(this::h3ToString)
-                .collect(Collectors.toList());
+        return collection.stream().map(this::h3ToString).collect(Collectors.toList());
     }
 
     /**
@@ -1262,11 +1348,13 @@ public class H3Core {
     }
 
     /**
-     * @throws IllegalArgumentException <code>res</code> is not a valid H3 resolution.
+     * @throws IllegalArgumentException <code>res</code> is not a valid H3
+     *                                  resolution.
      */
     private static void checkResolution(int res) {
         if (res < 0 || res > 15) {
-            throw new IllegalArgumentException(String.format("resolution %d is out of range (must be 0 <= res <= 15)", res));
+            throw new IllegalArgumentException(
+                    String.format("resolution %d is out of range (must be 0 <= res <= 15)", res));
         }
     }
 }

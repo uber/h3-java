@@ -20,6 +20,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collection;
 
+import com.uber.h3core.util.GeoCoord;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -44,7 +46,8 @@ public class TestH3Core extends BaseTestH3Core {
     public void testConstructSpecific() throws IOException {
         // This uses the same logic as H3CoreLoader for detecting
         // the OS and architecture, to avoid issues with CI.
-        final H3CoreLoader.OperatingSystem os = H3CoreLoader.detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
+        final H3CoreLoader.OperatingSystem os = H3CoreLoader.detectOs(System.getProperty("java.vendor"),
+                System.getProperty("os.name"));
         final String arch = H3CoreLoader.detectArch(System.getProperty("os.arch"));
 
         H3Core another = H3Core.newInstance(os, arch);
@@ -117,6 +120,74 @@ public class TestH3Core extends BaseTestH3Core {
         }
     }
 
+    @Test
+    public void testCellArea() {
+        double areasKm2[] = { 2.562182162955496e+06, 4.476842018179411e+05, 6.596162242711056e+04,
+                9.228872919002590e+03, 1.318694490797110e+03, 1.879593512281298e+02, 2.687164354763186e+01,
+                3.840848847060638e+00, 5.486939641329893e-01, 7.838600808637444e-02, 1.119834221989390e-02,
+                1.599777169186614e-03, 2.285390931423380e-04, 3.264850232091780e-05, 4.664070326136774e-06,
+                6.662957615868888e-07 };
+
+        for (int res = 0; res <= 15; res++) {
+            String cellAddress = h3.geoToH3Address(0, 0, res);
+            long cell = h3.geoToH3(0, 0, res);
+
+            double areaAddressM2 = h3.cellArea(cellAddress, AreaUnit.m2);
+            double areaAddressKm2 = h3.cellArea(cellAddress, AreaUnit.km2);
+            double areaAddressRads2 = h3.cellArea(cellAddress, AreaUnit.rads2);
+            double areaM2 = h3.cellArea(cell, AreaUnit.m2);
+            double areaKm2 = h3.cellArea(cell, AreaUnit.km2);
+            double areaRads2 = h3.cellArea(cell, AreaUnit.rads2);
+
+            assertEquals("cell area should match expectation", areasKm2[res], areaAddressKm2, EPSILON);
+            assertEquals("rads2 cell area should agree", areaAddressRads2, areaRads2, EPSILON);
+            assertEquals("km2 cell area should agree", areaAddressKm2, areaKm2, EPSILON);
+            assertEquals("m2 cell area should agree", areaAddressM2, areaM2, EPSILON);
+            assertTrue("m2 area greater than km2 area", areaM2 > areaKm2);
+            assertTrue("km2 area greater than rads2 area", areaKm2 > areaRads2);
+        }
+    }
+
+    @Test
+    public void testExactEdgeLength() {
+        for (int res = 0; res <= 15; res++) {
+            String cellAddress = h3.geoToH3Address(0, 0, res);
+            long cell = h3.geoToH3(0, 0, res);
+
+            double areaAddressM = h3.exactEdgeLength(cellAddress, LengthUnit.m);
+            double areaAddressKm = h3.exactEdgeLength(cellAddress, LengthUnit.km);
+            double areaAddressRads = h3.exactEdgeLength(cellAddress, LengthUnit.rads);
+            double areaM = h3.exactEdgeLength(cell, LengthUnit.m);
+            double areaKm = h3.exactEdgeLength(cell, LengthUnit.km);
+            double areaRads = h3.exactEdgeLength(cell, LengthUnit.rads);
+
+            // Only asserts some properties of the functions that the edge lengths
+            // should have certain relationships to each other, test isn't specific
+            // to a cell's actual values.
+            assertTrue("edge length should match expectation", areaAddressRads > 0);
+            assertEquals("rads edge length should agree", areaAddressRads, areaRads, EPSILON);
+            assertEquals("km edge length should agree", areaAddressKm, areaKm, EPSILON);
+            assertEquals("m edge length should agree", areaAddressM, areaM, EPSILON);
+            assertTrue("m length greater than km length", areaM > areaKm);
+            assertTrue("km length greater than rads length", areaKm > areaRads);
+        }
+    }
+
+    @Test
+    public void testPointDist() {
+        GeoCoord a = new GeoCoord(10, 10);
+        GeoCoord b = new GeoCoord(10, -10);
+
+        double distRads = h3.pointDist(a, b, LengthUnit.rads);
+        double distKm = h3.pointDist(a, b, LengthUnit.km);
+        double distM = h3.pointDist(a, b, LengthUnit.m);
+
+        // TODO: Epsilon is unusually large in the core H3 tests
+        assertEquals("radians distance is as expected", Math.toRadians(20), distRads, EPSILON * 10000);
+        assertTrue("m distance greater than km distance", distM > distKm);
+        assertTrue("km distance greater than rads distance", distKm > distRads);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testGetPentagonIndexesNegativeRes() {
         h3.getPentagonIndexesAddresses(-1);
@@ -130,6 +201,11 @@ public class TestH3Core extends BaseTestH3Core {
     @Test(expected = IllegalArgumentException.class)
     public void testConstantsInvalid() {
         h3.hexArea(-1, AreaUnit.km2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstantsInvalidUnit() {
+        h3.hexArea(-1, AreaUnit.rads2);
     }
 
     @Test(expected = IllegalArgumentException.class)

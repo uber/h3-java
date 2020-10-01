@@ -61,6 +61,16 @@ final class NativeMethods {
     native int maxUncompactSize(long[] h3, int res);
     native int uncompact(long[] h3, int res, long[] results);
 
+    native double cellAreaRads2(long h3);
+    native double cellAreaKm2(long h3);
+    native double cellAreaM2(long h3);
+    native double pointDistRads(double lat1, double lon1, double lat2, double lon2);
+    native double pointDistKm(double lat1, double lon1, double lat2, double lon2);
+    native double pointDistM(double lat1, double lon1, double lat2, double lon2);
+    native double exactEdgeLengthRads(long h3);
+    native double exactEdgeLengthKm(long h3);
+    native double exactEdgeLengthM(long h3);
+
     native double hexAreaKm2(int res);
     native double hexAreaM2(int res);
     native double edgeLengthKm(int res);
