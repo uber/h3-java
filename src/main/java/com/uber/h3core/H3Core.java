@@ -980,8 +980,8 @@ public class H3Core {
     /**
      * Calculates the area of the given H3 cell.
      *
-     * @param h3Address Cell to find the area of.
-     * @param unit      Unit to calculate the area in.
+     * @param h3   Cell to find the area of.
+     * @param unit Unit to calculate the area in.
      * @return Cell area in the given units.
      */
     public double cellArea(long h3, AreaUnit unit) {
@@ -1020,30 +1020,30 @@ public class H3Core {
     }
 
     /**
-     * Calculate the edge length of the given H3 cell.
+     * Calculate the edge length of the given H3 edge.
      *
-     * @param h3Address Cell to find the edge length of.
-     * @param unit      Unit of measure to use.
-     * @return Edge length of the given cell.
+     * @param edgeAddress Edge to find the edge length of.
+     * @param unit        Unit of measure to use.
+     * @return Length of the given edge.
      */
-    public double exactEdgeLength(String h3Address, LengthUnit unit) {
-        return exactEdgeLength(stringToH3(h3Address), unit);
+    public double exactEdgeLength(String edgeAddress, LengthUnit unit) {
+        return exactEdgeLength(stringToH3(edgeAddress), unit);
     }
 
     /**
-     * Calculate the edge length of the given H3 cell.
+     * Calculate the edge length of the given H3 edge.
      *
-     * @param h3Address Cell to find the edge length of.
-     * @param unit      Unit of measure to use.
-     * @return Edge length of the given cell.
+     * @param edge Edge to find the edge length of.
+     * @param unit Unit of measure to use.
+     * @return Length of the given edge.
      */
-    public double exactEdgeLength(long h3, LengthUnit unit) {
+    public double exactEdgeLength(long edge, LengthUnit unit) {
         if (unit == LengthUnit.rads)
-            return h3Api.exactEdgeLengthRads(h3);
+            return h3Api.exactEdgeLengthRads(edge);
         else if (unit == LengthUnit.km)
-            return h3Api.exactEdgeLengthKm(h3);
+            return h3Api.exactEdgeLengthKm(edge);
         else if (unit == LengthUnit.m)
-            return h3Api.exactEdgeLengthM(h3);
+            return h3Api.exactEdgeLengthM(edge);
         else
             throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
     }

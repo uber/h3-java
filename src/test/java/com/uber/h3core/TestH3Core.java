@@ -151,25 +151,28 @@ public class TestH3Core extends BaseTestH3Core {
     @Test
     public void testExactEdgeLength() {
         for (int res = 0; res <= 15; res++) {
-            String cellAddress = h3.geoToH3Address(0, 0, res);
             long cell = h3.geoToH3(0, 0, res);
 
-            double areaAddressM = h3.exactEdgeLength(cellAddress, LengthUnit.m);
-            double areaAddressKm = h3.exactEdgeLength(cellAddress, LengthUnit.km);
-            double areaAddressRads = h3.exactEdgeLength(cellAddress, LengthUnit.rads);
-            double areaM = h3.exactEdgeLength(cell, LengthUnit.m);
-            double areaKm = h3.exactEdgeLength(cell, LengthUnit.km);
-            double areaRads = h3.exactEdgeLength(cell, LengthUnit.rads);
+            for (long edge : h3.getH3UnidirectionalEdgesFromHexagon(cell)) {
+                String edgeAddress = h3.h3ToString(edge);
 
-            // Only asserts some properties of the functions that the edge lengths
-            // should have certain relationships to each other, test isn't specific
-            // to a cell's actual values.
-            assertTrue("edge length should match expectation", areaAddressRads > 0);
-            assertEquals("rads edge length should agree", areaAddressRads, areaRads, EPSILON);
-            assertEquals("km edge length should agree", areaAddressKm, areaKm, EPSILON);
-            assertEquals("m edge length should agree", areaAddressM, areaM, EPSILON);
-            assertTrue("m length greater than km length", areaM > areaKm);
-            assertTrue("km length greater than rads length", areaKm > areaRads);
+                double areaAddressM = h3.exactEdgeLength(edgeAddress, LengthUnit.m);
+                double areaAddressKm = h3.exactEdgeLength(edgeAddress, LengthUnit.km);
+                double areaAddressRads = h3.exactEdgeLength(edgeAddress, LengthUnit.rads);
+                double areaM = h3.exactEdgeLength(edge, LengthUnit.m);
+                double areaKm = h3.exactEdgeLength(edge, LengthUnit.km);
+                double areaRads = h3.exactEdgeLength(edge, LengthUnit.rads);
+
+                // Only asserts some properties of the functions that the edge lengths
+                // should have certain relationships to each other, test isn't specific
+                // to a cell's actual values.
+                assertTrue("edge length should match expectation", areaAddressRads > 0);
+                assertEquals("rads edge length should agree", areaAddressRads, areaRads, EPSILON);
+                assertEquals("km edge length should agree", areaAddressKm, areaKm, EPSILON);
+                assertEquals("m edge length should agree", areaAddressM, areaM, EPSILON);
+                assertTrue("m length greater than km length", areaM > areaKm);
+                assertTrue("km length greater than rads length", areaKm > areaRads);
+            }
         }
     }
 
