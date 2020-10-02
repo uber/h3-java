@@ -192,6 +192,8 @@ public class TestH3Core extends BaseTestH3Core {
     public void testExactEdgeLengthInvalid() {
         // Passing in a zero should not cause a crash
         h3.exactEdgeLength(0, LengthUnit.rads);
+        // Passing in a non-edge should not cause a crash
+        h3.exactEdgeLength(h3.geoToH3(0, 0, 0), LengthUnit.km);
     }
 
     @Test(expected = IllegalArgumentException.class)
