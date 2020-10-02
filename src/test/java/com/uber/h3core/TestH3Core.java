@@ -149,6 +149,18 @@ public class TestH3Core extends BaseTestH3Core {
     }
 
     @Test
+    public void testCellAreaInvalid() {
+        // Passing in a zero should not cause a crash
+        h3.cellArea(0, AreaUnit.rads2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCellAreaInvalidUnit() {
+        long cell = h3.geoToH3(0, 0, 0);
+        h3.cellArea(cell, null);
+    }
+
+    @Test
     public void testExactEdgeLength() {
         for (int res = 0; res <= 15; res++) {
             long cell = h3.geoToH3(0, 0, res);
@@ -177,18 +189,78 @@ public class TestH3Core extends BaseTestH3Core {
     }
 
     @Test
+    public void testExactEdgeLengthInvalid() {
+        // Passing in a zero should not cause a crash
+        h3.exactEdgeLength(0, LengthUnit.rads);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testExactEdgeLengthInvalidUnit() {
+        long cell = h3.geoToH3(0, 0, 0);
+        long edge = h3.getH3UnidirectionalEdgesFromHexagon(cell).get(0);
+        h3.exactEdgeLength(edge, null);
+    }
+
+    @Test
     public void testPointDist() {
-        GeoCoord a = new GeoCoord(10, 10);
-        GeoCoord b = new GeoCoord(10, -10);
+        GeoCoord[] testA = { new GeoCoord(10, 10), new GeoCoord(0, 0), new GeoCoord(23, 23) };
+        GeoCoord[] testB = { new GeoCoord(10, -10), new GeoCoord(-10, 0),new GeoCoord(23, 23) };
+        double[] testDistanceDegrees = { 20, 10, 0 };
 
-        double distRads = h3.pointDist(a, b, LengthUnit.rads);
-        double distKm = h3.pointDist(a, b, LengthUnit.km);
-        double distM = h3.pointDist(a, b, LengthUnit.m);
+        for (int i = 0; i < testA.length; i++) {
+            GeoCoord a = testA[i];
+            GeoCoord b = testB[i];
+            double expectedRads = Math.toRadians(testDistanceDegrees[i]);
 
-        // TODO: Epsilon is unusually large in the core H3 tests
-        assertEquals("radians distance is as expected", Math.toRadians(20), distRads, EPSILON * 10000);
-        assertTrue("m distance greater than km distance", distM > distKm);
-        assertTrue("km distance greater than rads distance", distKm > distRads);
+            double distRads = h3.pointDist(a, b, LengthUnit.rads);
+            double distKm = h3.pointDist(a, b, LengthUnit.km);
+            double distM = h3.pointDist(a, b, LengthUnit.m);
+
+            // TODO: Epsilon is unusually large in the core H3 tests
+            assertEquals("radians distance is as expected", expectedRads, distRads, EPSILON * 10000);
+            if (expectedRads == 0) {
+                assertEquals("m distance is zero", 0, distM, EPSILON);
+                assertEquals("km distance is zero", 0, distKm, EPSILON);
+            } else {
+                assertTrue("m distance greater than km distance", distM > distKm);
+                assertTrue("km distance greater than rads distance", distKm > distRads);
+            }
+        }
+    }
+
+    @Test
+    public void testPointDistNaN() {
+        GeoCoord zero = new GeoCoord(0, 0);
+        GeoCoord nan = new GeoCoord(Double.NaN, Double.NaN);
+        double dist1 = h3.pointDist(nan, zero, LengthUnit.rads);
+        double dist2 = h3.pointDist(zero, nan, LengthUnit.km);
+        double dist3 = h3.pointDist(nan, nan, LengthUnit.m);
+        assertTrue("nan distance results in nan", Double.isNaN(dist1));
+        assertTrue("nan distance results in nan", Double.isNaN(dist2));
+        assertTrue("nan distance results in nan", Double.isNaN(dist3));
+    }
+
+    @Test
+    public void testPointDistPositiveInfinity() {
+        GeoCoord posInf = new GeoCoord(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        GeoCoord zero = new GeoCoord(0, 0);
+        double dist = h3.pointDist(posInf, zero, LengthUnit.m);
+        assertTrue("+Infinity distance results in NaN", Double.isNaN(dist));
+    }
+
+    @Test
+    public void testPointDistNegativeInfinity() {
+        GeoCoord negInf = new GeoCoord(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        GeoCoord zero = new GeoCoord(0, 0);
+        double dist = h3.pointDist(negInf, zero, LengthUnit.m);
+        assertTrue("-Infinity distance results in NaN", Double.isNaN(dist));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPointDistInvalid() {
+        GeoCoord a = new GeoCoord(0, 0);
+        GeoCoord b = new GeoCoord(0, 0);
+        h3.pointDist(a, b, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
