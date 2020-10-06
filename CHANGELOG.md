@@ -13,7 +13,7 @@ for the Linux x64 and Darwin x64 platforms.
     - `pointDist`
     - `exactEdgeLength`
 ## Changed
-- Updated the core library to v3.7.0. (#70)
+- Updated the core library to v3.7.1. (#70)
 
 ## [3.6.4] - 2020-06-29
 ### Changed
