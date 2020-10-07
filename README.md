@@ -56,6 +56,7 @@ H3-Java provides bindings to the H3 library, which is written in C. The built ar
 | Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
 | Windows          | x64, x86
 | Darwin (Mac OSX) | x64
+| FreeBSD          | x64
 | Android          | ARM, ARM64
 
 You may be able to build H3-Java locally if you need to use an operating system or architecture not listed above.
@@ -75,6 +76,14 @@ mvn package
 ```
 
 Additional information on how the build process works is available in the [build process documentaiton](docs/library-build.md).
+
+## Building on FreeBSD
+
+```sh
+# To install build dependencies
+sudo pkg install openjdk11 maven33 cmake
+# Ensure /usr/local/openjdk11/bin is on your path
+```
 
 ## Javadocs
 
