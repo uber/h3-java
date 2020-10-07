@@ -967,6 +967,88 @@ public class H3Core {
     }
 
     /**
+     * Calculates the area of the given H3 cell.
+     *
+     * @param h3Address Cell to find the area of.
+     * @param unit      Unit to calculate the area in.
+     * @return Cell area in the given units.
+     */
+    public double cellArea(String h3Address, AreaUnit unit) {
+        return cellArea(stringToH3(h3Address), unit);
+    }
+
+    /**
+     * Calculates the area of the given H3 cell.
+     *
+     * @param h3   Cell to find the area of.
+     * @param unit Unit to calculate the area in.
+     * @return Cell area in the given units.
+     */
+    public double cellArea(long h3, AreaUnit unit) {
+        if (unit == AreaUnit.rads2)
+            return h3Api.cellAreaRads2(h3);
+        else if (unit == AreaUnit.km2)
+            return h3Api.cellAreaKm2(h3);
+        else if (unit == AreaUnit.m2)
+            return h3Api.cellAreaM2(h3);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
+    /**
+     * Return the distance along the sphere between two points.
+     *
+     * @param a    First point
+     * @param b    Second point
+     * @param unit Unit to return the distance in.
+     * @return Distance from point <code>a</code> to point <code>b</code>
+     */
+    public double pointDist(GeoCoord a, GeoCoord b, LengthUnit unit) {
+        double lat1 = toRadians(a.lat);
+        double lng1 = toRadians(a.lng);
+        double lat2 = toRadians(b.lat);
+        double lng2 = toRadians(b.lng);
+
+        if (unit == LengthUnit.rads)
+            return h3Api.pointDistRads(lat1, lng1, lat2, lng2);
+        else if (unit == LengthUnit.km)
+            return h3Api.pointDistKm(lat1, lng1, lat2, lng2);
+        else if (unit == LengthUnit.m)
+            return h3Api.pointDistM(lat1, lng1, lat2, lng2);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
+    /**
+     * Calculate the edge length of the given H3 edge.
+     *
+     * @param edgeAddress Edge to find the edge length of.
+     * @param unit        Unit of measure to use.
+     * @return Length of the given edge.
+     */
+    public double exactEdgeLength(String edgeAddress, LengthUnit unit) {
+        return exactEdgeLength(stringToH3(edgeAddress), unit);
+    }
+
+    /**
+     * Calculate the edge length of the given H3 edge.
+     *
+     * @param edge Edge to find the edge length of.
+     * @param unit Unit of measure to use.
+     * @return Length of the given edge.
+     */
+    public double exactEdgeLength(long edge, LengthUnit unit) {
+        if (unit == LengthUnit.rads)
+            return h3Api.exactEdgeLengthRads(edge);
+        else if (unit == LengthUnit.km)
+            return h3Api.exactEdgeLengthKm(edge);
+        else if (unit == LengthUnit.m)
+            return h3Api.exactEdgeLengthM(edge);
+        else
+            throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
+    }
+
+    /**
      * Returns the average area in <code>unit</code> for indexes at resolution <code>res</code>.
      *
      * @throws IllegalArgumentException Invalid parameter value

@@ -20,6 +20,10 @@ package com.uber.h3core;
  */
 public enum AreaUnit {
     /**
+     * Square radians on the WGS84 sphere
+     */
+    rads2,
+    /**
      * Square kilometers
      */
     km2,

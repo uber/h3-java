@@ -20,6 +20,10 @@ package com.uber.h3core;
  */
 public enum LengthUnit {
     /**
+     * Radians on the WGS84 sphere
+     */
+    rads,
+    /**
      * Kilometers
      */
     km,

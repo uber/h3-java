@@ -765,6 +765,106 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_uncompact(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellAreaRads2
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaRads2(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return cellAreaRads2(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellAreaKm2
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaKm2(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return cellAreaKm2(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellAreaM2
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaM2(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return cellAreaM2(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    pointDistRads
+ * Signature: (DDDD)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistRads(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
+    jdouble lon2) {
+    GeoCoord c1 = {.lat = lat1, .lon = lon1};
+    GeoCoord c2 = {.lat = lat2, .lon = lon2};
+    return pointDistRads(&c1, &c2);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    pointDistKm
+ * Signature: (DDDD)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistKm(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
+    jdouble lon2) {
+    GeoCoord c1 = {.lat = lat1, .lon = lon1};
+    GeoCoord c2 = {.lat = lat2, .lon = lon2};
+    return pointDistKm(&c1, &c2);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    pointDistM
+ * Signature: (DDDD)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistM(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
+    jdouble lon2) {
+    GeoCoord c1 = {.lat = lat1, .lon = lon1};
+    GeoCoord c2 = {.lat = lat2, .lon = lon2};
+    return pointDistM(&c1, &c2);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    exactEdgeLengthRads
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_exactEdgeLengthRads(JNIEnv *env,
+                                                       jobject thiz, jlong h3) {
+    return exactEdgeLengthRads(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    exactEdgeLengthKm
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthKm(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return exactEdgeLengthKm(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    exactEdgeLengthM
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthM(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return exactEdgeLengthM(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    hexAreaKm2
  * Signature: (I)D
  */
