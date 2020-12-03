@@ -7,6 +7,8 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+
+## [3.7.0] - 2020-12-03
 ## Added
 - Area and haversine distance functions (#70)
     - `cellArea`
