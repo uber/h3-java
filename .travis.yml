@@ -34,13 +34,3 @@ matrix:
       script:
         - mvn clean test jacoco:report coveralls:report -Dh3.test.system=true -Dh3.additional.argLine="-Djava.library.path=./src/main/resources/linux-x64/"
         - 'if [ -n "$FOSSA_API_KEY" ]; then fossa; fi'
-    - os: linux
-      jdk: openjdk11
-    - name: "Linux without Docker"
-      os: linux
-      jdk: oraclejdk11
-      install:
-        - mvn install -DskipTests=true -B -V -Dh3.use.docker=false
-      script:
-        - mvn test -B -Dh3.use.docker=false
-    - os: osx

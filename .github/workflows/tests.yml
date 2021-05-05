@@ -30,5 +30,46 @@ jobs:
       - uses: docker-practice/actions-setup-docker@master
         if: "!startsWith(matrix.os, 'windows')"
 
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Tests
-        run: mvn clean test
+        run: mvn clean test -B -V
+
+  tests-no-docker:
+    name: Java (no Docker) ${{ matrix.java-version }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java-distribution: [adopt]
+        java-version: [11]
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Tests
+        run: |
+          mvn install -DskipTests=true -B -V -Dh3.use.docker=false
+          mvn test -B -Dh3.use.docker=false
