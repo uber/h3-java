@@ -122,8 +122,12 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
+    echo BEFORE PULL USAGE:
+    df -h
     docker pull dockcross/$image
     docker run --rm dockcross/$image > $BUILD_ROOT/dockcross
+    echo AFTER RUN USAGE:
+    df -h
     chmod +x $BUILD_ROOT/dockcross
 
     # Perform the actual build inside Docker
