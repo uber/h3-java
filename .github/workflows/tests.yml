@@ -1,0 +1,35 @@
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  tests:
+    name: Java ${{ matrix.java-version }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        java-distribution: [adopt]
+        java-version: [8, 11, 15]
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}""
+          java-version: "${{ matrix.java-version }}"
+
+      - name: Setup Docker
+        uses: docker-practice/actions-setup-docker@master
+        if: !startsWith(matrix.os, 'windows')
+
+      - name: Tests
+        run: mvn clean test
