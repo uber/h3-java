@@ -23,6 +23,7 @@
 #                 skip that step.
 # remove-images - If use-docker is true and this argument is true, Docker
 #                 cross compilation images will be removed after each step
+#                 (i.e. for disk space constrained environments like CI)
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
