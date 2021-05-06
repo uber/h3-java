@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Tests
-        run: mvn clean test -B -V -Dh3.remove.images=true
+        run: mvn "-Dh3.remove.images=true" -B -V clean test
 
   tests-no-docker:
     name: Java (no Docker) ${{ matrix.java-version }} ${{ matrix.os }}
