@@ -12,5 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO: Remove this and replace with Github Actions only
 build_script:
   - mvn clean package --batch-mode -V

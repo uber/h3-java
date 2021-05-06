@@ -70,6 +70,7 @@
 
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
+        <h3.remove.images>false</h3.remove.images>
         <!-- Used for passing additional arguments to surefire when using JaCoCo -->
         <h3.additional.argLine />
 
@@ -160,7 +161,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <version>30.0-jre</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -206,7 +207,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
+                <version>0.8.7</version>
                 <executions>
                     <execution>
                         <id>jacoco-instrument</id>
@@ -242,6 +243,7 @@
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>
                                 <argument>${h3.use.docker}</argument>
+                                <argument>${h3.remove.images}</argument>
                             </arguments>
                         </configuration>
                     </execution>

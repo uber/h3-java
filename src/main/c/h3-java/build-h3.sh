@@ -15,12 +15,15 @@
 # limitations under the License.
 #
 
-# Arguments: [git-remote] [git-ref] [use-docker]
-# git-remote - The git remote to pull from. An existing cloned repository
-#              will not be deleted if a new remote is specified.
-# git-ref    - Specific git ref of H3 to build.
-# use-docker - "true" to perform cross compilation via Docker, "false" to
-#              skip that step.
+# Arguments: [git-remote] [git-ref] [use-docker] [remove-images]
+# git-remote    - The git remote to pull from. An existing cloned repository
+#                 will not be deleted if a new remote is specified.
+# git-ref       - Specific git ref of H3 to build.
+# use-docker    - "true" to perform cross compilation via Docker, "false" to
+#                 skip that step.
+# remove-images - If use-docker is true and this argument is true, Docker
+#                 cross compilation images will be removed after each step
+#                 (i.e. for disk space constrained environments like CI)
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
@@ -33,6 +36,7 @@ set -ex
 GIT_REMOTE=$1
 GIT_REVISION=$2
 USE_DOCKER=$3
+REMOVE_IMAGES=$4
 
 echo Downloading H3 from "$GIT_REMOTE"
 
@@ -136,4 +140,11 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     if [ -e $BUILD_ROOT/lib/libh3-java.so ]; then cp $BUILD_ROOT/lib/libh3-java.so $OUTPUT_ROOT ; fi
     if [ -e $BUILD_ROOT/lib/libh3-java.dylib ]; then cp $BUILD_ROOT/lib/libh3-java.dylib $OUTPUT_ROOT ; fi
     if [ -e $BUILD_ROOT/lib/libh3-java.dll ]; then cp $BUILD_ROOT/lib/libh3-java.dll $OUTPUT_ROOT ; fi
+
+    if $REMOVE_IMAGES; then
+        docker rmi dockcross/$image
+        rm $BUILD_ROOT/dockcross
+    fi
+    echo Current disk usage:
+    df -h
 done
