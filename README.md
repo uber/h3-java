@@ -2,7 +2,7 @@
 
 # H3-Java
 
-[![tests](https://github.com/uber/h3/workflows/tests/badge.svg)](https://github.com/uber/h3/actions)
+[![tests](https://github.com/uber/h3-java/workflows/tests/badge.svg)](https://github.com/uber/h3-java/actions)
 [![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.uber/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.uber/h3)
