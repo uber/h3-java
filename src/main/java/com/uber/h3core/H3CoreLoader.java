@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 /**
  * Extracts the native H3 core library to the local filesystem and loads it.
@@ -28,6 +29,12 @@ public final class H3CoreLoader {
     private H3CoreLoader() {
         // Prevent instantiation
     }
+
+    /**
+     * Locale used when handling system strings that need to be mapped to resource names.
+     * English is used since that locale was used when building the library.
+     */
+    static final Locale H3_CORE_LOCALE = Locale.ENGLISH;
 
     // Supported H3 architectures
     static final String ARCH_X64 = "x64";
@@ -167,7 +174,7 @@ public final class H3CoreLoader {
          * How this operating system's name is rendered when extracting the native library.
          */
         public String getDirName() {
-            return name().toLowerCase();
+            return name().toLowerCase(H3_CORE_LOCALE);
         }
     }
 
@@ -180,11 +187,11 @@ public final class H3CoreLoader {
     static final OperatingSystem detectOs(String javaVendor, String osName) {
         // Detecting Android using the properties from:
         // https://developer.android.com/reference/java/lang/System.html
-        if (javaVendor.toLowerCase().contains("android")) {
+        if (javaVendor.toLowerCase(H3_CORE_LOCALE).contains("android")) {
             return OperatingSystem.ANDROID;
         }
 
-        String javaOs = osName.toLowerCase();
+        String javaOs = osName.toLowerCase(H3_CORE_LOCALE);
         if (javaOs.contains("mac")) {
             return OperatingSystem.DARWIN;
         } else if (javaOs.contains("win")) {
