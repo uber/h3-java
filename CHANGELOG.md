@@ -8,6 +8,12 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
 
+## Fixed
+- Fixes for non-English locales (#80)
+
+## Changed
+- Updated the core library to v3.7.2. (#81)
+
 ## [3.7.0] - 2020-12-03
 ## Added
 - Area and haversine distance functions (#70)
