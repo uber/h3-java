@@ -12,7 +12,7 @@ for the Linux x64 and Darwin x64 platforms.
 - Fixes for non-English locales (#80)
 
 ## Changed
-- Updated the core library to v3.7.2.
+- Updated the core library to v3.7.2. (#81)
 
 ## [3.7.0] - 2020-12-03
 ## Added
