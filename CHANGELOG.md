@@ -8,6 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
 
+## [3.7.1] - 2021-08-18
 ## Fixed
 - Fixes for non-English locales (#80)
 
