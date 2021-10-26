@@ -98,6 +98,7 @@ case "$(uname -sm)" in
     "Linux i786")    LIBRARY_DIR=linux-x86 ;;
     "Linux i886")    LIBRARY_DIR=linux-x86 ;;
     "Darwin x86_64") LIBRARY_DIR=darwin-x64 ;;
+    "Darwin arm64")  LIBRARY_DIR=darwin-arm64 ;;
     "FreeBSD amd64") LIBRARY_DIR=freebsd-x64 ;;
     # TODO: Detect others
     *)               LIBRARY_DIR="" ;;
