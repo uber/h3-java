@@ -7,6 +7,8 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+## Fixed
+- Fixes local build script to support Apple M1
 
 ## [3.7.1] - 2021-08-18
 ## Fixed
