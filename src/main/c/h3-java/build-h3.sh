@@ -156,6 +156,8 @@ if ! command -v docker; then
     exit 0
 fi
 
+dockcross_tag="20211126-f096312"
+
 # linux-armv6 excluded because of build failure
 for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-mipsel linux-mips linux-s390x \
     linux-ppc64le linux-x64 linux-x86 windows-x64 windows-x86; do
@@ -163,8 +165,8 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
-    docker pull dockcross/$image
-    docker run --rm dockcross/$image > $BUILD_ROOT/dockcross
+    docker pull dockcross/$image:$dockcross_tag
+    docker run --rm dockcross/$image:$dockcross_tag > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
 
     # Perform the actual build inside Docker
