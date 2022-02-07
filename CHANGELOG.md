@@ -7,23 +7,25 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
-## Fixed
-- Fixes local build script to support Apple M1
+### Added
+- Added Apple M1 build (#89)
+### Fixed
+- Fixes local build script to support Apple M1 (#86)
 
 ## [3.7.1] - 2021-08-18
-## Fixed
+### Fixed
 - Fixes for non-English locales (#80)
 
-## Changed
+### Changed
 - Updated the core library to v3.7.2. (#81)
 
 ## [3.7.0] - 2020-12-03
-## Added
+### Added
 - Area and haversine distance functions (#70)
     - `cellArea`
     - `pointDist`
     - `exactEdgeLength`
-## Changed
+### Changed
 - Updated the core library to v3.7.1. (#70)
 
 ## [3.6.4] - 2020-06-29
