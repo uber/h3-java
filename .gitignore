@@ -26,3 +26,5 @@ pom.xml.next
 release.properties
 
 .vscode/
+
+.DS_Store
