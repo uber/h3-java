@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Uber Technologies, Inc.
+ * Copyright 2017-2019, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,29 @@
     }
 
 /**
+ * Triggers an H3Exception
+ */
+void ThrowH3Exception(JNIEnv *env, H3Error err) {
+    jclass h3e =
+        (**env).FindClass(env, "com/uber/h3core/exceptions/H3Exception");
+
+    if (h3e != NULL) {
+        jmethodID h3eConstructor =
+            (**env).GetMethodID(env, h3e, "<init>", "(I)V");
+
+        if (h3eConstructor != NULL) {
+            jthrowable h3eInstance =
+                (jthrowable)((**env).NewObject(env, h3e, h3eConstructor, err));
+
+            if (h3eInstance != NULL) {
+                // TODO: Is ExceptionClear needed here?
+                (**env).Throw(env, h3eInstance);
+            }
+        }
+    }
+}
+
+/**
  * Triggers an OutOfMemoryError.
  *
  * Calling function should return the Java control immediately after calling
@@ -65,18 +88,18 @@ void ThrowOutOfMemoryError(JNIEnv *env) {
  *
  * Returns 0 on success.
  */
-int CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
-                     jdoubleArray holeVerts, GeoPolygon *polygon) {
+H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
+                         jdoubleArray holeVerts, GeoPolygon *polygon) {
     // This is the number of doubles, so convert to number of verts
-    polygon->geofence.numVerts = (**env).GetArrayLength(env, verts) / 2;
-    polygon->geofence.verts = (**env).GetDoubleArrayElements(env, verts, 0);
-    if (polygon->geofence.verts != NULL) {
+    polygon->geoloop.numVerts = (**env).GetArrayLength(env, verts) / 2;
+    polygon->geoloop.verts = (**env).GetDoubleArrayElements(env, verts, 0);
+    if (polygon->geoloop.verts != NULL) {
         polygon->numHoles = (**env).GetArrayLength(env, holeSizes);
 
         polygon->holes = calloc(sizeof(GeoPolygon), polygon->numHoles);
         if (polygon->holes == NULL) {
             ThrowOutOfMemoryError(env);
-            return 2;
+            return E_MEMORY;
         }
 
         jint *holeSizesElements =
@@ -84,7 +107,7 @@ int CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
         if (holeSizesElements == NULL) {
             free(polygon->holes);
             ThrowOutOfMemoryError(env);
-            return 3;
+            return E_MEMORY;
         }
 
         jdouble *holeVertsElements =
@@ -94,7 +117,7 @@ int CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
             (**env).ReleaseIntArrayElements(env, holeSizes, holeSizesElements,
                                             0);
             ThrowOutOfMemoryError(env);
-            return 4;
+            return E_MEMORY;
         }
 
         size_t offset = 0;
@@ -110,17 +133,17 @@ int CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
         // pointed to by polygon->holes[*].verts. It will be released in
         // DestroyGeoPolygon.
 
-        return 0;
+        return E_SUCCESS;
     } else {
         ThrowOutOfMemoryError(env);
-        return 1;
+        return E_MEMORY;
     }
 }
 
 void DestroyGeoPolygon(JNIEnv *env, jdoubleArray verts,
                        jintArray holeSizesElements, jdoubleArray holeVerts,
                        GeoPolygon *polygon) {
-    (**env).ReleaseDoubleArrayElements(env, verts, polygon->geofence.verts, 0);
+    (**env).ReleaseDoubleArrayElements(env, verts, polygon->geoloop.verts, 0);
 
     if (polygon->numHoles > 0) {
         // The hole verts were pinned only once, so we don't need to iterate.
@@ -133,54 +156,63 @@ void DestroyGeoPolygon(JNIEnv *env, jdoubleArray verts,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3IsValid
+ * Method:    isValidCell
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_h3IsValid(
+JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidCell(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return h3IsValid(h3);
+    return isValidCell(h3);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3GetBaseCell
+ * Method:    getBaseCellNumber
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3GetBaseCell(
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_getBaseCellNumber(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return h3GetBaseCell(h3);
+    return getBaseCellNumber(h3);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3IsPentagon
+ * Method:    isPentagon
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_h3IsPentagon(
+JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isPentagon(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return h3IsPentagon(h3);
+    return isPentagon(h3);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    geoToH3
+ * Method:    latLngToCell
  * Signature: (DDI)J
  */
-JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_geoToH3(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_latLngToCell(
     JNIEnv *env, jobject thiz, jdouble lat, jdouble lng, jint res) {
-    GeoCoord geo = {lat, lng};
-    return geoToH3(&geo, res);
+    LatLng geo = {lat, lng};
+    H3Index out;
+    H3Error err = latLngToCell(&geo, res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3ToGeo
+ * Method:    cellToLatLng
  * Signature: (J[D)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeo(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToLatLng(
     JNIEnv *env, jobject thiz, jlong h3, jdoubleArray verts) {
-    GeoCoord coord;
-    h3ToGeo(h3, &coord);
+    LatLng coord;
+    H3Error err = cellToLatLng(h3, &coord);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return;
+    }
 
     jsize sz = (**env).GetArrayLength(env, verts);
     jdouble *coordsElements = (**env).GetDoubleArrayElements(env, verts, 0);
@@ -189,7 +221,7 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeo(
         // if sz is too small, we will fail to write all the elements
         if (sz >= 2) {
             coordsElements[0] = coord.lat;
-            coordsElements[1] = coord.lon;
+            coordsElements[1] = coord.lng;
         }
 
         // 0 is the mode
@@ -203,13 +235,17 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeo(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3ToGeoBoundary
+ * Method:    cellToBoundary
  * Signature: (J[D)I
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeoBoundary(
+JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_cellToBoundary(
     JNIEnv *env, jobject thiz, jlong h3, jdoubleArray verts) {
-    GeoBoundary boundary;
-    h3ToGeoBoundary(h3, &boundary);
+    CellBoundary boundary;
+    H3Error err = cellToBoundary(h3, &boundary);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return -1;
+    }
 
     jsize sz = (**env).GetArrayLength(env, verts);
     jdouble *vertsElements = (**env).GetDoubleArrayElements(env, verts, 0);
@@ -218,7 +254,7 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeoBoundary(
         // if sz is too small, we will fail to write all the elements
         for (jsize i = 0; i < sz && i < boundary.numVerts * 2; i += 2) {
             vertsElements[i] = boundary.verts[i / 2].lat;
-            vertsElements[i + 1] = boundary.verts[i / 2].lon;
+            vertsElements[i + 1] = boundary.verts[i / 2].lng;
         }
 
         (**env).ReleaseDoubleArrayElements(env, verts, vertsElements, 0);
@@ -232,28 +268,36 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3ToGeoBoundary(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    maxKringSize
- * Signature: (I)I
+ * Method:    maxGridDiskSize
+ * Signature: (I)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxKringSize(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_maxGridDiskSize(
     JNIEnv *env, jobject thiz, jint k) {
-    return maxKringSize(k);
+    jlong sz;
+    H3Error err = maxGridDiskSize(k, &sz);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return sz;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    kRing
+ * Method:    gridDisk
  * Signature: (JI[J)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_kRing(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridDisk(
     JNIEnv *env, jobject thiz, jlong h3, jint k, jlongArray results) {
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        kRing(h3, k, resultsElements);
+        H3Error err = gridDisk(h3, k, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }
@@ -261,12 +305,13 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_kRing(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    kRingDistances
+ * Method:    gridDiskDistances
  * Signature: (JI[J[I)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_kRingDistances(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridDiskDistances(
     JNIEnv *env, jobject thiz, jlong h3, jint k, jlongArray results,
     jintArray distances) {
+    H3Error err = E_SUCCESS;
     bool isOom = false;
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
     if (resultsElements != NULL) {
@@ -274,7 +319,7 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_kRingDistances(
             (**env).GetIntArrayElements(env, distances, 0);
         if (distancesElements != NULL) {
             // if sz is too small, bad things will happen
-            kRingDistances(h3, k, resultsElements, distancesElements);
+            err = gridDiskDistances(h3, k, resultsElements, distancesElements);
 
             (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
         } else {
@@ -287,73 +332,83 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_kRingDistances(
 
     if (isOom) {
         ThrowOutOfMemoryError(env);
+    } else if (err) {
+        ThrowH3Exception(env, err);
     }
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    hexRange
- * Signature: (JI[J)I
+ * Method:    gridDiskUnsafe
+ * Signature: (JI[J)V
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_hexRange(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridDiskUnsafe(
     JNIEnv *env, jobject thiz, jlong h3, jint k, jlongArray results) {
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        int ret = hexRange(h3, k, resultsElements);
+        H3Error err = gridDiskUnsafe(h3, k, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
-        return ret;
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
-        return -1;
     }
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    hexRing
- * Signature: (JI[J)I
+ * Method:    gridRingUnsafe
+ * Signature: (JI[J)V
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_hexRing(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridRingUnsafe(
     JNIEnv *env, jobject thiz, jlong h3, jint k, jlongArray results) {
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        int ret = hexRing(h3, k, resultsElements);
+        H3Error err = gridRingUnsafe(h3, k, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
-        return ret;
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
-        return -1;
     }
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3Distance
- * Signature: (JJ)I
+ * Method:    gridDistance
+ * Signature: (JJ)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3Distance(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_gridDistance(
     JNIEnv *env, jobject thiz, jlong a, jlong b) {
-    return h3Distance(a, b);
+    jlong distance;
+    H3Error err = gridDistance(a, b, &distance);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return distance;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
  * Method:    experimentalH3ToLocalIj
- * Signature: (JJ[I)I
+ * Signature: (JJ[I)V
  */
-JNIEXPORT int JNICALL
+JNIEXPORT void JNICALL
 Java_com_uber_h3core_NativeMethods_experimentalH3ToLocalIj(
     JNIEnv *env, jobject thiz, jlong origin, jlong h3, jintArray coords) {
     CoordIJ ij = {0};
-    int result = experimentalH3ToLocalIj(origin, h3, &ij);
-    if (result != 0) {
-        return result;
+    H3Error err = experimentalH3ToLocalIj(origin, h3, &ij);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return;
     }
 
     jsize sz = (**env).GetArrayLength(env, coords);
@@ -370,10 +425,8 @@ Java_com_uber_h3core_NativeMethods_experimentalH3ToLocalIj(
         // reference
         // https://developer.android.com/training/articles/perf-jni.html
         (**env).ReleaseIntArrayElements(env, coords, coordsElements, 0);
-        return 0;
     } else {
         ThrowOutOfMemoryError(env);
-        return -1;
     }
 }
 
@@ -389,74 +442,84 @@ Java_com_uber_h3core_NativeMethods_experimentalLocalIjToH3(JNIEnv *env,
                                                            jint j) {
     CoordIJ ij = {.i = i, .j = j};
     H3Index index;
-    int result = experimentalLocalIjToH3(origin, &ij, &index);
-    if (result != 0) {
-        // Exact error is not preserved, just that the operation failed.
-        return 0;
+    H3Error err = experimentalLocalIjToH3(origin, &ij, &index);
+    if (err) {
+        ThrowH3Exception(env, err);
     }
     return index;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3LineSize
- * Signature: (JJ)I
+ * Method:    gridPathCellsSize
+ * Signature: (JJ)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3LineSize(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_gridPathCellsSize(
     JNIEnv *env, jobject thiz, jlong start, jlong end) {
-    return h3LineSize(start, end);
+    jlong sz;
+    H3Error err = gridPathCellsSize(start, end, &sz);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return sz;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3Line
- * Signature: (JJ[J)I
+ * Method:    gridPathCells
+ * Signature: (JJ[J)V
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_h3Line(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridPathCells(
     JNIEnv *env, jobject thiz, jlong start, jlong end, jlongArray results) {
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        int status = h3Line(start, end, resultsElements);
+        H3Error err = gridPathCells(start, end, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
-        return status;
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
-        return 1;
     }
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    maxPolyfillSize
- * Signature: ([D[I[DI)I
+ * Method:    maxPolygonToCellsSize
+ * Signature: ([D[I[DII)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxPolyfillSize(
+JNIEXPORT jlong JNICALL
+Java_com_uber_h3core_NativeMethods_maxPolygonToCellsSize(
     JNIEnv *env, jobject thiz, jdoubleArray verts, jintArray holeSizes,
-    jdoubleArray holeVerts, jint res) {
+    jdoubleArray holeVerts, jint res, jint flags) {
     GeoPolygon polygon;
     if (CreateGeoPolygon(env, verts, holeSizes, holeVerts, &polygon)) {
         return -1;
     }
 
-    int numHexagons = maxPolyfillSize(&polygon, res);
+    jlong numHexagons;
+    H3Error err = maxPolygonToCellsSize(&polygon, res, flags, &numHexagons);
 
     DestroyGeoPolygon(env, verts, holeSizes, holeVerts, &polygon);
 
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
     return numHexagons;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getRes0Indexes
+ * Method:    getRes0Cells
  * Signature: ([J)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Cells(
     JNIEnv *env, jobject thiz, jlongArray results) {
     jsize size = (**env).GetArrayLength(env, results);
-    if (size < res0IndexCount()) {
+    if (size < res0CellCount()) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -464,9 +527,12 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
-        getRes0Indexes(resultsElements);
+        H3Error err = getRes0Cells(resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }
@@ -474,13 +540,13 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getRes0Indexes(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getPentagonIndexes
+ * Method:    getPentagons
  * Signature: (I[J)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagonIndexes(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagons(
     JNIEnv *env, jobject thiz, jint res, jlongArray results) {
     jsize size = (**env).GetArrayLength(env, results);
-    if (size < pentagonIndexCount()) {
+    if (size < pentagonCount()) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -488,9 +554,12 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagonIndexes(
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
-        getPentagonIndexes(res, resultsElements);
+        H3Error err = getPentagons(res, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }
@@ -498,12 +567,12 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getPentagonIndexes(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    polyfill
- * Signature: ([D[I[DI[J)V
+ * Method:    polygonToCells
+ * Signature: ([D[I[DII[J)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polyfill(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polygonToCells(
     JNIEnv *env, jobject thiz, jdoubleArray verts, jintArray holeSizes,
-    jdoubleArray holeVerts, jint res, jlongArray results) {
+    jdoubleArray holeVerts, jint res, jint flags, jlongArray results) {
     GeoPolygon polygon;
     if (CreateGeoPolygon(env, verts, holeSizes, holeVerts, &polygon)) {
         return;
@@ -511,9 +580,10 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polyfill(
 
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
+    H3Error err;
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        polyfill(&polygon, res, resultsElements);
+        err = polygonToCells(&polygon, res, flags, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
@@ -522,11 +592,15 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polyfill(
     }
 
     DestroyGeoPolygon(env, verts, holeSizes, holeVerts, &polygon);
+
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
 }
 
 /**
  * Converts the given polygon to managed objects
- * (ArrayList<ArrayList<ArrayList<GeoCoord>>>)
+ * (ArrayList<ArrayList<ArrayList<LatLng>>>)
  *
  * May return early if allocation or finding required classes or methods fails.
  */
@@ -538,9 +612,8 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
         ThrowOutOfMemoryError(env);
         return;
     }
-    jclass geoCoordClass =
-        (**env).FindClass(env, "com/uber/h3core/util/GeoCoord");
-    if (geoCoordClass == NULL) {
+    jclass latLngClass = (**env).FindClass(env, "com/uber/h3core/util/LatLng");
+    if (latLngClass == NULL) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -556,9 +629,9 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
         ThrowOutOfMemoryError(env);
         return;
     }
-    jmethodID geoCoordConstructor =
-        (**env).GetMethodID(env, geoCoordClass, "<init>", "(DD)V");
-    if (geoCoordConstructor == NULL) {
+    jmethodID latLngConstructor =
+        (**env).GetMethodID(env, latLngClass, "<init>", "(DD)V");
+    if (latLngConstructor == NULL) {
         ThrowOutOfMemoryError(env);
         return;
     }
@@ -582,11 +655,11 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
                     return;
                 }
 
-                LinkedGeoCoord *coord = currentLoop->first;
+                LinkedLatLng *coord = currentLoop->first;
                 while (coord != NULL) {
-                    jobject v = (**env).NewObject(
-                        env, geoCoordClass, geoCoordConstructor,
-                        coord->vertex.lat, coord->vertex.lon);
+                    jobject v =
+                        (**env).NewObject(env, latLngClass, latLngConstructor,
+                                          coord->vertex.lat, coord->vertex.lng);
                     if (v == NULL) {
                         return;
                     }
@@ -614,27 +687,34 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3SetToLinkedGeo
+ * Method:    cellsToLinkedMultiPolygon
  * Signature: ([JLjava/util/ArrayList;)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3SetToLinkedGeo(
-    JNIEnv *env, jobject thiz, jlongArray h3, jobject results) {
+JNIEXPORT void JNICALL
+Java_com_uber_h3core_NativeMethods_cellsToLinkedMultiPolygon(JNIEnv *env,
+                                                             jobject thiz,
+                                                             jlongArray h3,
+                                                             jobject results) {
     LinkedGeoPolygon polygon;
 
     jsize numH3 = (**env).GetArrayLength(env, h3);
     jlong *h3Elements = (**env).GetLongArrayElements(env, h3, 0);
 
     if (h3Elements != NULL) {
-        h3SetToLinkedGeo(h3Elements, numH3, &polygon);
+        H3Error err = cellsToLinkedMultiPolygon(h3Elements, numH3, &polygon);
 
         // Parse the output now
         LinkedGeoPolygon *currentPolygon = &polygon;
 
         ConvertLinkedGeoPolygonToManaged(env, currentPolygon, results);
 
-        destroyLinkedPolygon(&polygon);
+        destroyLinkedMultiPolygon(&polygon);
 
         (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
+
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }
@@ -642,28 +722,36 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3SetToLinkedGeo(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    maxH3ToChildrenSize
- * Signature: (JI)I
+ * Method:    cellToChildrenSize
+ * Signature: (JI)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxH3ToChildrenSize(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToChildrenSize(
     JNIEnv *env, jobject thiz, jlong h3, jint childRes) {
-    return maxH3ToChildrenSize(h3, childRes);
+    jlong sz;
+    H3Error err = cellToChildrenSize(h3, childRes, &sz);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return sz;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3ToChildren
+ * Method:    cellToChildren
  * Signature: (JI[J)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToChildren(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToChildren(
     JNIEnv *env, jobject thiz, jlong h3, jint childRes, jlongArray results) {
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
-        h3ToChildren(h3, childRes, resultsElements);
+        H3Error err = cellToChildren(h3, childRes, resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }
@@ -671,22 +759,26 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3ToChildren(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3ToCenterChild
+ * Method:    cellToCenterChild
  * Signature: (JI)J
  */
-JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_h3ToCenterChild(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToCenterChild(
     JNIEnv *env, jobject thiz, jlong h3, jint childRes) {
-    return h3ToCenterChild(h3, childRes);
+    // TODO
+    H3Index child = cellToCenterChild(h3, childRes);
+    if (child == 0) {
+        ThrowH3Exception(env, E_FAILED);
+    }
+    return child;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    compact
- * Signature: ([J[J)I
+ * Method:    compactCells
+ * Signature: ([J[J)V
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_compact(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_compactCells(
     JNIEnv *env, jobject thiz, jlongArray h3, jlongArray results) {
-    jint ret = 0;
     jlong *h3Elements = (**env).GetLongArrayElements(env, h3, 0);
 
     if (h3Elements != NULL) {
@@ -694,10 +786,14 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_compact(
 
         if (resultsElements != NULL) {
             jsize numHexes = (**env).GetArrayLength(env, h3);
-            ret = compact(h3Elements, resultsElements, numHexes);
+            H3Error err = compactCells(h3Elements, resultsElements, numHexes);
 
             (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
             (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+
+            if (err) {
+                ThrowH3Exception(env, err);
+            }
         } else {
             (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
             ThrowOutOfMemoryError(env);
@@ -705,26 +801,28 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_compact(
     } else {
         ThrowOutOfMemoryError(env);
     }
-
-    return ret;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    maxUncompactSize
- * Signature: ([JI)I
+ * Method:    uncompactCellsSize
+ * Signature: ([JI)J
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxUncompactSize(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_uncompactCellsSize(
     JNIEnv *env, jobject thiz, jlongArray h3, jint res) {
     jsize numHexes = (**env).GetArrayLength(env, h3);
     jlong *h3Elements = (**env).GetLongArrayElements(env, h3, 0);
 
     if (h3Elements != NULL) {
-        jint ret = maxUncompactSize(h3Elements, numHexes, res);
+        jlong sz;
+        H3Error err = uncompactCellsSize(h3Elements, numHexes, res, &sz);
 
         (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
 
-        return ret;
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
+        return sz;
     } else {
         ThrowOutOfMemoryError(env);
         return 0;
@@ -733,12 +831,11 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxUncompactSize(
 
 /*
  * Class:     com_uber_h3_NativeMethods
- * Method:    uncompact
- * Signature: ([JI[J)I
+ * Method:    uncompactCells
+ * Signature: ([JI[J)V
  */
-JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_uncompact(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_uncompactCells(
     JNIEnv *env, jobject thiz, jlongArray h3, jint res, jlongArray results) {
-    jint ret = 0;
     jsize numHexes = (**env).GetArrayLength(env, h3);
     jlong *h3Elements = (**env).GetLongArrayElements(env, h3, 0);
 
@@ -747,11 +844,15 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_uncompact(
         jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
         if (resultsElements != NULL) {
-            ret =
-                uncompact(h3Elements, numHexes, resultsElements, maxHexes, res);
+            H3Error err = uncompactCells(h3Elements, numHexes, resultsElements,
+                                         maxHexes, res);
 
             (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
             (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+
+            if (err) {
+                ThrowH3Exception(env, err);
+            }
         } else {
             (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
             ThrowOutOfMemoryError(env);
@@ -759,8 +860,6 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_uncompact(
     } else {
         ThrowOutOfMemoryError(env);
     }
-
-    return ret;
 }
 
 /*
@@ -770,7 +869,12 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_uncompact(
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaRads2(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return cellAreaRads2(h3);
+    jdouble out;
+    H3Error err = cellAreaRads2(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
@@ -780,7 +884,12 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaRads2(
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaKm2(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return cellAreaKm2(h3);
+    jdouble out;
+    H3Error err = cellAreaKm2(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
@@ -790,46 +899,51 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaKm2(
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaM2(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return cellAreaM2(h3);
+    jdouble out;
+    H3Error err = cellAreaM2(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    pointDistRads
+ * Method:    distanceRads
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistRads(
-    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
-    jdouble lon2) {
-    GeoCoord c1 = {.lat = lat1, .lon = lon1};
-    GeoCoord c2 = {.lat = lat2, .lon = lon2};
-    return pointDistRads(&c1, &c2);
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceRads(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
+    jdouble lng2) {
+    LatLng c1 = {.lat = lat1, .lng = lng1};
+    LatLng c2 = {.lat = lat2, .lng = lng2};
+    return distanceRads(&c1, &c2);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    pointDistKm
+ * Method:    distanceKm
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistKm(
-    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
-    jdouble lon2) {
-    GeoCoord c1 = {.lat = lat1, .lon = lon1};
-    GeoCoord c2 = {.lat = lat2, .lon = lon2};
-    return pointDistKm(&c1, &c2);
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceKm(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
+    jdouble lng2) {
+    LatLng c1 = {.lat = lat1, .lng = lng1};
+    LatLng c2 = {.lat = lat2, .lng = lng2};
+    return distanceKm(&c1, &c2);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    pointDistM
+ * Method:    distanceM
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistM(
-    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lon1, jdouble lat2,
-    jdouble lon2) {
-    GeoCoord c1 = {.lat = lat1, .lon = lon1};
-    GeoCoord c2 = {.lat = lat2, .lon = lon2};
-    return pointDistM(&c1, &c2);
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceM(
+    JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
+    jdouble lng2) {
+    LatLng c1 = {.lat = lat1, .lng = lng1};
+    LatLng c2 = {.lat = lat2, .lng = lng2};
+    return distanceM(&c1, &c2);
 }
 
 /*
@@ -840,7 +954,12 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_pointDistM(
 JNIEXPORT jdouble JNICALL
 Java_com_uber_h3core_NativeMethods_exactEdgeLengthRads(JNIEnv *env,
                                                        jobject thiz, jlong h3) {
-    return exactEdgeLengthRads(h3);
+    jdouble out;
+    H3Error err = exactEdgeLengthRads(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
@@ -850,7 +969,12 @@ Java_com_uber_h3core_NativeMethods_exactEdgeLengthRads(JNIEnv *env,
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthKm(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return exactEdgeLengthKm(h3);
+    jdouble out;
+    H3Error err = exactEdgeLengthKm(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
@@ -860,124 +984,175 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthKm(
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthM(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return exactEdgeLengthM(h3);
+    jdouble out;
+    H3Error err = exactEdgeLengthM(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    hexAreaKm2
+ * Method:    getHexagonAreaAvgKm2
  * Signature: (I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_hexAreaKm2(
-    JNIEnv *env, jobject thiz, jint res) {
-    return hexAreaKm2(res);
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_getHexagonAreaAvgKm2(JNIEnv *env,
+                                                        jobject thiz,
+                                                        jint res) {
+    jdouble out;
+    H3Error err = getHexagonAreaAvgKm2(res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    hexAreaM2
+ * Method:    getHexagonAreaAvgM2
  * Signature: (I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_hexAreaM2(
-    JNIEnv *env, jobject thiz, jint res) {
-    return hexAreaM2(res);
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_getHexagonAreaAvgM2(JNIEnv *env,
+                                                       jobject thiz, jint res) {
+    jdouble out;
+    H3Error err = getHexagonAreaAvgM2(res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    edgeLengthKm
+ * Method:    getHexagonEdgeLengthAvgKm
  * Signature: (I)D
  */
 JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthKm(
     JNIEnv *env, jobject thiz, jint res) {
-    return edgeLengthKm(res);
+    jdouble out;
+    H3Error err = getHexagonEdgeLengthAvgKm(res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    edgeLengthM
+ * Method:    getHexagonEdgeLengthAvgM
  * Signature: (I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthM(
-    JNIEnv *env, jobject thiz, jint res) {
-    return edgeLengthM(res);
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_getHexagonEdgeLengthAvgM(JNIEnv *env,
+                                                            jobject thiz,
+                                                            jint res) {
+    jdouble out;
+    H3Error err = getHexagonEdgeLengthAvgM(res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    numHexagons
+ * Method:    getNumCells
  * Signature: (I)J
  */
-JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_numHexagons(
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_getNumCells(
     JNIEnv *env, jobject thiz, jint res) {
-    return numHexagons(res);
+    jlong out;
+    H3Error err = getNumCells(res, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3IndexesAreNeighbors
+ * Method:    areNeighborCells
  * Signature: (JJ)Z
  */
-JNIEXPORT jboolean JNICALL
-Java_com_uber_h3core_NativeMethods_h3IndexesAreNeighbors(JNIEnv *env,
-                                                         jobject thiz, jlong a,
-                                                         jlong b) {
-    return h3IndexesAreNeighbors(a, b);
+JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_areNeighborCells(
+    JNIEnv *env, jobject thiz, jlong a, jlong b) {
+    int out;
+    H3Error err = areNeighborCells(a, b, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getH3UnidirectionalEdge
+ * Method:    cellsToDirectedEdge
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL
-Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdge(JNIEnv *env,
-                                                           jobject thiz,
-                                                           jlong a, jlong b) {
-    return getH3UnidirectionalEdge(a, b);
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellsToDirectedEdge(
+    JNIEnv *env, jobject thiz, jlong a, jlong b) {
+    H3Index out;
+    H3Error err = cellsToDirectedEdge(a, b, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3UnidirectionalEdgeIsValid
+ * Method:    isValidDirectedEdge
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_uber_h3core_NativeMethods_h3UnidirectionalEdgeIsValid(JNIEnv *env,
-                                                               jobject thiz,
-                                                               jlong h3) {
-    return h3UnidirectionalEdgeIsValid(h3);
+Java_com_uber_h3core_NativeMethods_isValidDirectedEdge(JNIEnv *env,
+                                                       jobject thiz, jlong h3) {
+    return isValidDirectedEdge(h3);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getOriginH3IndexFromUnidirectionalEdge
+ * Method:    getDirectedEdgeOrigin
  * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_uber_h3core_NativeMethods_getOriginH3IndexFromUnidirectionalEdge(
-    JNIEnv *env, jobject thiz, jlong h3) {
-    return getOriginH3IndexFromUnidirectionalEdge(h3);
+Java_com_uber_h3core_NativeMethods_getDirectedEdgeOrigin(JNIEnv *env,
+                                                         jobject thiz,
+                                                         jlong h3) {
+    H3Index out;
+    H3Error err = getDirectedEdgeOrigin(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getDestinationH3IndexFromUnidirectionalEdge
+ * Method:    getDirectedEdgeDestination
  * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_uber_h3core_NativeMethods_getDestinationH3IndexFromUnidirectionalEdge(
-    JNIEnv *env, jobject thiz, jlong h3) {
-    return getDestinationH3IndexFromUnidirectionalEdge(h3);
+Java_com_uber_h3core_NativeMethods_getDirectedEdgeDestination(JNIEnv *env,
+                                                              jobject thiz,
+                                                              jlong h3) {
+    H3Index out;
+    H3Error err = getDirectedEdgeDestination(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getH3IndexesFromUnidirectionalEdge
+ * Method:    directedEdgeToCells
  * Signature: (J[J)V
  */
-JNIEXPORT void JNICALL
-Java_com_uber_h3core_NativeMethods_getH3IndexesFromUnidirectionalEdge(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_directedEdgeToCells(
     JNIEnv *env, jobject thiz, jlong h3, jlongArray results) {
     jsize sz = (**env).GetArrayLength(env, results);
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
@@ -985,7 +1160,12 @@ Java_com_uber_h3core_NativeMethods_getH3IndexesFromUnidirectionalEdge(
     if (resultsElements != NULL) {
         // if sz is too small, we will fail to write all the elements
         if (sz >= 2) {
-            getH3IndexesFromUnidirectionalEdge(h3, resultsElements);
+            H3Error err = directedEdgeToCells(h3, resultsElements);
+            if (err) {
+                ThrowH3Exception(env, err);
+            }
+        } else {
+            ThrowOutOfMemoryError(env);
         }
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
@@ -996,11 +1176,10 @@ Java_com_uber_h3core_NativeMethods_getH3IndexesFromUnidirectionalEdge(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getH3UnidirectionalEdgesFromHexagon
+ * Method:    originToDirectedEdges
  * Signature: (J[J)V
  */
-JNIEXPORT void JNICALL
-Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgesFromHexagon(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_originToDirectedEdges(
     JNIEnv *env, jobject thiz, jlong h3, jlongArray results) {
     jsize sz = (**env).GetArrayLength(env, results);
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
@@ -1008,7 +1187,12 @@ Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgesFromHexagon(
     if (resultsElements != NULL) {
         // if sz is too small, we will fail to write all the elements
         if (sz >= MAX_HEX_EDGES) {
-            getH3UnidirectionalEdgesFromHexagon(h3, resultsElements);
+            H3Error err = originToDirectedEdges(h3, resultsElements);
+            if (err) {
+                ThrowH3Exception(env, err);
+            }
+        } else {
+            ThrowOutOfMemoryError(env);
         }
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
@@ -1019,14 +1203,20 @@ Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgesFromHexagon(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    getH3UnidirectionalEdgeBoundary
+ * Method:    directedEdgeToBoundary
  * Signature: (J[D)I
  */
 JNIEXPORT jint JNICALL
-Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgeBoundary(
-    JNIEnv *env, jobject thiz, jlong h3, jdoubleArray verts) {
-    GeoBoundary boundary;
-    getH3UnidirectionalEdgeBoundary(h3, &boundary);
+Java_com_uber_h3core_NativeMethods_directedEdgeToBoundary(JNIEnv *env,
+                                                          jobject thiz,
+                                                          jlong h3,
+                                                          jdoubleArray verts) {
+    CellBoundary boundary;
+    H3Error err = directedEdgeToBoundary(h3, &boundary);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return -1;
+    }
 
     jsize sz = (**env).GetArrayLength(env, verts);
     jdouble *vertsElements = (**env).GetDoubleArrayElements(env, verts, 0);
@@ -1035,7 +1225,7 @@ Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgeBoundary(
         // if sz is too small, we will fail to write all the elements
         for (jsize i = 0; i < sz && i < boundary.numVerts * 2; i += 2) {
             vertsElements[i] = boundary.verts[i / 2].lat;
-            vertsElements[i + 1] = boundary.verts[i / 2].lon;
+            vertsElements[i + 1] = boundary.verts[i / 2].lng;
         }
 
         (**env).ReleaseDoubleArrayElements(env, verts, vertsElements, 0);
@@ -1054,23 +1244,33 @@ Java_com_uber_h3core_NativeMethods_getH3UnidirectionalEdgeBoundary(
  */
 JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxFaceCount(
     JNIEnv *env, jobject thiz, jlong h3) {
-    return maxFaceCount(h3);
+    int out;
+    H3Error err = maxFaceCount(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    h3GetFaces
+ * Method:    getIcosahedronFaces
  * Signature: (J[I)V
  */
-JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_h3GetFaces(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getIcosahedronFaces(
     JNIEnv *env, jobject thiz, jlong h3, jintArray faces) {
-    jsize sz = (**env).GetArrayLength(env, faces);
+    // TODO: Unused
+    // jsize sz = (**env).GetArrayLength(env, faces);
     jint *facesElements = (**env).GetIntArrayElements(env, faces, 0);
 
     if (facesElements != NULL) {
-        h3GetFaces(h3, facesElements);
+        H3Error err = getIcosahedronFaces(h3, facesElements);
 
         (**env).ReleaseIntArrayElements(env, faces, facesElements, 0);
+
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
     } else {
         ThrowOutOfMemoryError(env);
     }

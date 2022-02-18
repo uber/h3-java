@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
  */
 package com.uber.h3core.benchmarking;
 
-import com.google.common.collect.ImmutableList;
 import com.uber.h3core.H3Core;
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.exceptions.PentagonEncounteredException;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -29,29 +28,39 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Benchmarks <code>h3SetToMultiPolygon</code>.
+ * Benchmarks <code>kRing</code> and related functions.
  */
-public class H3SetToMultiPolygonBenchmark {
+public class GridDiskBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<List<GeoCoord>>> benchmarkH3SetToMultiPolygon2() {
-        return BenchmarkState.h3Core.h3SetToMultiPolygon(BenchmarkState.list2, false);
+    public List<Long> benchmarkHexRingsCore() {
+        return BenchmarkState.h3Core.gridDisk(0x8928308280fffffL, BenchmarkState.k);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<List<GeoCoord>>> benchmarkH3SetToMultiPolygon20() {
-        return BenchmarkState.h3Core.h3SetToMultiPolygon(BenchmarkState.list20, true);
+    public List<List<Long>> benchmarkHexRangeCore() throws PentagonEncounteredException {
+        return BenchmarkState.h3Core.gridDiskDistances(0x8928308280fffffL, BenchmarkState.k);
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    public List<Long> benchmarkHexRingsCoreNearPentagon() {
+        return BenchmarkState.h3Core.gridDisk(0x821d5ffffffffffL, BenchmarkState.k);
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    public List<List<Long>> benchmarkHexRangeCoreNearPentagon() throws PentagonEncounteredException {
+        return BenchmarkState.h3Core.gridDiskDistances(0x821d5ffffffffffL, BenchmarkState.k);
     }
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        static List<Long> list2 = ImmutableList.of(0x89283082837ffffL, 0x89283082833ffffL);
-        static List<Long> list20;
+        static int k = 10;
 
         static H3Core h3Core;
 
@@ -61,19 +70,14 @@ public class H3SetToMultiPolygonBenchmark {
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
-
-            list20 = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                list20.add(h3Core.geoToH3(i, 0, 10));
-            }
         }
     }
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(H3SetToMultiPolygonBenchmark.class.getSimpleName())
-                .forks(1)
-                .build();
+            .include(GridDiskBenchmark.class.getSimpleName())
+            .forks(1)
+            .build();
 
         new Runner(opt).run();
     }

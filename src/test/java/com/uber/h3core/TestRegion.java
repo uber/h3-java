@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uber Technologies, Inc.
+ * Copyright 2019, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.uber.h3core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.util.LatLng;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,14 +33,14 @@ import static org.junit.Assert.assertTrue;
 public class TestRegion extends BaseTestH3Core {
     @Test
     public void testPolyfill() {
-        List<Long> hexagons = h3.polyfill(
+        List<Long> hexagons = h3.polygonToCells(
                 ImmutableList.of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
+                        new LatLng(37.813318999983238, -122.4089866999972145),
+                        new LatLng(37.7866302000007224, -122.3805436999997056),
+                        new LatLng(37.7198061999978478, -122.3544736999993603),
+                        new LatLng(37.7076131999975672, -122.5123436999983966),
+                        new LatLng(37.7835871999971715, -122.5247187000021967),
+                        new LatLng(37.8151571999998453, -122.4798767000009008)
                 ), null, 9
         );
 
@@ -49,14 +49,14 @@ public class TestRegion extends BaseTestH3Core {
 
     @Test
     public void testPolyfillAddresses() {
-        List<String> hexagons = h3.polyfillAddress(
-                ImmutableList.<GeoCoord>of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
+        List<String> hexagons = h3.polygonToCellAddresses(
+                ImmutableList.<LatLng>of(
+                        new LatLng(37.813318999983238, -122.4089866999972145),
+                        new LatLng(37.7866302000007224, -122.3805436999997056),
+                        new LatLng(37.7198061999978478, -122.3544736999993603),
+                        new LatLng(37.7076131999975672, -122.5123436999983966),
+                        new LatLng(37.7835871999971715, -122.5247187000021967),
+                        new LatLng(37.8151571999998453, -122.4798767000009008)
                 ), null, 9
         );
 
@@ -65,20 +65,20 @@ public class TestRegion extends BaseTestH3Core {
 
     @Test
     public void testPolyfillWithHole() {
-        List<Long> hexagons = h3.polyfill(
-                ImmutableList.<GeoCoord>of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
+        List<Long> hexagons = h3.polygonToCells(
+                ImmutableList.<LatLng>of(
+                        new LatLng(37.813318999983238, -122.4089866999972145),
+                        new LatLng(37.7866302000007224, -122.3805436999997056),
+                        new LatLng(37.7198061999978478, -122.3544736999993603),
+                        new LatLng(37.7076131999975672, -122.5123436999983966),
+                        new LatLng(37.7835871999971715, -122.5247187000021967),
+                        new LatLng(37.8151571999998453, -122.4798767000009008)
                 ),
-                ImmutableList.<List<GeoCoord>>of(
-                        ImmutableList.<GeoCoord>of(
-                                new GeoCoord(37.7869802, -122.4471197),
-                                new GeoCoord(37.7664102, -122.4590777),
-                                new GeoCoord(37.7710682, -122.4137097)
+                ImmutableList.<List<LatLng>>of(
+                        ImmutableList.<LatLng>of(
+                                new LatLng(37.7869802, -122.4471197),
+                                new LatLng(37.7664102, -122.4590777),
+                                new LatLng(37.7710682, -122.4137097)
                         )
                 ),
                 9
@@ -89,25 +89,25 @@ public class TestRegion extends BaseTestH3Core {
 
     @Test
     public void testPolyfillWithTwoHoles() {
-        List<Long> hexagons = h3.polyfill(
-                ImmutableList.<GeoCoord>of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
+        List<Long> hexagons = h3.polygonToCells(
+                ImmutableList.<LatLng>of(
+                        new LatLng(37.813318999983238, -122.4089866999972145),
+                        new LatLng(37.7866302000007224, -122.3805436999997056),
+                        new LatLng(37.7198061999978478, -122.3544736999993603),
+                        new LatLng(37.7076131999975672, -122.5123436999983966),
+                        new LatLng(37.7835871999971715, -122.5247187000021967),
+                        new LatLng(37.8151571999998453, -122.4798767000009008)
                 ),
-                ImmutableList.<List<GeoCoord>>of(
-                        ImmutableList.<GeoCoord>of(
-                                new GeoCoord(37.7869802, -122.4471197),
-                                new GeoCoord(37.7664102, -122.4590777),
-                                new GeoCoord(37.7710682, -122.4137097)
+                ImmutableList.<List<LatLng>>of(
+                        ImmutableList.<LatLng>of(
+                                new LatLng(37.7869802, -122.4471197),
+                                new LatLng(37.7664102, -122.4590777),
+                                new LatLng(37.7710682, -122.4137097)
                         ),
-                        ImmutableList.<GeoCoord>of(
-                                new GeoCoord(37.747976, -122.490025),
-                                new GeoCoord(37.731550, -122.503758),
-                                new GeoCoord(37.725440, -122.452603)
+                        ImmutableList.<LatLng>of(
+                                new LatLng(37.747976, -122.490025),
+                                new LatLng(37.731550, -122.503758),
+                                new LatLng(37.725440, -122.452603)
                         )
                 ),
                 9
@@ -118,31 +118,31 @@ public class TestRegion extends BaseTestH3Core {
 
     @Test
     public void testPolyfillKnownHoles() {
-        List<Long> inputHexagons = h3.kRing(0x85283083fffffffL, 2);
+        List<Long> inputHexagons = h3.gridDisk(0x85283083fffffffL, 2);
         inputHexagons.remove(0x8528308ffffffffL);
         inputHexagons.remove(0x85283097fffffffL);
         inputHexagons.remove(0x8528309bfffffffL);
 
-        List<List<GeoCoord>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
+        List<List<LatLng>> geo = h3.cellsToLinkedMultiPolygon(inputHexagons, true).get(0);
 
-        List<GeoCoord> outline = geo.remove(0); // geo is now holes
+        List<LatLng> outline = geo.remove(0); // geo is now holes
 
-        List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
+        List<Long> outputHexagons = h3.polygonToCells(outline, geo, 5);
 
         assertEquals(ImmutableSet.copyOf(inputHexagons), ImmutableSet.copyOf(outputHexagons));
     }
 
     @Test
     public void testH3SetToMultiPolygonEmpty() {
-        assertEquals(0, h3.h3SetToMultiPolygon(new ArrayList<Long>(), false).size());
+        assertEquals(0, h3.cellsToLinkedMultiPolygon(new ArrayList<Long>(), false).size());
     }
 
     @Test
     public void testH3SetToMultiPolygonSingle() {
         long testIndex = 0x89283082837ffffL;
 
-        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), true);
+        List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex), true);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -164,8 +164,8 @@ public class TestRegion extends BaseTestH3Core {
     public void testH3SetToMultiPolygonSingleNonGeoJson() {
         long testIndex = 0x89283082837ffffL;
 
-        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), false);
+        List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex), false);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -188,11 +188,11 @@ public class TestRegion extends BaseTestH3Core {
         long testIndex = 0x89283082837ffffL;
         long testIndex2 = 0x89283082833ffffL;
 
-        List<GeoCoord> actualBounds = h3.h3ToGeoBoundary(testIndex);
-        List<GeoCoord> actualBounds2 = h3.h3ToGeoBoundary(testIndex2);
+        List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
+        List<LatLng> actualBounds2 = h3.cellToBoundary(testIndex2);
 
         // Note this is different than the h3core-js bindings, in that it uses GeoJSON (possible bug)
-        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         assertEquals(1, multiBounds.size());
         assertEquals(1, multiBounds.get(0).size());
@@ -225,7 +225,7 @@ public class TestRegion extends BaseTestH3Core {
         long testIndex = 0x89283082837ffffL;
         long testIndex2 = 0x8928308280fffffL;
 
-        List<List<List<GeoCoord>>> multiBounds = h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         assertEquals(2, multiBounds.size());
         assertEquals(1, multiBounds.get(0).size());
@@ -237,7 +237,7 @@ public class TestRegion extends BaseTestH3Core {
     @Test
     public void testH3SetToMultiPolygonHole() {
         // Six hexagons in a ring around a hole
-        List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(ImmutableList.of(
+        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToLinkedMultiPolygon(ImmutableList.of(
                 "892830828c7ffff", "892830828d7ffff", "8928308289bffff",
                 "89283082813ffff", "8928308288fffff", "89283082883ffff"
         ), false);
@@ -254,10 +254,10 @@ public class TestRegion extends BaseTestH3Core {
 
         List<String> addresses = new ArrayList<>(numHexes);
         for (int i = 0; i < numHexes; i++) {
-            addresses.add(h3.geoToH3Address(0, i * 0.01, 15));
+            addresses.add(h3.latLngToCellAddress(0, i * 0.01, 15));
         }
 
-        List<List<List<GeoCoord>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
+        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToLinkedMultiPolygon(addresses, false);
 
         assertEquals(numHexes, multiBounds.size());
         for (int i = 0; i < multiBounds.size(); i++) {

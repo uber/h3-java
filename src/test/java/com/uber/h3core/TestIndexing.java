@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uber Technologies, Inc.
+ * Copyright 2019, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.exceptions.H3Exception;
+import com.uber.h3core.util.LatLng;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -30,87 +31,77 @@ import static org.junit.Assert.assertNotEquals;
 public class TestIndexing extends BaseTestH3Core {
     @Test
     public void testGeoToH3() {
-        assertEquals(h3.geoToH3(67.194013596, 191.598258018, 5), 22758474429497343L | (1L << 59L));
+        assertEquals(h3.latLngToCell(67.194013596, 191.598258018, 5), 22758474429497343L | (1L << 59L));
     }
 
     @Test
     public void testH3ToGeo() {
-        GeoCoord coords = h3.h3ToGeo(22758474429497343L | (1L << 59L));
+        LatLng coords = h3.cellToLatLng(22758474429497343L | (1L << 59L));
         assertEquals(coords.lat, 67.15092686397713, EPSILON);
         assertEquals(coords.lng, 191.6091114190303 - 360.0, EPSILON);
 
-        GeoCoord coords2 = h3.h3ToGeo(Long.toHexString(22758474429497343L | (1L << 59L)));
+        LatLng coords2 = h3.cellToLatLng(Long.toHexString(22758474429497343L | (1L << 59L)));
         assertEquals(coords, coords2);
     }
 
     @Test
     public void testH3ToGeoBoundary() {
-        List<GeoCoord> boundary = h3.h3ToGeoBoundary(22758474429497343L | (1L << 59L));
-        List<GeoCoord> actualBoundary = new ArrayList<>();
-        actualBoundary.add(new GeoCoord(67.224749856, 191.476993415 - 360.0));
-        actualBoundary.add(new GeoCoord(67.140938355, 191.373085667 - 360.0));
-        actualBoundary.add(new GeoCoord(67.067252558, 191.505086715 - 360.0));
-        actualBoundary.add(new GeoCoord(67.077062918, 191.740304069 - 360.0));
-        actualBoundary.add(new GeoCoord(67.160561948, 191.845198829 - 360.0));
-        actualBoundary.add(new GeoCoord(67.234563187, 191.713897218 - 360.0));
+        List<LatLng> boundary = h3.cellToBoundary(22758474429497343L | (1L << 59L));
+        List<LatLng> actualBoundary = new ArrayList<>();
+        actualBoundary.add(new LatLng(67.224749856, 191.476993415 - 360.0));
+        actualBoundary.add(new LatLng(67.140938355, 191.373085667 - 360.0));
+        actualBoundary.add(new LatLng(67.067252558, 191.505086715 - 360.0));
+        actualBoundary.add(new LatLng(67.077062918, 191.740304069 - 360.0));
+        actualBoundary.add(new LatLng(67.160561948, 191.845198829 - 360.0));
+        actualBoundary.add(new LatLng(67.234563187, 191.713897218 - 360.0));
 
         for (int i = 0; i < 6; i++) {
             assertEquals(boundary.get(i).lat, actualBoundary.get(i).lat, EPSILON);
             assertEquals(boundary.get(i).lng, actualBoundary.get(i).lng, EPSILON);
         }
 
-        List<GeoCoord> boundary2 = h3.h3ToGeoBoundary(Long.toHexString(22758474429497343L | (1L << 59L)));
+        List<LatLng> boundary2 = h3.cellToBoundary(Long.toHexString(22758474429497343L | (1L << 59L)));
         assertEquals(boundary, boundary2);
     }
 
     @Test
     public void testHostileInput() {
-        assertNotEquals(0, h3.geoToH3(-987654321, 987654321, 5));
-        assertNotEquals(0, h3.geoToH3(987654321, -987654321, 5));
+        assertNotEquals(0, h3.latLngToCell(-987654321, 987654321, 5));
+        assertNotEquals(0, h3.latLngToCell(987654321, -987654321, 5));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3NaN() {
-        h3.geoToH3(Double.NaN, Double.NaN, 5);
+        h3.latLngToCell(Double.NaN, Double.NaN, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3PositiveInfinity() {
-        h3.geoToH3(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 5);
+        h3.latLngToCell(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileGeoToH3NegativeInfinity() {
-        h3.geoToH3(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 5);
+        h3.latLngToCell(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileInputNegativeRes() {
-        h3.geoToH3(0, 0, -1);
+        h3.latLngToCell(0, 0, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHostileInputLargeRes() {
-        h3.geoToH3(0, 0, 1000);
+        h3.latLngToCell(0, 0, 1000);
     }
 
-    @Test
+    @Test(expected = H3Exception.class)
     public void testHostileInputLatLng() {
-        try {
-            // Don't crash
-            h3.geoToH3(1e45, 1e45, 0);
-        } catch (IllegalArgumentException e) {
-            // Acceptable result
-        }
+        h3.latLngToCell(1e45, 1e45, 0);
     }
 
-    @Test
+    @Test(expected = H3Exception.class)
     public void testHostileInputMaximum() {
-        try {
-            // Don't crash
-            h3.geoToH3(Double.MAX_VALUE, Double.MAX_VALUE, 0);
-        } catch (IllegalArgumentException e) {
-            // Acceptable result
-        }
+        h3.latLngToCell(Double.MAX_VALUE, Double.MAX_VALUE, 0);
     }
 }

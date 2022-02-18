@@ -97,7 +97,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [3.0.3] - 2018-05-22
 ### Breaking Changes
-- Replaced Vector2D with GeoCoord.
+- Replaced Vector2D with LatLng.
 - Removed the geoJsonOrder parameter from polyfill functions.
 
 ## [3.0.2] - 2018-05-08

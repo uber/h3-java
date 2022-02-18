@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ import static org.junit.Assert.assertTrue;
 /**
  *
  */
-public class TestGeoCoord {
+public class TestLatLng {
     @Test
     public void test() {
-        GeoCoord v1 = new GeoCoord(0, 1);
-        GeoCoord v2 = new GeoCoord(1, 0);
-        GeoCoord v3 = new GeoCoord(0, 1);
+        LatLng v1 = new LatLng(0, 1);
+        LatLng v2 = new LatLng(1, 0);
+        LatLng v3 = new LatLng(0, 1);
 
         assertEquals(0, v1.lat, TestH3Core.EPSILON);
         assertEquals(1, v1.lng, TestH3Core.EPSILON);
@@ -52,7 +52,7 @@ public class TestGeoCoord {
 
     @Test
     public void testToString() {
-        GeoCoord v = new GeoCoord(123.456, 456.789);
+        LatLng v = new LatLng(123.456, 456.789);
 
         String toString = v.toString();
         assertTrue(toString.contains("lat=123.456"));

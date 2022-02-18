@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.util.LatLng;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,9 +46,9 @@ public class TestNativeMethods {
         final AtomicInteger counter = new AtomicInteger(0);
 
         try {
-            nativeMethods.h3SetToLinkedGeo(new long[]{0x8928308280fffffL}, new ArrayList<List<List<GeoCoord>>>() {
+            nativeMethods.cellsToLinkedMultiPolygon(new long[]{0x8928308280fffffL}, new ArrayList<List<List<LatLng>>>() {
                 @Override
-                public boolean add(List<List<GeoCoord>> lists) {
+                public boolean add(List<List<LatLng>> lists) {
                     throw new RuntimeException("crashed#" + counter.getAndIncrement());
                 }
             });
@@ -61,11 +61,11 @@ public class TestNativeMethods {
 
     @Test(expected = OutOfMemoryError.class)
     public void getRes0IndexesTooSmall() {
-        nativeMethods.getRes0Indexes(new long[1]);
+        nativeMethods.getRes0Cells(new long[1]);
     }
 
     @Test(expected = OutOfMemoryError.class)
     public void getPentagonIndexes() {
-        nativeMethods.getPentagonIndexes(1, new long[1]);
+        nativeMethods.getPentagons(1, new long[1]);
     }
 }

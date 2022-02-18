@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Uber Technologies, Inc.
+ * Copyright 2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,6 @@ public class TestH3CoreSystemInstance {
     public void test() {
         final H3Core h3 = H3Core.newSystemInstance();
         assertNotNull(h3);
-        assertEquals("84194adffffffff", h3.geoToH3Address(51.5008796, -0.1253643, 4));
+        assertEquals("84194adffffffff", h3.latLngToCell(51.5008796, -0.1253643, 4));
     }
 }

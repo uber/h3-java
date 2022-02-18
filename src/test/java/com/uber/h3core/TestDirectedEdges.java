@@ -15,56 +15,55 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.exceptions.H3Exception;
+import com.uber.h3core.util.LatLng;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for unidirectional edge functions.
  */
-public class TestUnidirectionalEdges extends BaseTestH3Core {
+public class TestDirectedEdges extends BaseTestH3Core {
     @Test
     public void testUnidirectionalEdges() {
         String start = "891ea6d6533ffff";
         String adjacent = "891ea6d65afffff";
         String notAdjacent = "891ea6992dbffff";
 
-        assertTrue(h3.h3IndexesAreNeighbors(start, adjacent));
-        assertFalse(h3.h3IndexesAreNeighbors(start, notAdjacent));
+        assertTrue(h3.areNeighborCells(start, adjacent));
+        assertFalse(h3.areNeighborCells(start, notAdjacent));
         // Indexes are not considered to neighbor themselves
-        assertFalse(h3.h3IndexesAreNeighbors(start, start));
+        assertFalse(h3.areNeighborCells(start, start));
 
-        String edge = h3.getH3UnidirectionalEdge(start, adjacent);
+        String edge = h3.cellsToDirectedEdge(start, adjacent);
 
-        assertTrue(h3.h3UnidirectionalEdgeIsValid(edge));
-        assertFalse(h3.h3UnidirectionalEdgeIsValid(start));
+        assertTrue(h3.isValidDirectedEdge(edge));
+        assertFalse(h3.isValidDirectedEdge(start));
 
-        assertEquals(start, h3.getOriginH3IndexFromUnidirectionalEdge(edge));
-        assertEquals(adjacent, h3.getDestinationH3IndexFromUnidirectionalEdge(edge));
+        assertEquals(start, h3.getDirectedEdgeOrigin(edge));
+        assertEquals(adjacent, h3.getDirectedEdgeDestination(edge));
 
-        List<String> components = h3.getH3IndexesFromUnidirectionalEdge(edge);
+        List<String> components = h3.directedEdgeToCells(edge);
         assertEquals(2, components.size());
         assertEquals(start, components.get(0));
         assertEquals(adjacent, components.get(1));
 
-        Collection<String> edges = h3.getH3UnidirectionalEdgesFromHexagon(start);
+        Collection<String> edges = h3.originToDirectedEdges(start);
         assertEquals(6, edges.size());
         assertTrue(edges.contains(edge));
 
-        List<GeoCoord> boundary = h3.getH3UnidirectionalEdgeBoundary(edge);
+        List<LatLng> boundary = h3.directedEdgeToBoundary(edge);
         assertEquals(2, boundary.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testUnidirectionalEdgesNotNeighbors() {
-        h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");
+        h3.cellsToDirectedEdge("891ea6d6533ffff", "891ea6992dbffff");
     }
 }

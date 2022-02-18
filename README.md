@@ -37,13 +37,13 @@ double lat = 37.775938728915946;
 double lng = -122.41795063018799;
 int res = 9;
 
-String hexAddr = h3.geoToH3Address(lat, lng, res);
+String hexAddr = h3.latLngToCellAddress(lat, lng, res);
 ```
 
 Decode a hexagon address into coordinates:
 
 ```java
-List<GeoCoord> geoCoords = h3.h3ToGeoBoundary(hexAddr);
+List<LatLng> LatLngs = h3.cellToGeoBoundary(hexAddr);
 ```
 
 ## Supported Operating Systems

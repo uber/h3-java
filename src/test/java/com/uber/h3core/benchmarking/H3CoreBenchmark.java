@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package com.uber.h3core.benchmarking;
 
 import com.uber.h3core.H3Core;
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.util.LatLng;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -43,19 +43,19 @@ public class H3CoreBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public long benchmarkGeoToHex() {
-        return BenchmarkState.h3.geoToH3(37.775938728915946, -122.41795063018799, 5);
+        return BenchmarkState.h3.latLngToCell(37.775938728915946, -122.41795063018799, 5);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public GeoCoord benchmarkGetCenterCoordinates() {
-        return BenchmarkState.h3.h3ToGeo("85283083fffffff");
+    public LatLng benchmarkGetCenterCoordinates() {
+        return BenchmarkState.h3.cellToLatLng("85283083fffffff");
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<GeoCoord> benchmarkGetBoundary() {
-        return BenchmarkState.h3.h3ToGeoBoundary("85283083fffffff");
+    public List<LatLng> benchmarkGetBoundary() {
+        return BenchmarkState.h3.cellToBoundary("85283083fffffff");
     }
 
     @State(Scope.Benchmark)

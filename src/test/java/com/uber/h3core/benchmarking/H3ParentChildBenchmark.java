@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,32 +35,32 @@ import java.util.List;
 public class H3ParentChildBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public int benchmarkH3GetResolution() {
-        return BenchmarkState.h3Core.h3GetResolution(BenchmarkState.someHexagon);
+    public int benchmarkGetResolution() {
+        return BenchmarkState.h3Core.getResolution(BenchmarkState.someHexagon);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public long benchmarkH3ToParent() {
-        return BenchmarkState.h3Core.h3ToParent(BenchmarkState.someHexagon, 5);
+    public long benchmarkcellToParent() {
+        return BenchmarkState.h3Core.cellToParent(BenchmarkState.someHexagon, 5);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkH3ToChildrenRes10() {
-        return BenchmarkState.h3Core.h3ToChildren(BenchmarkState.someHexagon, 10);
+    public List<Long> benchmarkCellToChildrenRes10() {
+        return BenchmarkState.h3Core.cellToChildren(BenchmarkState.someHexagon, 10);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkH3ToChildrenRes11() {
-        return BenchmarkState.h3Core.h3ToChildren(BenchmarkState.someHexagon, 11);
+    public List<Long> benchmarkCellToChildrenRes11() {
+        return BenchmarkState.h3Core.cellToChildren(BenchmarkState.someHexagon, 11);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkH3ToChildrenPentagon() {
-        return BenchmarkState.h3Core.h3ToChildren(BenchmarkState.somePentagon, 2);
+    public List<Long> benchmarkCellToChildrenPentagon() {
+        return BenchmarkState.h3Core.cellToChildren(BenchmarkState.somePentagon, 2);
     }
 
     @State(Scope.Benchmark)
