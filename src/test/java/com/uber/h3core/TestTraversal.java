@@ -285,7 +285,7 @@ public class TestTraversal extends BaseTestH3Core {
         h3.gridDistance("81283ffffffffff", "811dbffffffffff");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testExperimentalH3ToLocalIjNoncomparable() {
         h3.experimentalH3ToLocalIj("832830fffffffff", "822837fffffffff");
     }

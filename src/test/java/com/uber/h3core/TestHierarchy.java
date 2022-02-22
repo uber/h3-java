@@ -16,6 +16,8 @@
 package com.uber.h3core;
 
 import com.google.common.collect.ImmutableList;
+import com.uber.h3core.exceptions.H3Exception;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -159,7 +161,7 @@ public class TestHierarchy extends BaseTestH3Core {
         assertEquals("Center child skipping a resolution is correct", 0x8b28308280c0fffL, h3.cellToCenterChild(0x8928308280fffffL, 11));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testH3ToCenterChildParent() {
         h3.cellToCenterChild("8928308280fffff", 8);
     }

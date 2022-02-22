@@ -1030,8 +1030,10 @@ Java_com_uber_h3core_NativeMethods_getHexagonAreaAvgM2(JNIEnv *env,
  * Method:    getHexagonEdgeLengthAvgKm
  * Signature: (I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthKm(
-    JNIEnv *env, jobject thiz, jint res) {
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_getHexagonEdgeLengthAvgKm(JNIEnv *env,
+                                                             jobject thiz,
+                                                             jint res) {
     jdouble out;
     H3Error err = getHexagonEdgeLengthAvgKm(res, &out);
     if (err) {

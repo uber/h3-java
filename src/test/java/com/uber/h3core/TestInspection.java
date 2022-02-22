@@ -94,8 +94,9 @@ public class TestInspection extends BaseTestH3Core {
         assertH3Faces(5, h3.getIcosahedronFaces(0x804dfffffffffffL));
     }
 
-    @Test(expected = H3Exception.class)
+    @Test
     public void testH3GetFacesInvalid() {
+        // Don't crash
         h3.getIcosahedronFaces(0);
     }
 

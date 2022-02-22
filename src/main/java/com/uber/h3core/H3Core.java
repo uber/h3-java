@@ -637,16 +637,16 @@ public class H3Core {
     /**
      * Create polygons from a set of contiguous indexes
      */
-    public List<List<List<LatLng>>> cellAddressesToLinkedMultiPolygon(Collection<String> h3Addresses, boolean geoJson) {
+    public List<List<List<LatLng>>> cellAddressesToMultiPolygon(Collection<String> h3Addresses, boolean geoJson) {
         List<Long> indices = stringToH3List(h3Addresses);
 
-        return cellsToLinkedMultiPolygon(indices, geoJson);
+        return cellsToMultiPolygon(indices, geoJson);
     }
 
     /**
      * Create polygons from a set of contiguous indexes
      */
-    public List<List<List<LatLng>>> cellsToLinkedMultiPolygon(Collection<Long> h3, boolean geoJson) {
+    public List<List<List<LatLng>>> cellsToMultiPolygon(Collection<Long> h3, boolean geoJson) {
         long[] h3AsArray = collectionToLongArray(h3);
 
         ArrayList<List<List<LatLng>>> result = new ArrayList<>();

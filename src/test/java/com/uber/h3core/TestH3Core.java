@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collection;
 
+import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
 
 import static org.junit.Assert.assertEquals;
@@ -188,12 +189,15 @@ public class TestH3Core extends BaseTestH3Core {
         }
     }
 
-    @Test
+    @Test(expected = H3Exception.class)
     public void testExactEdgeLengthInvalid() {
-        // Passing in a zero should not cause a crash
-        h3.exactEdgeLength(0, LengthUnit.rads);
         // Passing in a non-edge should not cause a crash
         h3.exactEdgeLength(h3.latLngToCell(0, 0, 0), LengthUnit.km);
+    }
+
+    @Test(expected = H3Exception.class)
+    public void testExactEdgeLengthInvalidEdge() {
+        h3.exactEdgeLength(0, LengthUnit.rads);
     }
 
     @Test(expected = IllegalArgumentException.class)

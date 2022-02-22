@@ -123,7 +123,7 @@ public class TestRegion extends BaseTestH3Core {
         inputHexagons.remove(0x85283097fffffffL);
         inputHexagons.remove(0x8528309bfffffffL);
 
-        List<List<LatLng>> geo = h3.cellsToLinkedMultiPolygon(inputHexagons, true).get(0);
+        List<List<LatLng>> geo = h3.cellsToMultiPolygon(inputHexagons, true).get(0);
 
         List<LatLng> outline = geo.remove(0); // geo is now holes
 
@@ -134,7 +134,7 @@ public class TestRegion extends BaseTestH3Core {
 
     @Test
     public void testH3SetToMultiPolygonEmpty() {
-        assertEquals(0, h3.cellsToLinkedMultiPolygon(new ArrayList<Long>(), false).size());
+        assertEquals(0, h3.cellsToMultiPolygon(new ArrayList<Long>(), false).size());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TestRegion extends BaseTestH3Core {
         long testIndex = 0x89283082837ffffL;
 
         List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
-        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex), true);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToMultiPolygon(ImmutableList.of(testIndex), true);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -165,7 +165,7 @@ public class TestRegion extends BaseTestH3Core {
         long testIndex = 0x89283082837ffffL;
 
         List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
-        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex), false);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToMultiPolygon(ImmutableList.of(testIndex), false);
 
         // This is tricky, because output in an order starting from any vertex
         // would also be correct, but that's difficult to assert and there's
@@ -192,7 +192,7 @@ public class TestRegion extends BaseTestH3Core {
         List<LatLng> actualBounds2 = h3.cellToBoundary(testIndex2);
 
         // Note this is different than the h3core-js bindings, in that it uses GeoJSON (possible bug)
-        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         assertEquals(1, multiBounds.size());
         assertEquals(1, multiBounds.get(0).size());
@@ -225,7 +225,7 @@ public class TestRegion extends BaseTestH3Core {
         long testIndex = 0x89283082837ffffL;
         long testIndex2 = 0x8928308280fffffL;
 
-        List<List<List<LatLng>>> multiBounds = h3.cellsToLinkedMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        List<List<List<LatLng>>> multiBounds = h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
         assertEquals(2, multiBounds.size());
         assertEquals(1, multiBounds.get(0).size());
@@ -237,7 +237,7 @@ public class TestRegion extends BaseTestH3Core {
     @Test
     public void testH3SetToMultiPolygonHole() {
         // Six hexagons in a ring around a hole
-        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToLinkedMultiPolygon(ImmutableList.of(
+        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToMultiPolygon(ImmutableList.of(
                 "892830828c7ffff", "892830828d7ffff", "8928308289bffff",
                 "89283082813ffff", "8928308288fffff", "89283082883ffff"
         ), false);
@@ -257,7 +257,7 @@ public class TestRegion extends BaseTestH3Core {
             addresses.add(h3.latLngToCellAddress(0, i * 0.01, 15));
         }
 
-        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToLinkedMultiPolygon(addresses, false);
+        List<List<List<LatLng>>> multiBounds = h3.cellAddressesToMultiPolygon(addresses, false);
 
         assertEquals(numHexes, multiBounds.size());
         for (int i = 0; i < multiBounds.size(); i++) {

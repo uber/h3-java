@@ -70,17 +70,17 @@ public class TestIndexing extends BaseTestH3Core {
         assertNotEquals(0, h3.latLngToCell(987654321, -987654321, 5));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testHostileGeoToH3NaN() {
         h3.latLngToCell(Double.NaN, Double.NaN, 5);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testHostileGeoToH3PositiveInfinity() {
         h3.latLngToCell(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 5);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = H3Exception.class)
     public void testHostileGeoToH3NegativeInfinity() {
         h3.latLngToCell(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 5);
     }
@@ -95,12 +95,13 @@ public class TestIndexing extends BaseTestH3Core {
         h3.latLngToCell(0, 0, 1000);
     }
 
-    @Test(expected = H3Exception.class)
+    @Test
     public void testHostileInputLatLng() {
+        // Should not crash
         h3.latLngToCell(1e45, 1e45, 0);
     }
 
-    @Test(expected = H3Exception.class)
+    @Test
     public void testHostileInputMaximum() {
         h3.latLngToCell(Double.MAX_VALUE, Double.MAX_VALUE, 0);
     }
