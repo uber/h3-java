@@ -15,17 +15,13 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.exceptions.DistanceUndefinedException;
-import com.uber.h3core.exceptions.LineUndefinedException;
-import com.uber.h3core.exceptions.LocalIjUndefinedException;
-import com.uber.h3core.exceptions.PentagonEncounteredException;
+import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,6 +33,8 @@ import static java.lang.Math.toRadians;
  * H3Core provides all functions of the H3 API.
  *
  * <p>This class is thread safe and can be used as a singleton.</p>
+ *
+ * <p>Any function in this class may throw {@link H3Exception}.</p>
  */
 public class H3Core {
     // These constants are from h3api.h and h3Index.h
@@ -162,7 +160,6 @@ public class H3Core {
      * @param lng Longitude in degrees.
      * @param res Resolution, 0 &lt;= res &lt;= 15
      * @return The H3 index.
-     * @throws H3Exception latitude, longitude, or resolution are out of range.
      */
     public long latLngToCell(double lat, double lng, int res) {
         checkResolution(res);
@@ -176,7 +173,6 @@ public class H3Core {
      * @param lng Longitude in degrees.
      * @param res Resolution, 0 &lt;= res &lt;= 15
      * @return The H3 index.
-     * @throws H3Exception Latitude, longitude, or resolution is out of range.
      */
     public String latLngToCellAddress(double lat, double lng, int res) {
         return h3ToString(latLngToCell(lat, lng, res));
