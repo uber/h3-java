@@ -91,9 +91,8 @@ final class NativeMethods {
     native int maxFaceCount(long h3);
     native void getIcosahedronFaces(long h3, int[] faces);
 
-    // TODO
-    // native long cellToVertex(long h3, int vertexNum);
-    // native void cellToVertexes(long h3, long[] results);
-    // native void vertexToLatLng(long h3, double[] latLng);
-    // native boolean isValidVertex(long h3);
+    native long cellToVertex(long h3, int vertexNum);
+    native void cellToVertexes(long h3, long[] results);
+    native void vertexToLatLng(long h3, double[] latLng);
+    native boolean isValidVertex(long h3);
 }

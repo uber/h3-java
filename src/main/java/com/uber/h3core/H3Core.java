@@ -1195,6 +1195,42 @@ public class H3Core {
                 .collect(Collectors.toList());
     }
 
+    public long cellToVertex(long h3, int vertexNum) {
+        return h3Api.cellToVertex(h3, vertexNum);
+    }
+
+    public String cellToVertex(String h3Address, int vertexNum) {
+        return h3ToString(h3Api.cellToVertex(stringToH3(h3Address), vertexNum));
+    }
+
+    public List<Long> cellToVertexes(long h3) {
+        long[] results = new long[6];
+        h3Api.cellToVertexes(h3, results);
+        return nonZeroLongArrayToList(results);
+    }
+
+    public List<String> cellToVertexes(String h3Address) {
+        return h3ToStringList(cellToVertexes(stringToH3(h3Address)));
+    }
+
+    public LatLng vertexToLatLng(long h3) {
+        double[] results = new double[2];
+        h3Api.vertexToLatLng(h3, results);
+        return new LatLng(toDegrees(results[0]), toDegrees(results[1]));
+    }
+
+    public LatLng vertexToLatLng(String h3Address) {
+        return vertexToLatLng(stringToH3(h3Address));
+    }
+
+    public boolean isValidVertex(long h3) {
+        return h3Api.isValidVertex(h3);
+    }
+
+    public boolean isValidVertex(String h3Address) {
+        return h3Api.isValidVertex(stringToH3(h3Address));
+    }
+
     /**
      * Transforms a collection of H3 indexes in string form to a list of H3
      * indexes in long form.

@@ -1261,7 +1261,7 @@ JNIEXPORT jint JNICALL Java_com_uber_h3core_NativeMethods_maxFaceCount(
  */
 JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getIcosahedronFaces(
     JNIEnv *env, jobject thiz, jlong h3, jintArray faces) {
-    // TODO: Unused
+    // TODO: Unused; use maxFaceCount here
     // jsize sz = (**env).GetArrayLength(env, faces);
     jint *facesElements = (**env).GetIntArrayElements(env, faces, 0);
 
@@ -1276,4 +1276,82 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getIcosahedronFaces(
     } else {
         ThrowOutOfMemoryError(env);
     }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellToVertex
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToVertex(
+    JNIEnv *env, jobject thiz, jlong h3, jint vertexNum) {
+    int out;
+    H3Error err = cellToVertex(h3, vertexNum, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return out;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellToVertexes
+ * Signature: (J[J)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToVertexes(
+    JNIEnv *env, jobject thiz, jlong h3, jlongArray vertexes) {
+    jsize sz = (**env).GetArrayLength(env, vertexes);
+    jint *vertexesElements = (**env).GetLongArrayElements(env, vertexes, 0);
+
+    if (vertexesElements != NULL && sz >= 6) {
+        H3Error err = cellToVertexes(h3, vertexesElements);
+
+        (**env).ReleaseLongArrayElements(env, vertexes, vertexesElements, 0);
+
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    vertexToLatLng
+ * Signature: (J[D)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_vertexToLatLng(
+    JNIEnv *env, jobject thiz, jlong h3, jdoubleArray latLng) {
+    LatLng coord;
+    H3Error err = vertexToLatLng(h3, &coord);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return;
+    }
+
+    jsize sz = (**env).GetArrayLength(env, latLng);
+    jdouble *coordsElements = (**env).GetDoubleArrayElements(env, latLng, 0);
+
+    if (coordsElements != NULL) {
+        // if sz is too small, we will fail to write all the elements
+        if (sz >= 2) {
+            coordsElements[0] = coord.lat;
+            coordsElements[1] = coord.lng;
+        }
+
+        (**env).ReleaseDoubleArrayElements(env, latLng, coordsElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    isValidVertex
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidVertex(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return isValidVertex(h3);
 }
