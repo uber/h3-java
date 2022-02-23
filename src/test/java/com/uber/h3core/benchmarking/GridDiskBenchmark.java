@@ -16,7 +16,6 @@
 package com.uber.h3core.benchmarking;
 
 import com.uber.h3core.H3Core;
-import com.uber.h3core.exceptions.PentagonEncounteredException;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -42,7 +41,7 @@ public class GridDiskBenchmark {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<Long>> benchmarkHexRangeCore() throws PentagonEncounteredException {
+    public List<List<Long>> benchmarkHexRangeCore() {
         return BenchmarkState.h3Core.gridDiskDistances(0x8928308280fffffL, BenchmarkState.k);
     }
 
@@ -54,7 +53,7 @@ public class GridDiskBenchmark {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public List<List<Long>> benchmarkHexRangeCoreNearPentagon() throws PentagonEncounteredException {
+    public List<List<Long>> benchmarkHexRangeCoreNearPentagon() {
         return BenchmarkState.h3Core.gridDiskDistances(0x821d5ffffffffffL, BenchmarkState.k);
     }
 
