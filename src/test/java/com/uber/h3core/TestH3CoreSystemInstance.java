@@ -40,6 +40,6 @@ public class TestH3CoreSystemInstance {
     public void test() {
         final H3Core h3 = H3Core.newSystemInstance();
         assertNotNull(h3);
-        assertEquals("84194adffffffff", h3.latLngToCell(51.5008796, -0.1253643, 4));
+        assertEquals("84194adffffffff", h3.latLngToCellAddress(51.5008796, -0.1253643, 4));
     }
 }
