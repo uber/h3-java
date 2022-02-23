@@ -1285,7 +1285,7 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_getIcosahedronFaces(
  */
 JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToVertex(
     JNIEnv *env, jobject thiz, jlong h3, jint vertexNum) {
-    int out;
+    H3Index out;
     H3Error err = cellToVertex(h3, vertexNum, &out);
     if (err) {
         ThrowH3Exception(env, err);
