@@ -7,6 +7,14 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+### Breaking Changes
+- Changed the API of `H3Core` to align it with the core library, and introduced `H3CoreV3` for users who wish to use the old names. (#91)
+
+### Added
+- Vertex mode API. (#91)
+
+### Changed
+- Upgraded the core library to v4.0.0. (#91)
 
 ## [3.7.2] - 2022-02-07
 ### Added
@@ -97,7 +105,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [3.0.3] - 2018-05-22
 ### Breaking Changes
-- Replaced Vector2D with LatLng.
+- Replaced Vector2D with GeoCoord.
 - Removed the geoJsonOrder parameter from polyfill functions.
 
 ## [3.0.2] - 2018-05-08
