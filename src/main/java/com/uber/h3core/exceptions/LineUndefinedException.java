@@ -16,13 +16,12 @@
 package com.uber.h3core.exceptions;
 
 /**
- * The line could not be computed between two cells.
- * This can happen due to incomparable input (different resolutions),
- * the distance being too great. or limitations in the
- * H3 library for calculating lines.
+ * The line could not be computed between two cells. This can happen due to incomparable input
+ * (different resolutions), the distance being too great. or limitations in the H3 library for
+ * calculating lines.
  */
 public class LineUndefinedException extends Exception {
-    public LineUndefinedException(String message) {
-        super(message);
-    }
+  public LineUndefinedException(String message) {
+    super(message);
+  }
 }

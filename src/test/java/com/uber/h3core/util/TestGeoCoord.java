@@ -15,47 +15,45 @@
  */
 package com.uber.h3core.util;
 
-import com.uber.h3core.TestH3Core;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- *
- */
+import com.uber.h3core.TestH3Core;
+import org.junit.Test;
+
+/** */
 public class TestGeoCoord {
-    @Test
-    public void test() {
-        GeoCoord v1 = new GeoCoord(0, 1);
-        GeoCoord v2 = new GeoCoord(1, 0);
-        GeoCoord v3 = new GeoCoord(0, 1);
+  @Test
+  public void test() {
+    GeoCoord v1 = new GeoCoord(0, 1);
+    GeoCoord v2 = new GeoCoord(1, 0);
+    GeoCoord v3 = new GeoCoord(0, 1);
 
-        assertEquals(0, v1.lat, TestH3Core.EPSILON);
-        assertEquals(1, v1.lng, TestH3Core.EPSILON);
-        assertEquals(1, v2.lat, TestH3Core.EPSILON);
-        assertEquals(0, v2.lng, TestH3Core.EPSILON);
-        assertEquals(0, v3.lat, TestH3Core.EPSILON);
-        assertEquals(1, v3.lng, TestH3Core.EPSILON);
+    assertEquals(0, v1.lat, TestH3Core.EPSILON);
+    assertEquals(1, v1.lng, TestH3Core.EPSILON);
+    assertEquals(1, v2.lat, TestH3Core.EPSILON);
+    assertEquals(0, v2.lng, TestH3Core.EPSILON);
+    assertEquals(0, v3.lat, TestH3Core.EPSILON);
+    assertEquals(1, v3.lng, TestH3Core.EPSILON);
 
-        assertNotEquals(v1, v2);
-        assertNotEquals(v3, v2);
-        assertEquals(v1, v3);
-        assertEquals(v1, v1);
-        assertNotEquals(v1, null);
+    assertNotEquals(v1, v2);
+    assertNotEquals(v3, v2);
+    assertEquals(v1, v3);
+    assertEquals(v1, v1);
+    assertNotEquals(v1, null);
 
-        assertEquals(v1.hashCode(), v3.hashCode());
-        // Not strictly needed, but likely
-        assertNotEquals(v1.hashCode(), v2.hashCode());
-    }
+    assertEquals(v1.hashCode(), v3.hashCode());
+    // Not strictly needed, but likely
+    assertNotEquals(v1.hashCode(), v2.hashCode());
+  }
 
-    @Test
-    public void testToString() {
-        GeoCoord v = new GeoCoord(123.456, 456.789);
+  @Test
+  public void testToString() {
+    GeoCoord v = new GeoCoord(123.456, 456.789);
 
-        String toString = v.toString();
-        assertTrue(toString.contains("lat=123.456"));
-        assertTrue(toString.contains("lng=456.789"));
-    }
+    String toString = v.toString();
+    assertTrue(toString.contains("lat=123.456"));
+    assertTrue(toString.contains("lng=456.789"));
+  }
 }

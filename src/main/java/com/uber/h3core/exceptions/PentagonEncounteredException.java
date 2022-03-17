@@ -15,11 +15,9 @@
  */
 package com.uber.h3core.exceptions;
 
-/**
- * An H3 algorithm encountered a pentagon and was unable to continue.
- */
+/** An H3 algorithm encountered a pentagon and was unable to continue. */
 public class PentagonEncounteredException extends Exception {
-    public PentagonEncounteredException(String message) {
-        super(message);
-    }
+  public PentagonEncounteredException(String message) {
+    super(message);
+  }
 }

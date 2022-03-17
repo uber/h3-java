@@ -74,6 +74,12 @@ To build the library, run:
 mvn package
 ```
 
+To format source code as required by CI, run:
+
+```sh
+mvn com.spotify.fmt:fmt-maven-plugin:format
+```
+
 Additional information on how the build process works is available in the [build process documentaiton](docs/library-build.md).
 
 ## Building on FreeBSD

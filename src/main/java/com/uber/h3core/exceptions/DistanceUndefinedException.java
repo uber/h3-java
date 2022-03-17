@@ -16,13 +16,12 @@
 package com.uber.h3core.exceptions;
 
 /**
- * The distance could not be computed between two cells.
- * This can happen due to incomparable input (different resolutions),
- * the distance being too great to express. or limitations in the
- * H3 library for calculating distance.
+ * The distance could not be computed between two cells. This can happen due to incomparable input
+ * (different resolutions), the distance being too great to express. or limitations in the H3
+ * library for calculating distance.
  */
 public class DistanceUndefinedException extends Exception {
-    public DistanceUndefinedException(String message) {
-        super(message);
-    }
+  public DistanceUndefinedException(String message) {
+    super(message);
+  }
 }
