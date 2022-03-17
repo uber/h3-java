@@ -18,6 +18,9 @@ package com.uber.h3core.benchmarking;
 import com.google.common.collect.ImmutableList;
 import com.uber.h3core.H3Core;
 import com.uber.h3core.util.LatLng;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -28,53 +31,48 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Benchmarks <code>cellsToMultiPolygon</code>.
- */
+/** Benchmarks <code>cellsToMultiPolygon</code>. */
 public class CellsToMultiPolygonBenchmark {
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon2() {
-        return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list2, false);
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon2() {
+    return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list2, false);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon20() {
+    return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list20, true);
+  }
+
+  @State(Scope.Benchmark)
+  public static class BenchmarkState {
+    static List<Long> list2 = ImmutableList.of(0x89283082837ffffL, 0x89283082833ffffL);
+    static List<Long> list20;
+
+    static H3Core h3Core;
+
+    static {
+      try {
+        h3Core = H3Core.newInstance();
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
+      }
+
+      list20 = new ArrayList<>();
+      for (int i = 0; i < 20; i++) {
+        list20.add(h3Core.latLngToCell(i, 0, 10));
+      }
     }
+  }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon20() {
-        return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list20, true);
-    }
+  public static void main(String[] args) throws RunnerException {
+    Options opt =
+        new OptionsBuilder()
+            .include(CellsToMultiPolygonBenchmark.class.getSimpleName())
+            .forks(1)
+            .build();
 
-    @State(Scope.Benchmark)
-    public static class BenchmarkState {
-        static List<Long> list2 = ImmutableList.of(0x89283082837ffffL, 0x89283082833ffffL);
-        static List<Long> list20;
-
-        static H3Core h3Core;
-
-        static {
-            try {
-                h3Core = H3Core.newInstance();
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-
-            list20 = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                list20.add(h3Core.latLngToCell(i, 0, 10));
-            }
-        }
-    }
-
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(CellsToMultiPolygonBenchmark.class.getSimpleName())
-                .forks(1)
-                .build();
-
-        new Runner(opt).run();
-    }
+    new Runner(opt).run();
+  }
 }

@@ -16,6 +16,9 @@ for the Linux x64 and Darwin x64 platforms.
 ### Changed
 - Upgraded the core library to v4.0.0. (#91)
 
+### Removed
+- Removed support for Linux MIPSEL (#92)
+
 ## [3.7.2] - 2022-02-07
 ### Added
 - Added Apple M1 build (#89)

@@ -18,57 +18,56 @@ package com.uber.h3core.exceptions;
 /**
  * An exception from the H3 core library.
  *
- * The error code contained in an H3Exception comes from the H3
- * core library. The H3 documentation contains a
- * <a href="https://h3geo.org/docs/next/library/errors/#table-of-error-codes">
- * table of error codes</a>.
+ * <p>The error code contained in an H3Exception comes from the H3 core library. The H3
+ * documentation contains a <a
+ * href="https://h3geo.org/docs/next/library/errors/#table-of-error-codes">table of error codes</a>.
  */
 public class H3Exception extends RuntimeException {
-    private int code;
+  private int code;
 
-    public H3Exception(int code) {
-        super(codeToMessage(code));
-        this.code = code;
-    }
+  public H3Exception(int code) {
+    super(codeToMessage(code));
+    this.code = code;
+  }
 
-    public int getCode() {
-        return code;
-    }
+  public int getCode() {
+    return code;
+  }
 
-    public static String codeToMessage(int code) {
-        switch (code) {
-            case 0:
-                return "Success";
-            case 1:
-                return "The operation failed but a more specific error is not available";
-            case 2:
-                return "Argument was outside of acceptable range";
-            case 3:
-                return "Latitude or longitude arguments were outside of acceptable range";
-            case 4:
-                return "Resolution argument was outside of acceptable range";
-            case 5:
-                return "Cell argument was not valid";
-            case 6:
-                return "Directed edge argument was not valid";
-            case 7:
-                return "Undirected edge argument was not valid";
-            case 8:
-                return "Vertex argument was not valid";
-            case 9:
-                return "Pentagon distortion was encountered";
-            case 10:
-                return "Duplicate input";
-            case 11:
-                return "Cell arguments were not neighbors";
-            case 12:
-                return "Cell arguments had incompatible resolutions";
-            case 13:
-                return "Memory allocation failed";
-            case 14:
-                return "Bounds of provided memory were insufficient";
-            default:
-                return "Unknown error";
-        }
+  public static String codeToMessage(int code) {
+    switch (code) {
+      case 0:
+        return "Success";
+      case 1:
+        return "The operation failed but a more specific error is not available";
+      case 2:
+        return "Argument was outside of acceptable range";
+      case 3:
+        return "Latitude or longitude arguments were outside of acceptable range";
+      case 4:
+        return "Resolution argument was outside of acceptable range";
+      case 5:
+        return "Cell argument was not valid";
+      case 6:
+        return "Directed edge argument was not valid";
+      case 7:
+        return "Undirected edge argument was not valid";
+      case 8:
+        return "Vertex argument was not valid";
+      case 9:
+        return "Pentagon distortion was encountered";
+      case 10:
+        return "Duplicate input";
+      case 11:
+        return "Cell arguments were not neighbors";
+      case 12:
+        return "Cell arguments had incompatible resolutions";
+      case 13:
+        return "Memory allocation failed";
+      case 14:
+        return "Bounds of provided memory were insufficient";
+      default:
+        return "Unknown error";
     }
+  }
 }

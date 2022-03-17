@@ -17,34 +17,31 @@ package com.uber.h3core.util;
 
 import java.util.Objects;
 
-/**
- * Immutable two-dimensional spherical coordinates, in degrees.
- */
+/** Immutable two-dimensional spherical coordinates, in degrees. */
 public class LatLng {
-    public final double lat;
-    public final double lng;
+  public final double lat;
+  public final double lng;
 
-    public LatLng(double lat, double lng) {
-        this.lat = lat;
-        this.lng = lng;
-    }
+  public LatLng(double lat, double lng) {
+    this.lat = lat;
+    this.lng = lng;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LatLng coord = (LatLng) o;
-        return Double.compare(coord.lat, lat) == 0 &&
-                Double.compare(coord.lng, lng) == 0;
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    LatLng coord = (LatLng) o;
+    return Double.compare(coord.lat, lat) == 0 && Double.compare(coord.lng, lng) == 0;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(lat, lng);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(lat, lng);
+  }
 
-    @Override
-    public String toString() {
-        return String.format("LatLng{lat=%f, lng=%f}", lat, lng);
-    }
+  @Override
+  public String toString() {
+    return String.format("LatLng{lat=%f, lng=%f}", lat, lng);
+  }
 }

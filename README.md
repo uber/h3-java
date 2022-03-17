@@ -52,7 +52,7 @@ H3-Java provides bindings to the H3 library, which is written in C. The built ar
 
 | Operating System | Architectures
 | ---------------- | -------------
-| Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, MIPSEL, PPC64LE, s390x
+| Linux            | x64, x86, ARM64, ARMv5, ARMv7, MIPS, PPC64LE, s390x
 | Windows          | x64, x86
 | Darwin (Mac OSX) | x64, ARM64
 | FreeBSD          | x64
@@ -72,6 +72,12 @@ To build the library, run:
 
 ```sh
 mvn package
+```
+
+To format source code as required by CI, run:
+
+```sh
+mvn com.spotify.fmt:fmt-maven-plugin:format
 ```
 
 Additional information on how the build process works is available in the [build process documentaiton](docs/library-build.md).

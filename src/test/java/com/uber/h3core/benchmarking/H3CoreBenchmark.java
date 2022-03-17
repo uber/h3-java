@@ -17,6 +17,8 @@ package com.uber.h3core.benchmarking;
 
 import com.uber.h3core.H3Core;
 import com.uber.h3core.util.LatLng;
+import java.io.IOException;
+import java.util.List;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -27,56 +29,52 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.io.IOException;
-import java.util.List;
-
 /**
- * Benchmarks creating the library and simple index operations (index, get coordinates, get boundary)
+ * Benchmarks creating the library and simple index operations (index, get coordinates, get
+ * boundary)
  */
 public class H3CoreBenchmark {
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public H3Core benchmarkCreateH3Core() throws IOException {
-        return H3Core.newInstance();
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public H3Core benchmarkCreateH3Core() throws IOException {
+    return H3Core.newInstance();
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public long benchmarkGeoToHex() {
+    return BenchmarkState.h3.latLngToCell(37.775938728915946, -122.41795063018799, 5);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public LatLng benchmarkGetCenterCoordinates() {
+    return BenchmarkState.h3.cellToLatLng("85283083fffffff");
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<LatLng> benchmarkGetBoundary() {
+    return BenchmarkState.h3.cellToBoundary("85283083fffffff");
+  }
+
+  @State(Scope.Benchmark)
+  public static class BenchmarkState {
+    static final H3Core h3;
+
+    static {
+      try {
+        h3 = H3Core.newInstance();
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
+      }
     }
+  }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public long benchmarkGeoToHex() {
-        return BenchmarkState.h3.latLngToCell(37.775938728915946, -122.41795063018799, 5);
-    }
+  public static void main(String[] args) throws RunnerException {
+    Options opt =
+        new OptionsBuilder().include(H3CoreBenchmark.class.getSimpleName()).forks(1).build();
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public LatLng benchmarkGetCenterCoordinates() {
-        return BenchmarkState.h3.cellToLatLng("85283083fffffff");
-    }
-
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<LatLng> benchmarkGetBoundary() {
-        return BenchmarkState.h3.cellToBoundary("85283083fffffff");
-    }
-
-    @State(Scope.Benchmark)
-    public static class BenchmarkState {
-        static final H3Core h3;
-
-        static {
-            try {
-                h3 = H3Core.newInstance();
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        }
-    }
-
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(H3CoreBenchmark.class.getSimpleName())
-                .forks(1)
-                .build();
-
-        new Runner(opt).run();
-    }
+    new Runner(opt).run();
+  }
 }
