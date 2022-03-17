@@ -17,6 +17,8 @@ package com.uber.h3core.benchmarking;
 
 import com.uber.h3core.H3Core;
 import com.uber.h3core.exceptions.PentagonEncounteredException;
+import java.io.IOException;
+import java.util.List;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -27,58 +29,51 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.io.IOException;
-import java.util.List;
-
-/**
- * Benchmarks <code>kRing</code> and related functions.
- */
+/** Benchmarks <code>kRing</code> and related functions. */
 public class KRingBenchmark {
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkHexRingsCore() {
-        return BenchmarkState.h3Core.kRing(0x8928308280fffffL, BenchmarkState.k);
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<Long> benchmarkHexRingsCore() {
+    return BenchmarkState.h3Core.kRing(0x8928308280fffffL, BenchmarkState.k);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<List<Long>> benchmarkHexRangeCore() throws PentagonEncounteredException {
+    return BenchmarkState.h3Core.kRingDistances(0x8928308280fffffL, BenchmarkState.k);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<Long> benchmarkHexRingsCoreNearPentagon() {
+    return BenchmarkState.h3Core.kRing(0x821d5ffffffffffL, BenchmarkState.k);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<List<Long>> benchmarkHexRangeCoreNearPentagon() throws PentagonEncounteredException {
+    return BenchmarkState.h3Core.kRingDistances(0x821d5ffffffffffL, BenchmarkState.k);
+  }
+
+  @State(Scope.Benchmark)
+  public static class BenchmarkState {
+    static int k = 10;
+
+    static H3Core h3Core;
+
+    static {
+      try {
+        h3Core = H3Core.newInstance();
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
+      }
     }
+  }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<List<Long>> benchmarkHexRangeCore() throws PentagonEncounteredException {
-        return BenchmarkState.h3Core.kRingDistances(0x8928308280fffffL, BenchmarkState.k);
-    }
+  public static void main(String[] args) throws RunnerException {
+    Options opt =
+        new OptionsBuilder().include(KRingBenchmark.class.getSimpleName()).forks(1).build();
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkHexRingsCoreNearPentagon() {
-        return BenchmarkState.h3Core.kRing(0x821d5ffffffffffL, BenchmarkState.k);
-    }
-
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<List<Long>> benchmarkHexRangeCoreNearPentagon() throws PentagonEncounteredException {
-        return BenchmarkState.h3Core.kRingDistances(0x821d5ffffffffffL, BenchmarkState.k);
-    }
-
-    @State(Scope.Benchmark)
-    public static class BenchmarkState {
-        static int k = 10;
-
-        static H3Core h3Core;
-
-        static {
-            try {
-                h3Core = H3Core.newInstance();
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        }
-    }
-
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-            .include(KRingBenchmark.class.getSimpleName())
-            .forks(1)
-            .build();
-
-        new Runner(opt).run();
-    }
+    new Runner(opt).run();
+  }
 }

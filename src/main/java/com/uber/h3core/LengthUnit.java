@@ -15,20 +15,12 @@
  */
 package com.uber.h3core;
 
-/**
- * Unit of measurement for lengths.
- */
+/** Unit of measurement for lengths. */
 public enum LengthUnit {
-    /**
-     * Radians on the WGS84 sphere
-     */
-    rads,
-    /**
-     * Kilometers
-     */
-    km,
-    /**
-     * Meters
-     */
-    m
+  /** Radians on the WGS84 sphere */
+  rads,
+  /** Kilometers */
+  km,
+  /** Meters */
+  m
 }

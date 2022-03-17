@@ -16,14 +16,14 @@
 package com.uber.h3core.exceptions;
 
 /**
- * The local IJ coordinates could not be determined for an index, or the
- * index could not be determined for IJ coordinates.
+ * The local IJ coordinates could not be determined for an index, or the index could not be
+ * determined for IJ coordinates.
  *
- * <p>This can happen because the origin and index/IJ coordinates are too
- * far away from each other, or because pentagon distortion was encountered.
+ * <p>This can happen because the origin and index/IJ coordinates are too far away from each other,
+ * or because pentagon distortion was encountered.
  */
 public class LocalIjUndefinedException extends Exception {
-    public LocalIjUndefinedException(String message) {
-        super(message);
-    }
+  public LocalIjUndefinedException(String message) {
+    super(message);
+  }
 }

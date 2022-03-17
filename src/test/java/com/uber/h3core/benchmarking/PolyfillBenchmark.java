@@ -18,6 +18,8 @@ package com.uber.h3core.benchmarking;
 import com.google.common.collect.ImmutableList;
 import com.uber.h3core.H3Core;
 import com.uber.h3core.util.GeoCoord;
+import java.io.IOException;
+import java.util.List;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -28,98 +30,82 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.io.IOException;
-import java.util.List;
-
-/**
- * Benchmarks <code>polyfill</code>.
- */
+/** Benchmarks <code>polyfill</code>. */
 public class PolyfillBenchmark {
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkPolyfill() {
-        return BenchmarkState.h3Core.polyfill(
-                ImmutableList.of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
-                ), null, 9
-        );
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<Long> benchmarkPolyfill() {
+    return BenchmarkState.h3Core.polyfill(
+        ImmutableList.of(
+            new GeoCoord(37.813318999983238, -122.4089866999972145),
+            new GeoCoord(37.7866302000007224, -122.3805436999997056),
+            new GeoCoord(37.7198061999978478, -122.3544736999993603),
+            new GeoCoord(37.7076131999975672, -122.5123436999983966),
+            new GeoCoord(37.7835871999971715, -122.5247187000021967),
+            new GeoCoord(37.8151571999998453, -122.4798767000009008)),
+        null,
+        9);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<Long> benchmarkPolyfillWithHole() {
+    return BenchmarkState.h3Core.polyfill(
+        ImmutableList.of(
+            new GeoCoord(37.813318999983238, -122.4089866999972145),
+            new GeoCoord(37.7866302000007224, -122.3805436999997056),
+            new GeoCoord(37.7198061999978478, -122.3544736999993603),
+            new GeoCoord(37.7076131999975672, -122.5123436999983966),
+            new GeoCoord(37.7835871999971715, -122.5247187000021967),
+            new GeoCoord(37.8151571999998453, -122.4798767000009008)),
+        ImmutableList.of(
+            ImmutableList.of(
+                new GeoCoord(37.7869802, -122.4471197),
+                new GeoCoord(37.7664102, -122.4590777),
+                new GeoCoord(37.7710682, -122.4137097))),
+        9);
+  }
+
+  @Benchmark
+  @BenchmarkMode(Mode.Throughput)
+  public List<Long> benchmarkPolyfillWithTwoHoles() {
+    return BenchmarkState.h3Core.polyfill(
+        ImmutableList.of(
+            new GeoCoord(37.813318999983238, -122.4089866999972145),
+            new GeoCoord(37.7866302000007224, -122.3805436999997056),
+            new GeoCoord(37.7198061999978478, -122.3544736999993603),
+            new GeoCoord(37.7076131999975672, -122.5123436999983966),
+            new GeoCoord(37.7835871999971715, -122.5247187000021967),
+            new GeoCoord(37.8151571999998453, -122.4798767000009008)),
+        ImmutableList.of(
+            ImmutableList.of(
+                new GeoCoord(37.7869802, -122.4471197),
+                new GeoCoord(37.7664102, -122.4590777),
+                new GeoCoord(37.7710682, -122.4137097)),
+            ImmutableList.of(
+                new GeoCoord(37.747976, -122.490025),
+                new GeoCoord(37.731550, -122.503758),
+                new GeoCoord(37.725440, -122.452603))),
+        9);
+  }
+
+  @State(Scope.Benchmark)
+  public static class BenchmarkState {
+    static H3Core h3Core;
+
+    static {
+      try {
+        h3Core = H3Core.newInstance();
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
+      }
     }
+  }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkPolyfillWithHole() {
-        return BenchmarkState.h3Core.polyfill(
-                ImmutableList.of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
-                ),
-                ImmutableList.of(
-                        ImmutableList.of(
-                                new GeoCoord(37.7869802, -122.4471197),
-                                new GeoCoord(37.7664102, -122.4590777),
-                                new GeoCoord(37.7710682, -122.4137097)
-                        )
-                ),
-                9
-        );
-    }
+  public static void main(String[] args) throws RunnerException {
+    Options opt =
+        new OptionsBuilder().include(PolyfillBenchmark.class.getSimpleName()).forks(1).build();
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    public List<Long> benchmarkPolyfillWithTwoHoles() {
-        return BenchmarkState.h3Core.polyfill(
-                ImmutableList.of(
-                        new GeoCoord(37.813318999983238, -122.4089866999972145),
-                        new GeoCoord(37.7866302000007224, -122.3805436999997056),
-                        new GeoCoord(37.7198061999978478, -122.3544736999993603),
-                        new GeoCoord(37.7076131999975672, -122.5123436999983966),
-                        new GeoCoord(37.7835871999971715, -122.5247187000021967),
-                        new GeoCoord(37.8151571999998453, -122.4798767000009008)
-                ),
-                ImmutableList.of(
-                        ImmutableList.of(
-                                new GeoCoord(37.7869802, -122.4471197),
-                                new GeoCoord(37.7664102, -122.4590777),
-                                new GeoCoord(37.7710682, -122.4137097)
-                        ),
-                        ImmutableList.of(
-                                new GeoCoord(37.747976, -122.490025),
-                                new GeoCoord(37.731550, -122.503758),
-                                new GeoCoord(37.725440, -122.452603)
-                        )
-                ),
-                9
-        );
-    }
-
-    @State(Scope.Benchmark)
-    public static class BenchmarkState {
-        static H3Core h3Core;
-
-        static {
-            try {
-                h3Core = H3Core.newInstance();
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        }
-    }
-
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(PolyfillBenchmark.class.getSimpleName())
-                .forks(1)
-                .build();
-
-        new Runner(opt).run();
-    }
+    new Runner(opt).run();
+  }
 }

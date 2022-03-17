@@ -15,20 +15,12 @@
  */
 package com.uber.h3core;
 
-/**
- * Unit of measurement for areas.
- */
+/** Unit of measurement for areas. */
 public enum AreaUnit {
-    /**
-     * Square radians on the WGS84 sphere
-     */
-    rads2,
-    /**
-     * Square kilometers
-     */
-    km2,
-    /**
-     * Square meters
-     */
-    m2
+  /** Square radians on the WGS84 sphere */
+  rads2,
+  /** Square kilometers */
+  km2,
+  /** Square meters */
+  m2
 }
