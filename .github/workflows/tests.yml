@@ -35,6 +35,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Format check
+        run: mvn formatter:validate impsort:check
+
       - name: Tests
         run: mvn "-Dh3.remove.images=true" -B -V clean test
 

@@ -7,6 +7,8 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+### Removed
+- Removed support for Linux MIPSEL (#92)
 
 ## [3.7.2] - 2022-02-07
 ### Added
