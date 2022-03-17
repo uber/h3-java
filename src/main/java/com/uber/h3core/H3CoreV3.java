@@ -311,7 +311,7 @@ public class H3CoreV3 {
    * @return Coordinates for <code>h3</code> in the local coordinate space.
    */
   public CoordIJ experimentalH3ToLocalIj(long origin, long h3) {
-    return h3Api.experimentalH3ToLocalIj(origin, h3);
+    return h3Api.cellToLocalIj(origin, h3);
   }
 
   /**
@@ -329,7 +329,7 @@ public class H3CoreV3 {
    * @return Coordinates for <code>h3</code> in the local coordinate space.
    */
   public CoordIJ experimentalH3ToLocalIj(String originAddress, String h3Address) {
-    return h3Api.experimentalH3ToLocalIj(originAddress, h3Address);
+    return h3Api.cellToLocalIj(originAddress, h3Address);
   }
 
   /**
@@ -347,7 +347,7 @@ public class H3CoreV3 {
    * @return Index represented by <code>ij</code>
    */
   public long experimentalLocalIjToH3(long origin, CoordIJ ij) {
-    return h3Api.experimentalLocalIjToH3(origin, ij);
+    return h3Api.localIjToCell(origin, ij);
   }
 
   /**
@@ -365,7 +365,7 @@ public class H3CoreV3 {
    * @return Index represented by <code>ij</code>
    */
   public String experimentalLocalIjToH3(String originAddress, CoordIJ ij) {
-    return h3Api.experimentalLocalIjToH3(originAddress, ij);
+    return h3Api.localIjToCell(originAddress, ij);
   }
 
   /**

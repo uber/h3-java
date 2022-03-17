@@ -401,9 +401,9 @@ public class H3Core {
    * @param h3 Index to find the coordinates of.
    * @return Coordinates for <code>h3</code> in the local coordinate space.
    */
-  public CoordIJ experimentalH3ToLocalIj(long origin, long h3) {
+  public CoordIJ cellToLocalIj(long origin, long h3) {
     final int[] coords = new int[2];
-    h3Api.experimentalH3ToLocalIj(origin, h3, coords);
+    h3Api.cellToLocalIj(origin, h3, coords);
     return new CoordIJ(coords[0], coords[1]);
   }
 
@@ -421,8 +421,8 @@ public class H3Core {
    * @param h3Address Index to find the coordinates of.
    * @return Coordinates for <code>h3</code> in the local coordinate space.
    */
-  public CoordIJ experimentalH3ToLocalIj(String originAddress, String h3Address) {
-    return experimentalH3ToLocalIj(stringToH3(originAddress), stringToH3(h3Address));
+  public CoordIJ cellToLocalIj(String originAddress, String h3Address) {
+    return cellToLocalIj(stringToH3(originAddress), stringToH3(h3Address));
   }
 
   /**
@@ -439,8 +439,8 @@ public class H3Core {
    * @param ij Coordinates in the local IJ coordinate space.
    * @return Index represented by <code>ij</code>
    */
-  public long experimentalLocalIjToH3(long origin, CoordIJ ij) {
-    return h3Api.experimentalLocalIjToH3(origin, ij.i, ij.j);
+  public long localIjToCell(long origin, CoordIJ ij) {
+    return h3Api.localIjToCell(origin, ij.i, ij.j);
   }
 
   /**
@@ -457,8 +457,8 @@ public class H3Core {
    * @param ij Coordinates in the local IJ coordinate space.
    * @return Index represented by <code>ij</code>
    */
-  public String experimentalLocalIjToH3(String originAddress, CoordIJ ij) {
-    return h3ToString(experimentalLocalIjToH3(stringToH3(originAddress), ij));
+  public String localIjToCell(String originAddress, CoordIJ ij) {
+    return h3ToString(localIjToCell(stringToH3(originAddress), ij));
   }
 
   /**

@@ -282,47 +282,47 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test(expected = H3Exception.class)
-  public void testExperimentalH3ToLocalIjNoncomparable() {
-    h3.experimentalH3ToLocalIj("832830fffffffff", "822837fffffffff");
+  public void testCellToLocalIjNoncomparable() {
+    h3.cellToLocalIj("832830fffffffff", "822837fffffffff");
   }
 
   @Test(expected = H3Exception.class)
-  public void testExperimentalH3ToLocalIjTooFar() {
-    h3.experimentalH3ToLocalIj("822a17fffffffff", "822837fffffffff");
+  public void testCellToLocalIjTooFar() {
+    h3.cellToLocalIj("822a17fffffffff", "822837fffffffff");
   }
 
   @Test(expected = H3Exception.class)
-  public void testExperimentalH3ToLocalIjPentagonDistortion() {
-    h3.experimentalH3ToLocalIj("81283ffffffffff", "811cbffffffffff");
+  public void testCellToLocalIjPentagonDistortion() {
+    h3.cellToLocalIj("81283ffffffffff", "811cbffffffffff");
   }
 
   @Test
-  public void testExperimentalH3ToLocalIjPentagon() {
+  public void testCellToLocalIjPentagon() {
     final String origin = "811c3ffffffffff";
-    assertEquals(new CoordIJ(0, 0), h3.experimentalH3ToLocalIj(origin, origin));
-    assertEquals(new CoordIJ(1, 0), h3.experimentalH3ToLocalIj(origin, "811d3ffffffffff"));
-    assertEquals(new CoordIJ(-1, 0), h3.experimentalH3ToLocalIj(origin, "811cfffffffffff"));
+    assertEquals(new CoordIJ(0, 0), h3.cellToLocalIj(origin, origin));
+    assertEquals(new CoordIJ(1, 0), h3.cellToLocalIj(origin, "811d3ffffffffff"));
+    assertEquals(new CoordIJ(-1, 0), h3.cellToLocalIj(origin, "811cfffffffffff"));
   }
 
   @Test
-  public void testExperimentalH3ToLocalIjHexagons() {
+  public void testCellToLocalIjHexagons() {
     final String origin = "8828308281fffff";
-    assertEquals(new CoordIJ(392, 336), h3.experimentalH3ToLocalIj(origin, origin));
-    assertEquals(new CoordIJ(387, 336), h3.experimentalH3ToLocalIj(origin, "88283080c3fffff"));
-    assertEquals(new CoordIJ(392, -14), h3.experimentalH3ToLocalIj(origin, "8828209581fffff"));
+    assertEquals(new CoordIJ(392, 336), h3.cellToLocalIj(origin, origin));
+    assertEquals(new CoordIJ(387, 336), h3.cellToLocalIj(origin, "88283080c3fffff"));
+    assertEquals(new CoordIJ(392, -14), h3.cellToLocalIj(origin, "8828209581fffff"));
   }
 
   @Test
-  public void testExperimentalLocalIjToH3Pentagon() {
+  public void testLocalIjToCellPentagon() {
     final String origin = "811c3ffffffffff";
-    assertEquals(origin, h3.experimentalLocalIjToH3(origin, new CoordIJ(0, 0)));
-    assertEquals("811d3ffffffffff", h3.experimentalLocalIjToH3(origin, new CoordIJ(1, 0)));
-    assertEquals("811cfffffffffff", h3.experimentalLocalIjToH3(origin, new CoordIJ(-1, 0)));
+    assertEquals(origin, h3.localIjToCell(origin, new CoordIJ(0, 0)));
+    assertEquals("811d3ffffffffff", h3.localIjToCell(origin, new CoordIJ(1, 0)));
+    assertEquals("811cfffffffffff", h3.localIjToCell(origin, new CoordIJ(-1, 0)));
   }
 
   @Test(expected = H3Exception.class)
-  public void testExperimentalLocalIjToH3TooFar() {
-    h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
+  public void testLocalIjToCellTooFar() {
+    h3.localIjToCell("8049fffffffffff", new CoordIJ(2, 0));
   }
 
   @Test

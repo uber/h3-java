@@ -66,6 +66,8 @@ public class H3Exception extends RuntimeException {
         return "Memory allocation failed";
       case 14:
         return "Bounds of provided memory were insufficient";
+      case 15:
+        return "Mode or flags argument was not valid";
       default:
         return "Unknown error";
     }

@@ -398,14 +398,13 @@ JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_gridDistance(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    experimentalH3ToLocalIj
+ * Method:    cellToLocalIj
  * Signature: (JJ[I)V
  */
-JNIEXPORT void JNICALL
-Java_com_uber_h3core_NativeMethods_experimentalH3ToLocalIj(
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToLocalIj(
     JNIEnv *env, jobject thiz, jlong origin, jlong h3, jintArray coords) {
     CoordIJ ij = {0};
-    H3Error err = experimentalH3ToLocalIj(origin, h3, &ij);
+    H3Error err = cellToLocalIj(origin, h3, 0, &ij);
     if (err) {
         ThrowH3Exception(env, err);
         return;
@@ -432,17 +431,14 @@ Java_com_uber_h3core_NativeMethods_experimentalH3ToLocalIj(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    experimentalLocalIjToH3
+ * Method:    localIjToCell
  * Signature: (JII)J
  */
-JNIEXPORT jlong JNICALL
-Java_com_uber_h3core_NativeMethods_experimentalLocalIjToH3(JNIEnv *env,
-                                                           jobject thiz,
-                                                           jlong origin, jint i,
-                                                           jint j) {
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_localIjToCell(
+    JNIEnv *env, jobject thiz, jlong origin, jint i, jint j) {
     CoordIJ ij = {.i = i, .j = j};
     H3Index index;
-    H3Error err = experimentalLocalIjToH3(origin, &ij, &index);
+    H3Error err = localIjToCell(origin, &ij, 0, &index);
     if (err) {
         ThrowH3Exception(env, err);
     }
@@ -764,10 +760,10 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToChildren(
  */
 JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToCenterChild(
     JNIEnv *env, jobject thiz, jlong h3, jint childRes) {
-    // TODO
-    H3Index child = cellToCenterChild(h3, childRes);
-    if (child == 0) {
-        ThrowH3Exception(env, E_FAILED);
+    H3Index child;
+    H3Error err = cellToCenterChild(h3, childRes, &child);
+    if (err) {
+        ThrowH3Exception(env, err);
     }
     return child;
 }

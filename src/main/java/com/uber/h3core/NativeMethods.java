@@ -58,9 +58,9 @@ final class NativeMethods {
 
   native long gridDistance(long a, long b);
 
-  native void experimentalH3ToLocalIj(long origin, long h3, int[] coords);
+  native void cellToLocalIj(long origin, long h3, int[] coords);
 
-  native long experimentalLocalIjToH3(long origin, int i, int j);
+  native long localIjToCell(long origin, int i, int j);
 
   native long gridPathCellsSize(long start, long end);
 
