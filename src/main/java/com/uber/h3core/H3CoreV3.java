@@ -28,7 +28,8 @@ import java.util.List;
  *
  * <p>This class is thread safe and can be used as a singleton.
  *
- * <p>This class provides backwards compatability with the V3 API.
+ * <p>This class provides backwards compatable naming with the V3 API. Specific exceptions thrown
+ * may not be the same as V3.
  */
 public class H3CoreV3 {
   /** Native implementation of the H3 library. */
