@@ -19,9 +19,17 @@ import java.util.Objects;
 
 /** Immutable two-dimensional spherical coordinates, in degrees. */
 public class LatLng {
+  /** Latitude (north-south) coordinate in degrees */
   public final double lat;
+  /** Longitude (east-west) coordinate in degrees */
   public final double lng;
 
+  /**
+   * Construct with latitude and longitude
+   *
+   * @param lat Latitude coordinate
+   * @param lng Longitude coordinate
+   */
   public LatLng(double lat, double lng) {
     this.lat = lat;
     this.lng = lng;

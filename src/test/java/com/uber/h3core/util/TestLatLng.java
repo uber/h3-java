@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.uber.h3core.TestH3Core;
+import com.uber.h3core.BaseTestH3Core;
 import org.junit.Test;
 
 /** */
@@ -30,12 +30,12 @@ public class TestLatLng {
     LatLng v2 = new LatLng(1, 0);
     LatLng v3 = new LatLng(0, 1);
 
-    assertEquals(0, v1.lat, TestH3Core.EPSILON);
-    assertEquals(1, v1.lng, TestH3Core.EPSILON);
-    assertEquals(1, v2.lat, TestH3Core.EPSILON);
-    assertEquals(0, v2.lng, TestH3Core.EPSILON);
-    assertEquals(0, v3.lat, TestH3Core.EPSILON);
-    assertEquals(1, v3.lng, TestH3Core.EPSILON);
+    assertEquals(0, v1.lat, BaseTestH3Core.EPSILON);
+    assertEquals(1, v1.lng, BaseTestH3Core.EPSILON);
+    assertEquals(1, v2.lat, BaseTestH3Core.EPSILON);
+    assertEquals(0, v2.lng, BaseTestH3Core.EPSILON);
+    assertEquals(0, v3.lat, BaseTestH3Core.EPSILON);
+    assertEquals(1, v3.lng, BaseTestH3Core.EPSILON);
 
     assertNotEquals(v1, v2);
     assertNotEquals(v3, v2);

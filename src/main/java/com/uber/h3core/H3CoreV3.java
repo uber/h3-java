@@ -24,12 +24,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * H3Core provides all functions of the H3 API.
+ * H3CoreV3 provides all functions of the H3 API with backwards compatible naming for the V3 API.
  *
- * <p>This class is thread safe and can be used as a singleton.
+ * <p>This class is thread safe and can be used as a singleton. It is implemented on top of {@link
+ * H3Core}.
  *
- * <p>This class provides backwards compatable naming with the V3 API. Specific exceptions thrown
- * may not be the same as V3.
+ * <p>Specific exceptions thrown may not be the same as V3.
+ *
+ * <p>This class will be removed in a future version of H3-Java.
  */
 public class H3CoreV3 {
   /** Native implementation of the H3 library. */
