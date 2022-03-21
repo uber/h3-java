@@ -18,6 +18,7 @@ package com.uber.h3core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,5 +65,11 @@ public class TestNativeMethods {
   @Test(expected = OutOfMemoryError.class)
   public void getPentagonIndexes() {
     nativeMethods.getPentagons(1, new long[1]);
+  }
+
+  @Test(expected = H3Exception.class)
+  public void invalidMode() {
+    nativeMethods.polygonToCells(
+        new double[] {}, new int[] {}, new double[] {}, 0, 1, new long[] {});
   }
 }

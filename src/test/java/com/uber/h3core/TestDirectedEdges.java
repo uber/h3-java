@@ -63,4 +63,9 @@ public class TestDirectedEdges extends BaseTestH3Core {
   public void testUnidirectionalEdgesNotNeighbors() {
     h3.cellsToDirectedEdge("891ea6d6533ffff", "891ea6992dbffff");
   }
+
+  @Test(expected = H3Exception.class)
+  public void testDirectedEdgeInvalid() {
+    h3.getDirectedEdgeOrigin(0);
+  }
 }
