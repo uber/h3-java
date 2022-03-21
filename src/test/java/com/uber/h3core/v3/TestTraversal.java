@@ -68,6 +68,16 @@ public class TestTraversal extends BaseTestH3CoreV3 {
   }
 
   @Test
+  public void testKrings() {
+    String origin = "8928308280fffff";
+    List<List<String>> hexagons = h3.kRings(origin, 2);
+    assertEquals(h3.kRing(origin, 0), hexagons.get(0));
+    assertEquals(h3.kRing(origin, 1), hexagons.get(1));
+    assertEquals(h3.kRing(origin, 2), hexagons.get(2));
+    assertEquals(3, hexagons.size());
+  }
+
+  @Test
   public void testKringLarge() {
     int k = 50;
     List<String> hexagons = h3.kRing("8928308280fffff", k);
@@ -112,6 +122,23 @@ public class TestTraversal extends BaseTestH3CoreV3 {
   }
 
   @Test
+  public void testHexRangeLong() {
+    List<List<Long>> hexagons = h3.hexRange(0x8928308280fffffL, 1);
+
+    assertEquals(2, hexagons.size());
+    assertEquals(1, hexagons.get(0).size());
+    assertEquals(6, hexagons.get(1).size());
+
+    assertTrue(hexagons.get(0).contains(0x8928308280fffffL));
+    assertTrue(hexagons.get(1).contains(0x8928308280bffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082807ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082877ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082803ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082873ffffL));
+    assertTrue(hexagons.get(1).contains(0x8928308283bffffL));
+  }
+
+  @Test
   public void testKRingDistances() {
     List<List<String>> hexagons = h3.kRingDistances("8928308280fffff", 1);
 
@@ -126,6 +153,23 @@ public class TestTraversal extends BaseTestH3CoreV3 {
     assertTrue(hexagons.get(1).contains("89283082803ffff"));
     assertTrue(hexagons.get(1).contains("89283082873ffff"));
     assertTrue(hexagons.get(1).contains("8928308283bffff"));
+  }
+
+  @Test
+  public void testKRingDistancesLong() {
+    List<List<Long>> hexagons = h3.kRingDistances(0x8928308280fffffL, 1);
+
+    assertEquals(2, hexagons.size());
+    assertEquals(1, hexagons.get(0).size());
+    assertEquals(6, hexagons.get(1).size());
+
+    assertTrue(hexagons.get(0).contains(0x8928308280fffffL));
+    assertTrue(hexagons.get(1).contains(0x8928308280bffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082807ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082877ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082803ffffL));
+    assertTrue(hexagons.get(1).contains(0x89283082873ffffL));
+    assertTrue(hexagons.get(1).contains(0x8928308283bffffL));
   }
 
   @Test
@@ -181,6 +225,20 @@ public class TestTraversal extends BaseTestH3CoreV3 {
     assertTrue(hexagons.contains("89283082803ffff"));
     assertTrue(hexagons.contains("89283082873ffff"));
     assertTrue(hexagons.contains("8928308283bffff"));
+  }
+
+  @Test
+  public void testHexRingLong() {
+    List<Long> hexagons = h3.hexRing(0x8928308280fffffL, 1);
+
+    assertEquals(6, hexagons.size());
+
+    assertTrue(hexagons.contains(0x8928308280bffffL));
+    assertTrue(hexagons.contains(0x89283082807ffffL));
+    assertTrue(hexagons.contains(0x89283082877ffffL));
+    assertTrue(hexagons.contains(0x89283082803ffffL));
+    assertTrue(hexagons.contains(0x89283082873ffffL));
+    assertTrue(hexagons.contains(0x8928308283bffffL));
   }
 
   @Test
@@ -257,7 +315,7 @@ public class TestTraversal extends BaseTestH3CoreV3 {
   @Test
   public void testH3Distance() {
     // Resolution 0 to some neighbors
-    assertEquals(0, h3.h3Distance("8029fffffffffff", "8029fffffffffff"));
+    assertEquals(0, h3.h3Distance(0x8029fffffffffffL, 0x8029fffffffffffL));
     assertEquals(1, h3.h3Distance("8029fffffffffff", "801dfffffffffff"));
     assertEquals(1, h3.h3Distance("8029fffffffffff", "8037fffffffffff"));
 
@@ -272,7 +330,7 @@ public class TestTraversal extends BaseTestH3CoreV3 {
     assertEquals(2, h3.h3Distance("85283083fffffff", "8528342bfffffff"));
     assertEquals(3, h3.h3Distance("85283083fffffff", "85283477fffffff"));
     assertEquals(4, h3.h3Distance("85283083fffffff", "85283473fffffff"));
-    assertEquals(5, h3.h3Distance("85283083fffffff", "85283447fffffff"));
+    assertEquals(5, h3.h3Distance(0x85283083fffffffL, 0x85283447fffffffL));
   }
 
   @Test(expected = H3Exception.class)
@@ -283,7 +341,7 @@ public class TestTraversal extends BaseTestH3CoreV3 {
 
   @Test(expected = H3Exception.class)
   public void testCellToLocalIjNoncomparable() {
-    h3.experimentalH3ToLocalIj("832830fffffffff", "822837fffffffff");
+    h3.experimentalH3ToLocalIj(0x832830fffffffffL, 0x822837fffffffffL);
   }
 
   @Test(expected = H3Exception.class)
@@ -323,6 +381,11 @@ public class TestTraversal extends BaseTestH3CoreV3 {
   @Test(expected = H3Exception.class)
   public void testLocalIjToCellTooFar() {
     h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
+  }
+
+  @Test(expected = H3Exception.class)
+  public void testLocalIjToCellTooFarLong() {
+    h3.experimentalLocalIjToH3(0x8049fffffffffffL, new CoordIJ(2, 0));
   }
 
   @Test

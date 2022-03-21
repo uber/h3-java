@@ -290,4 +290,10 @@ public class TestMiscellaneous extends BaseTestH3CoreV3 {
   public void testConstantsInvalid3() {
     h3.edgeLength(0, null);
   }
+
+  @Test
+  public void testStringToH3() {
+    assertEquals("ffffffffffffffff", h3.h3ToString(0xffffffffffffffffL));
+    assertEquals(0xffffffffffffffffL, h3.stringToH3("ffffffffffffffff"));
+  }
 }

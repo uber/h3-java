@@ -59,6 +59,38 @@ public class TestDirectedEdges extends BaseTestH3CoreV3 {
     assertEquals(2, boundary.size());
   }
 
+  @Test
+  public void testUnidirectionalEdgesLong() {
+    long start = 0x891ea6d6533ffffL;
+    long adjacent = 0x891ea6d65afffffL;
+    long notAdjacent = 0x891ea6992dbffffL;
+
+    assertTrue(h3.h3IndexesAreNeighbors(start, adjacent));
+    assertFalse(h3.h3IndexesAreNeighbors(start, notAdjacent));
+    // Indexes are not considered to neighbor themselves
+    assertFalse(h3.h3IndexesAreNeighbors(start, start));
+
+    long edge = h3.getH3UnidirectionalEdge(start, adjacent);
+
+    assertTrue(h3.h3UnidirectionalEdgeIsValid(edge));
+    assertFalse(h3.h3UnidirectionalEdgeIsValid(start));
+
+    assertEquals(start, h3.getOriginH3IndexFromUnidirectionalEdge(edge));
+    assertEquals(adjacent, h3.getDestinationH3IndexFromUnidirectionalEdge(edge));
+
+    List<Long> components = h3.getH3IndexesFromUnidirectionalEdge(edge);
+    assertEquals(2, components.size());
+    assertEquals(start, (long) components.get(0));
+    assertEquals(adjacent, (long) components.get(1));
+
+    Collection<Long> edges = h3.getH3UnidirectionalEdgesFromHexagon(start);
+    assertEquals(6, edges.size());
+    assertTrue(edges.contains(edge));
+
+    List<LatLng> boundary = h3.getH3UnidirectionalEdgeBoundary(edge);
+    assertEquals(2, boundary.size());
+  }
+
   @Test(expected = H3Exception.class)
   public void testUnidirectionalEdgesNotNeighbors() {
     h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");

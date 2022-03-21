@@ -54,8 +54,8 @@ public class TestInspection extends BaseTestH3CoreV3 {
   public void testH3IsResClassIII() {
     String r0 = h3.geoToH3Address(0, 0, 0);
     String r1 = h3.geoToH3Address(10, 0, 1);
-    String r2 = h3.geoToH3Address(0, 10, 2);
-    String r3 = h3.geoToH3Address(10, 10, 3);
+    long r2 = h3.geoToH3(0, 10, 2);
+    long r3 = h3.geoToH3(10, 10, 3);
 
     assertFalse(h3.h3IsResClassIII(r0));
     assertTrue(h3.h3IsResClassIII(r1));

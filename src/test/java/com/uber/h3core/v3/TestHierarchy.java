@@ -114,6 +114,26 @@ public class TestHierarchy extends BaseTestH3CoreV3 {
     assertEquals(new HashSet<>(expanded), new HashSet<>(uncompacted));
   }
 
+  @Test
+  public void testCompactLong() {
+    // Some random location
+    long starting = h3.geoToH3(30, 20, 6);
+
+    Collection<Long> expanded = h3.kRing(starting, 8);
+
+    Collection<Long> compacted = h3.compact(expanded);
+
+    // Visually inspected the results to determine this was OK.
+    assertEquals(61, compacted.size());
+
+    Collection<Long> uncompacted = h3.uncompact(compacted, 6);
+
+    assertEquals(expanded.size(), uncompacted.size());
+
+    // Assert contents are the same
+    assertEquals(new HashSet<>(expanded), new HashSet<>(uncompacted));
+  }
+
   @Test(expected = RuntimeException.class)
   public void testCompactInvalid() {
     // Some random location
