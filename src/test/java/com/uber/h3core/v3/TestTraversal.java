@@ -378,6 +378,22 @@ public class TestTraversal extends BaseTestH3CoreV3 {
     assertEquals("811cfffffffffff", h3.experimentalLocalIjToH3(origin, new CoordIJ(-1, 0)));
   }
 
+  @Test
+  public void testCellToLocalIjHexagonsLong() {
+    final long origin = 0x8828308281fffffL;
+    assertEquals(new CoordIJ(392, 336), h3.experimentalH3ToLocalIj(origin, origin));
+    assertEquals(new CoordIJ(387, 336), h3.experimentalH3ToLocalIj(origin, 0x88283080c3fffffL));
+    assertEquals(new CoordIJ(392, -14), h3.experimentalH3ToLocalIj(origin, 0x8828209581fffffL));
+  }
+
+  @Test
+  public void testLocalIjToCellPentagonLong() {
+    final long origin = 0x811c3ffffffffffL;
+    assertEquals(origin, h3.experimentalLocalIjToH3(origin, new CoordIJ(0, 0)));
+    assertEquals(0x811d3ffffffffffL, h3.experimentalLocalIjToH3(origin, new CoordIJ(1, 0)));
+    assertEquals(0x811cfffffffffffL, h3.experimentalLocalIjToH3(origin, new CoordIJ(-1, 0)));
+  }
+
   @Test(expected = H3Exception.class)
   public void testLocalIjToCellTooFar() {
     h3.experimentalLocalIjToH3("8049fffffffffff", new CoordIJ(2, 0));
@@ -395,6 +411,29 @@ public class TestTraversal extends BaseTestH3CoreV3 {
       String destination = h3.geoToH3Address(25, -120, res);
 
       List<String> line = h3.h3Line(origin, destination);
+      long distance = h3.h3Distance(origin, destination);
+
+      // Need to add 1 to account for the origin as well
+      assertEquals("Distance matches expected", distance + 1, line.size());
+
+      for (int i = 1; i < line.size(); i++) {
+        assertTrue(
+            "Every index in the line is a neighbor of the previous",
+            h3.h3IndexesAreNeighbors(line.get(i - 1), line.get(i)));
+      }
+
+      assertTrue("Line contains start", line.contains(origin));
+      assertTrue("Line contains destination", line.contains(destination));
+    }
+  }
+
+  @Test
+  public void testH3LineLong() {
+    for (int res = 0; res < 12; res++) {
+      long origin = h3.geoToH3(37.5, -122, res);
+      long destination = h3.geoToH3(25, -120, res);
+
+      List<Long> line = h3.h3Line(origin, destination);
       long distance = h3.h3Distance(origin, destination);
 
       // Need to add 1 to account for the origin as well
