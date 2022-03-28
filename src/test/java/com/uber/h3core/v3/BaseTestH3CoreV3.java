@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2019 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uber.h3core.exceptions;
+package com.uber.h3core.v3;
 
-/**
- * The distance could not be computed between two cells. This can happen due to incomparable input
- * (different resolutions), the distance being too great to express. or limitations in the H3
- * library for calculating distance.
- */
-public class DistanceUndefinedException extends Exception {
-  public DistanceUndefinedException(String message) {
-    super(message);
+import com.uber.h3core.H3CoreV3;
+import java.io.IOException;
+import org.junit.BeforeClass;
+
+/** Base class for tests of the class {@link H3Core} */
+public abstract class BaseTestH3CoreV3 {
+  public static final double EPSILON = 1e-6;
+
+  protected static H3CoreV3 h3;
+
+  @BeforeClass
+  public static void setup() throws IOException {
+    h3 = H3CoreV3.newInstance();
   }
 }

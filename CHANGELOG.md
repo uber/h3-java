@@ -7,6 +7,15 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
+### Breaking Changes
+- Changed the API of `H3Core` to align it with the core library, and introduced `H3CoreV3` for users who wish to use the old names. (#91)
+
+### Added
+- Vertex mode API. (#91)
+
+### Changed
+- Upgraded the core library to v4.0.0. (#91)
+
 ### Removed
 - Removed support for Linux MIPSEL (#92)
 

@@ -19,9 +19,17 @@ import java.util.Objects;
 
 /** Immutable two-dimensional IJ grid coordinates. */
 public class CoordIJ {
+  /** I coordinate */
   public final int i;
+  /** J coordinate */
   public final int j;
 
+  /**
+   * Construct with I and J coordinates
+   *
+   * @param i I coordinate
+   * @param j J coordinate
+   */
   public CoordIJ(int i, int j) {
     this.i = i;
     this.j = j;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,24 @@
  */
 package com.uber.h3core.exceptions;
 
-/** An H3 algorithm encountered a pentagon and was unable to continue. */
-public class PentagonEncounteredException extends Exception {
-  public PentagonEncounteredException(String message) {
-    super(message);
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.Test;
+
+/** */
+public class TestH3Exception {
+  @Test
+  public void test() {
+    Set<String> messages = new HashSet<>();
+    int maxErrorCode = 16;
+    for (int i = 0; i < maxErrorCode + 10; i++) {
+      H3Exception e = new H3Exception(i);
+      messages.add(e.getMessage());
+      assertEquals(i, e.getCode());
+    }
+    // +1 for the unknown message
+    assertEquals(maxErrorCode + 1, messages.size());
   }
 }

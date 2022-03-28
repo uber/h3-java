@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Uber Technologies, Inc.
+ * Copyright 2017-2019, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.uber.h3core;
 
-import com.uber.h3core.util.GeoCoord;
+import com.uber.h3core.util.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,56 +28,57 @@ final class NativeMethods {
     // Only H3CoreLoader is expected to instantiate
   }
 
-  native int maxH3ToChildrenSize(long h3, int childRes);
+  native long cellToChildrenSize(long h3, int childRes);
 
-  native void h3ToChildren(long h3, int childRes, long[] results);
+  native void cellToChildren(long h3, int childRes, long[] results);
 
-  native long h3ToCenterChild(long h3, int childRes);
+  native long cellToCenterChild(long h3, int childRes);
 
-  native boolean h3IsValid(long h3);
+  native boolean isValidCell(long h3);
 
-  native int h3GetBaseCell(long h3);
+  native int getBaseCellNumber(long h3);
 
-  native boolean h3IsPentagon(long h3);
+  native boolean isPentagon(long h3);
 
-  native long geoToH3(double lat, double lon, int res);
+  native long latLngToCell(double lat, double lon, int res);
 
-  native void h3ToGeo(long h3, double[] verts);
+  native void cellToLatLng(long h3, double[] verts);
 
-  native int h3ToGeoBoundary(long h3, double[] verts);
+  native int cellToBoundary(long h3, double[] verts);
 
-  native int maxKringSize(int k);
+  native long maxGridDiskSize(int k);
 
-  native void kRing(long h3, int k, long[] results);
+  native void gridDisk(long h3, int k, long[] results);
 
-  native void kRingDistances(long h3, int k, long[] results, int[] distances);
+  native void gridDiskDistances(long h3, int k, long[] results, int[] distances);
 
-  native int hexRange(long h3, int k, long[] results);
+  native void gridDiskUnsafe(long h3, int k, long[] results);
 
-  native int hexRing(long h3, int k, long[] results);
+  native void gridRingUnsafe(long h3, int k, long[] results);
 
-  native int h3Distance(long a, long b);
+  native long gridDistance(long a, long b);
 
-  native int experimentalH3ToLocalIj(long origin, long h3, int[] coords);
+  native void cellToLocalIj(long origin, long h3, int[] coords);
 
-  native long experimentalLocalIjToH3(long origin, int i, int j);
+  native long localIjToCell(long origin, int i, int j);
 
-  native int h3LineSize(long start, long end);
+  native long gridPathCellsSize(long start, long end);
 
-  native int h3Line(long start, long end, long[] results);
+  native void gridPathCells(long start, long end, long[] results);
 
-  native int maxPolyfillSize(double[] verts, int[] holeSizes, double[] holeVerts, int res);
+  native long maxPolygonToCellsSize(
+      double[] verts, int[] holeSizes, double[] holeVerts, int res, int flags);
 
-  native void polyfill(
-      double[] verts, int[] holeSizes, double[] holeVerts, int res, long[] results);
+  native void polygonToCells(
+      double[] verts, int[] holeSizes, double[] holeVerts, int res, int flags, long[] results);
 
-  native void h3SetToLinkedGeo(long[] h3, ArrayList<List<List<GeoCoord>>> results);
+  native void cellsToLinkedMultiPolygon(long[] h3, ArrayList<List<List<LatLng>>> results);
 
-  native int compact(long[] h3, long[] results);
+  native void compactCells(long[] h3, long[] results);
 
-  native int maxUncompactSize(long[] h3, int res);
+  native long uncompactCellsSize(long[] h3, int res);
 
-  native int uncompact(long[] h3, int res, long[] results);
+  native void uncompactCells(long[] h3, int res, long[] results);
 
   native double cellAreaRads2(long h3);
 
@@ -85,11 +86,11 @@ final class NativeMethods {
 
   native double cellAreaM2(long h3);
 
-  native double pointDistRads(double lat1, double lon1, double lat2, double lon2);
+  native double distanceRads(double lat1, double lon1, double lat2, double lon2);
 
-  native double pointDistKm(double lat1, double lon1, double lat2, double lon2);
+  native double distanceKm(double lat1, double lon1, double lat2, double lon2);
 
-  native double pointDistM(double lat1, double lon1, double lat2, double lon2);
+  native double distanceM(double lat1, double lon1, double lat2, double lon2);
 
   native double exactEdgeLengthRads(long h3);
 
@@ -97,37 +98,45 @@ final class NativeMethods {
 
   native double exactEdgeLengthM(long h3);
 
-  native double hexAreaKm2(int res);
+  native double getHexagonAreaAvgKm2(int res);
 
-  native double hexAreaM2(int res);
+  native double getHexagonAreaAvgM2(int res);
 
-  native double edgeLengthKm(int res);
+  native double getHexagonEdgeLengthAvgKm(int res);
 
-  native double edgeLengthM(int res);
+  native double getHexagonEdgeLengthAvgM(int res);
 
-  native long numHexagons(int res);
+  native long getNumCells(int res);
 
-  native void getRes0Indexes(long[] indexes);
+  native void getRes0Cells(long[] indexes);
 
-  native void getPentagonIndexes(int res, long[] h3);
+  native void getPentagons(int res, long[] h3);
 
-  native boolean h3IndexesAreNeighbors(long a, long b);
+  native boolean areNeighborCells(long a, long b);
 
-  native long getH3UnidirectionalEdge(long a, long b);
+  native long cellsToDirectedEdge(long a, long b);
 
-  native boolean h3UnidirectionalEdgeIsValid(long h3);
+  native boolean isValidDirectedEdge(long h3);
 
-  native long getOriginH3IndexFromUnidirectionalEdge(long h3);
+  native long getDirectedEdgeOrigin(long h3);
 
-  native long getDestinationH3IndexFromUnidirectionalEdge(long h3);
+  native long getDirectedEdgeDestination(long h3);
 
-  native void getH3IndexesFromUnidirectionalEdge(long h3, long[] results);
+  native void directedEdgeToCells(long h3, long[] results);
 
-  native void getH3UnidirectionalEdgesFromHexagon(long h3, long[] results);
+  native void originToDirectedEdges(long h3, long[] results);
 
-  native int getH3UnidirectionalEdgeBoundary(long h3, double[] verts);
+  native int directedEdgeToBoundary(long h3, double[] verts);
 
   native int maxFaceCount(long h3);
 
-  native void h3GetFaces(long h3, int[] faces);
+  native void getIcosahedronFaces(long h3, int[] faces);
+
+  native long cellToVertex(long h3, int vertexNum);
+
+  native void cellToVertexes(long h3, long[] results);
+
+  native void vertexToLatLng(long h3, double[] latLng);
+
+  native boolean isValidVertex(long h3);
 }

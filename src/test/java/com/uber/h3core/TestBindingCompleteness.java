@@ -32,13 +32,7 @@ public class TestBindingCompleteness {
   private static final Set<String> WHITELIST =
       ImmutableSet.of(
           // These are provided by the Java library (java.lang.Math)
-          "degsToRads",
-          "radsToDegs",
-          // This is effectively done by hexRange in the Java binding
-          "hexRangeDistances",
-          // This exists only to reduce managed/unmanaged barrier costs,
-          // so is not strictly necessary.
-          "hexRanges");
+          "degsToRads", "radsToDegs");
 
   @Test
   public void test() throws IOException {

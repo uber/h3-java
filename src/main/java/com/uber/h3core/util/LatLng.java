@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2022 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,19 @@ package com.uber.h3core.util;
 import java.util.Objects;
 
 /** Immutable two-dimensional spherical coordinates, in degrees. */
-public class GeoCoord {
+public class LatLng {
+  /** Latitude (north-south) coordinate in degrees */
   public final double lat;
+  /** Longitude (east-west) coordinate in degrees */
   public final double lng;
 
-  public GeoCoord(double lat, double lng) {
+  /**
+   * Construct with latitude and longitude
+   *
+   * @param lat Latitude coordinate
+   * @param lng Longitude coordinate
+   */
+  public LatLng(double lat, double lng) {
     this.lat = lat;
     this.lng = lng;
   }
@@ -31,7 +39,7 @@ public class GeoCoord {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GeoCoord coord = (GeoCoord) o;
+    LatLng coord = (LatLng) o;
     return Double.compare(coord.lat, lat) == 0 && Double.compare(coord.lng, lng) == 0;
   }
 
@@ -42,6 +50,6 @@ public class GeoCoord {
 
   @Override
   public String toString() {
-    return String.format("GeoCoord{lat=%f, lng=%f}", lat, lng);
+    return String.format("LatLng{lat=%f, lng=%f}", lat, lng);
   }
 }

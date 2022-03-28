@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uber.h3core;
+package com.uber.h3core.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,11 +26,11 @@ import java.util.List;
 import org.junit.Test;
 
 /** Tests for region (polyfill, h3SetToMultiPolygon) functions. */
-public class TestRegion extends BaseTestH3Core {
+public class TestRegion extends BaseTestH3CoreV3 {
   @Test
   public void testPolyfill() {
     List<Long> hexagons =
-        h3.polygonToCells(
+        h3.polyfill(
             ImmutableList.of(
                 new LatLng(37.813318999983238, -122.4089866999972145),
                 new LatLng(37.7866302000007224, -122.3805436999997056),
@@ -47,7 +47,7 @@ public class TestRegion extends BaseTestH3Core {
   @Test
   public void testPolyfillAddresses() {
     List<String> hexagons =
-        h3.polygonToCellAddresses(
+        h3.polyfillAddress(
             ImmutableList.<LatLng>of(
                 new LatLng(37.813318999983238, -122.4089866999972145),
                 new LatLng(37.7866302000007224, -122.3805436999997056),
@@ -64,7 +64,7 @@ public class TestRegion extends BaseTestH3Core {
   @Test
   public void testPolyfillWithHole() {
     List<Long> hexagons =
-        h3.polygonToCells(
+        h3.polyfill(
             ImmutableList.<LatLng>of(
                 new LatLng(37.813318999983238, -122.4089866999972145),
                 new LatLng(37.7866302000007224, -122.3805436999997056),
@@ -85,7 +85,7 @@ public class TestRegion extends BaseTestH3Core {
   @Test
   public void testPolyfillWithTwoHoles() {
     List<Long> hexagons =
-        h3.polygonToCells(
+        h3.polyfill(
             ImmutableList.<LatLng>of(
                 new LatLng(37.813318999983238, -122.4089866999972145),
                 new LatLng(37.7866302000007224, -122.3805436999997056),
@@ -109,32 +109,32 @@ public class TestRegion extends BaseTestH3Core {
 
   @Test
   public void testPolyfillKnownHoles() {
-    List<Long> inputHexagons = h3.gridDisk(0x85283083fffffffL, 2);
+    List<Long> inputHexagons = h3.kRing(0x85283083fffffffL, 2);
     inputHexagons.remove(0x8528308ffffffffL);
     inputHexagons.remove(0x85283097fffffffL);
     inputHexagons.remove(0x8528309bfffffffL);
 
-    List<List<LatLng>> geo = h3.cellsToMultiPolygon(inputHexagons, true).get(0);
+    List<List<LatLng>> geo = h3.h3SetToMultiPolygon(inputHexagons, true).get(0);
 
     List<LatLng> outline = geo.remove(0); // geo is now holes
 
-    List<Long> outputHexagons = h3.polygonToCells(outline, geo, 5);
+    List<Long> outputHexagons = h3.polyfill(outline, geo, 5);
 
     assertEquals(ImmutableSet.copyOf(inputHexagons), ImmutableSet.copyOf(outputHexagons));
   }
 
   @Test
   public void testH3SetToMultiPolygonEmpty() {
-    assertEquals(0, h3.cellsToMultiPolygon(new ArrayList<Long>(), false).size());
+    assertEquals(0, h3.h3SetToMultiPolygon(new ArrayList<Long>(), false).size());
   }
 
   @Test
   public void testH3SetToMultiPolygonSingle() {
     long testIndex = 0x89283082837ffffL;
 
-    List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
+    List<LatLng> actualBounds = h3.h3ToGeoBoundary(testIndex);
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex), true);
+        h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), true);
 
     // This is tricky, because output in an order starting from any vertex
     // would also be correct, but that's difficult to assert and there's
@@ -158,9 +158,9 @@ public class TestRegion extends BaseTestH3Core {
   public void testH3SetToMultiPolygonSingleNonGeoJson() {
     long testIndex = 0x89283082837ffffL;
 
-    List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
+    List<LatLng> actualBounds = h3.h3ToGeoBoundary(testIndex);
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex), false);
+        h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), false);
 
     // This is tricky, because output in an order starting from any vertex
     // would also be correct, but that's difficult to assert and there's
@@ -185,12 +185,12 @@ public class TestRegion extends BaseTestH3Core {
     long testIndex = 0x89283082837ffffL;
     long testIndex2 = 0x89283082833ffffL;
 
-    List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
-    List<LatLng> actualBounds2 = h3.cellToBoundary(testIndex2);
+    List<LatLng> actualBounds = h3.h3ToGeoBoundary(testIndex);
+    List<LatLng> actualBounds2 = h3.h3ToGeoBoundary(testIndex2);
 
     // Note this is different than the h3core-js bindings, in that it uses GeoJSON (possible bug)
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
     assertEquals(1, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
@@ -224,7 +224,7 @@ public class TestRegion extends BaseTestH3Core {
     long testIndex2 = 0x8928308280fffffL;
 
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        h3.h3SetToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
 
     assertEquals(2, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
@@ -237,7 +237,7 @@ public class TestRegion extends BaseTestH3Core {
   public void testH3SetToMultiPolygonHole() {
     // Six hexagons in a ring around a hole
     List<List<List<LatLng>>> multiBounds =
-        h3.cellAddressesToMultiPolygon(
+        h3.h3AddressSetToMultiPolygon(
             ImmutableList.of(
                 "892830828c7ffff",
                 "892830828d7ffff",
@@ -259,10 +259,10 @@ public class TestRegion extends BaseTestH3Core {
 
     List<String> addresses = new ArrayList<>(numHexes);
     for (int i = 0; i < numHexes; i++) {
-      addresses.add(h3.latLngToCellAddress(0, i * 0.01, 15));
+      addresses.add(h3.geoToH3Address(0, i * 0.01, 15));
     }
 
-    List<List<List<LatLng>>> multiBounds = h3.cellAddressesToMultiPolygon(addresses, false);
+    List<List<List<LatLng>>> multiBounds = h3.h3AddressSetToMultiPolygon(addresses, false);
 
     assertEquals(numHexes, multiBounds.size());
     for (int i = 0; i < multiBounds.size(); i++) {
