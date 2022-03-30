@@ -6,15 +6,16 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
-## [Unreleased]
+## [4.0.0-rc1] - 2022-03-29
 ### Breaking Changes
-- Changed the API of `H3Core` to align it with the core library, and introduced `H3CoreV3` for users who wish to use the old names. (#91)
+- Changed the API of `H3Core` to align it with the core library. (#91)
 
 ### Added
+- `H3CoreV3` for users who wish to temporarily use old function names. (#91)
 - Vertex mode API. (#91)
 
 ### Changed
-- Upgraded the core library to v4.0.0. (#91)
+- Upgraded the core library to v4.0.0-rc2. (#91)
 
 ### Removed
 - Removed support for Linux MIPSEL (#92)
