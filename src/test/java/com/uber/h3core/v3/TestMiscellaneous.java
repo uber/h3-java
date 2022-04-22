@@ -25,7 +25,7 @@ import com.uber.h3core.util.LatLng;
 import java.util.Collection;
 import org.junit.Test;
 
-/** Tests for {@link H3Core} instantiation and miscellaneous functions. */
+/** Tests for {@link com.uber.h3core.H3CoreV3} instantiation and miscellaneous functions. */
 public class TestMiscellaneous extends BaseTestH3CoreV3 {
   @Test
   public void testConstants() {

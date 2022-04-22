@@ -40,7 +40,7 @@ jobs:
         run: mvn com.spotify.fmt:fmt-maven-plugin:check
 
       - name: Tests
-        run: mvn "-Dh3.remove.images=true" -B -V clean test
+        run: mvn "-Dh3.remove.images=true" -B -V clean test site
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Tests
-        run: mvn -B -V clean test
+        run: mvn -B -V clean test site
 
   tests-coverage:
     name: Java (Coverage) ${{ matrix.java-version }} ${{ matrix.os }}

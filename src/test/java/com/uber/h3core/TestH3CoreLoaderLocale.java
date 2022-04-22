@@ -24,8 +24,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * H3CoreLoader is mostly tested by {@link TestH3Core}. This also tests OS detection under different
- * locales.
+ * H3CoreLoader is mostly tested by {@link TestH3CoreFactory}. This also tests OS detection under
+ * different locales.
  */
 @NotThreadSafe
 public class TestH3CoreLoaderLocale {
