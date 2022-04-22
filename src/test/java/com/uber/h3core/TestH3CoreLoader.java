@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
 
-/** H3CoreLoader is mostly tested by {@link TestH3Core}. This also tests OS detection. */
+/** H3CoreLoader is mostly tested by {@link TestH3CoreFactory}. This also tests OS detection. */
 public class TestH3CoreLoader {
   @Test
   public void testDetectOs() {

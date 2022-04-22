@@ -19,7 +19,7 @@ import com.uber.h3core.H3CoreV3;
 import java.io.IOException;
 import org.junit.BeforeClass;
 
-/** Base class for tests of the class {@link H3Core} */
+/** Base class for tests of the class {@link H3CoreV3} */
 public abstract class BaseTestH3CoreV3 {
   public static final double EPSILON = 1e-6;
 

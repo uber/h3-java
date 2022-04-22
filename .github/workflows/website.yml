@@ -1,0 +1,39 @@
+
+on:
+  push:
+    branches:
+      - master
+
+# This job installs dependencies, builds the website, and pushes it to `gh-pages`
+jobs:
+  deploy-website:
+    name: Deploy website
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "15"
+
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Javadocs Build
+        working-directory: website
+        run: |
+          mvn -B -C clean site -Dh3.use.docker=false
+
+      # Deploy the book's HTML to gh-pages branch
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/site/apidocs/
