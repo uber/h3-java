@@ -29,7 +29,7 @@ jobs:
 
       - name: Javadocs Build
         run: |
-          mvn -B -C clean site -Dh3.use.docker=false
+          mvn -B -V clean site -Dh3.use.docker=false
 
       # Deploy the book's HTML to gh-pages branch
       - name: GitHub Pages action
