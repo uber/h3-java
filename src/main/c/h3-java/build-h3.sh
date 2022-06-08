@@ -21,8 +21,8 @@
 # git-ref       - Specific git ref of H3 to build.
 # use-docker    - "true" to perform cross compilation via Docker, "false" to
 #                 skip that step.
-# remove-images - If use-docker is true and this argument is true, Docker
-#                 cross compilation images will be removed after each step
+# system-prune  - If use-docker is true and this argument is true, Docker
+#                 system prune will be run after each step
 #                 (i.e. for disk space constrained environments like CI)
 # dockcross-tag - Tag name for dockcross
 #
@@ -37,7 +37,7 @@ set -ex
 GIT_REMOTE=$1
 GIT_REVISION=$2
 USE_DOCKER=$3
-REMOVE_IMAGES=$4
+SYSTEM_PRUNE=$4
 DOCKCROSS_TAG=$5
 
 echo Downloading H3 from "$GIT_REMOTE"
@@ -192,8 +192,8 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     if [ -e $BUILD_ROOT/lib/libh3-java.dylib ]; then cp $BUILD_ROOT/lib/libh3-java.dylib $OUTPUT_ROOT ; fi
     if [ -e $BUILD_ROOT/lib/libh3-java.dll ]; then cp $BUILD_ROOT/lib/libh3-java.dll $OUTPUT_ROOT ; fi
 
-    if $REMOVE_IMAGES; then
-        docker rmi dockcross/$image:$DOCKCROSS_TAG
+    if $SYSTEM_PRUNE; then
+        docker system prune --force
         rm $BUILD_ROOT/dockcross
     fi
     echo Current disk usage:

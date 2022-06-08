@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 15]
+        java-version: [8, 11, 15, 17]
 
     steps:
       - uses: actions/checkout@v2.1.1
@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Tests
-        run: mvn "-Dh3.remove.images=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test site
+        run: mvn "-Dh3.remove.images=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
