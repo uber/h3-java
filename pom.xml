@@ -71,6 +71,7 @@
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
         <h3.remove.images>false</h3.remove.images>
+        <h3.dockcross.tag>20210624-de7b1b0</h3.dockcross.tag>
         <!-- Used for passing additional arguments to surefire when using JaCoCo -->
         <h3.additional.argLine />
 
@@ -266,6 +267,7 @@
                                 <argument>${h3.git.reference}</argument>
                                 <argument>${h3.use.docker}</argument>
                                 <argument>${h3.remove.images}</argument>
+                                <argument>${h3.dockcross.tag}</argument>
                             </arguments>
                         </configuration>
                     </execution>

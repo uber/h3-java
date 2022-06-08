@@ -24,6 +24,7 @@
 # remove-images - If use-docker is true and this argument is true, Docker
 #                 cross compilation images will be removed after each step
 #                 (i.e. for disk space constrained environments like CI)
+# dockcross-tag - Tag name for dockcross
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
@@ -37,6 +38,7 @@ GIT_REMOTE=$1
 GIT_REVISION=$2
 USE_DOCKER=$3
 REMOVE_IMAGES=$4
+DOCKCROSS_TAG=$5
 
 echo Downloading H3 from "$GIT_REMOTE"
 
@@ -156,21 +158,25 @@ if ! command -v docker; then
     exit 0
 fi
 
-dockcross_tag="20211126-f096312"
+# Needed for older versions of dockcross
+UPGRADE_CMAKE=true
+CMAKE_ROOT=target/cmake-3.23.2-linux-x86_64
+mkdir -p $CMAKE_ROOT
 
 # linux-armv6 excluded because of build failure
-for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-mips linux-s390x \
+# linux-mips excluded due to manifest error
+for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-s390x \
     linux-ppc64le linux-x64 linux-x86 windows-static-x64 windows-static-x86; do
 
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
-    docker pull dockcross/$image:$dockcross_tag
-    docker run --rm dockcross/$image:$dockcross_tag > $BUILD_ROOT/dockcross
+    docker pull dockcross/$image:$DOCKCROSS_TAG
+    docker run --rm dockcross/$image:$DOCKCROSS_TAG > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
 
     # Perform the actual build inside Docker
-    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT"
+    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT"
 
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.
