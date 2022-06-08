@@ -193,7 +193,7 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     if [ -e $BUILD_ROOT/lib/libh3-java.dll ]; then cp $BUILD_ROOT/lib/libh3-java.dll $OUTPUT_ROOT ; fi
 
     if $REMOVE_IMAGES; then
-        docker rmi dockcross/$image
+        docker rmi dockcross/$image:$DOCKCROSS_TAG
         rm $BUILD_ROOT/dockcross
     fi
     echo Current disk usage:

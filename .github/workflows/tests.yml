@@ -43,7 +43,7 @@ jobs:
         run: mvn "-Dh3.remove.images=true" -B -V clean test site
 
   tests-new-dockcross:
-    name: Java ${{ matrix.java-version }} ${{ matrix.os }}
+    name: Dockcross ${{ matrix.dockcross-tag }} Java ${{ matrix.java-version }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
