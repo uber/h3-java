@@ -40,7 +40,7 @@ jobs:
         run: mvn com.spotify.fmt:fmt-maven-plugin:check
 
       - name: Tests
-        run: mvn "-Dh3.remove.images=true" -B -V clean test site
+        run: mvn "-Dh3.system.prune=true" -B -V clean test site
 
   tests-new-dockcross:
     name: Dockcross ${{ matrix.dockcross-tag }} Java ${{ matrix.java-version }} ${{ matrix.os }}
@@ -50,7 +50,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [15]
+        java-version: [17]
         dockcross-tag: ["20220528-e4627de"]
 
     steps:
@@ -72,7 +72,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Tests
-        run: mvn "-Dh3.remove.images=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
+        run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
