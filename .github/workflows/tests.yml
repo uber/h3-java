@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 15]
+        java-version: [8, 11, 15, 17]
 
     steps:
       - uses: actions/checkout@v2.1.1
@@ -40,7 +40,39 @@ jobs:
         run: mvn com.spotify.fmt:fmt-maven-plugin:check
 
       - name: Tests
-        run: mvn "-Dh3.remove.images=true" -B -V clean test site
+        run: mvn "-Dh3.system.prune=true" -B -V clean test site
+
+  tests-new-dockcross:
+    name: Dockcross ${{ matrix.dockcross-tag }} Java ${{ matrix.java-version }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java-distribution: [adopt]
+        java-version: [17]
+        dockcross-tag: ["20220528-e4627de"]
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Tests
+        run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -51,7 +83,7 @@ jobs:
         # TODO: Docker on macos-latest running is not working
         os: [macos-latest, windows-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 15]
+        java-version: [8, 11, 15, 17]
 
     steps:
       - uses: actions/checkout@v2.1.1
