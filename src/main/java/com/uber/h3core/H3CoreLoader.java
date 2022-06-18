@@ -111,7 +111,7 @@ public final class H3CoreLoader {
     // This is synchronized because if multiple threads were writing and
     // loading the shared object at the same time, bad things could happen.
 
-    if (libraryFile == null) {
+    if (libraryFile == null || !libraryFile.exists()) {
       final String dirName = String.format("%s-%s", os.getDirName(), arch);
       final String libName = String.format("libh3-java%s", os.getSuffix());
 
