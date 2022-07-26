@@ -8,8 +8,8 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [4.0.0-rc3] - 2022-07-26
 ### Breaking Changes
-- Upgraded the core library to v4.0.0-rc4.
-- `distance` function renamed to `greatCircleDistance`.
+- Upgraded the core library to v4.0.0-rc4. (#102)
+- `distance` function renamed to `greatCircleDistance`. (#102)
 
 ## [4.0.0-rc2] - 2022-06-09
 ### Changed
