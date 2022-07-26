@@ -612,7 +612,7 @@ public class H3CoreV3 {
    * @return Distance from point <code>a</code> to point <code>b</code>
    */
   public double pointDist(LatLng a, LatLng b, LengthUnit unit) {
-    return h3Api.distance(a, b, unit);
+    return h3Api.greatCircleDistance(a, b, unit);
   }
 
   /**

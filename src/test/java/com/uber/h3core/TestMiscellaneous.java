@@ -208,9 +208,9 @@ public class TestMiscellaneous extends BaseTestH3Core {
       LatLng b = testB[i];
       double expectedRads = Math.toRadians(testDistanceDegrees[i]);
 
-      double distRads = h3.distance(a, b, LengthUnit.rads);
-      double distKm = h3.distance(a, b, LengthUnit.km);
-      double distM = h3.distance(a, b, LengthUnit.m);
+      double distRads = h3.greatCircleDistance(a, b, LengthUnit.rads);
+      double distKm = h3.greatCircleDistance(a, b, LengthUnit.km);
+      double distM = h3.greatCircleDistance(a, b, LengthUnit.m);
 
       // TODO: Epsilon is unusually large in the core H3 tests
       assertEquals("radians distance is as expected", expectedRads, distRads, EPSILON * 10000);
@@ -228,9 +228,9 @@ public class TestMiscellaneous extends BaseTestH3Core {
   public void testPointDistNaN() {
     LatLng zero = new LatLng(0, 0);
     LatLng nan = new LatLng(Double.NaN, Double.NaN);
-    double dist1 = h3.distance(nan, zero, LengthUnit.rads);
-    double dist2 = h3.distance(zero, nan, LengthUnit.km);
-    double dist3 = h3.distance(nan, nan, LengthUnit.m);
+    double dist1 = h3.greatCircleDistance(nan, zero, LengthUnit.rads);
+    double dist2 = h3.greatCircleDistance(zero, nan, LengthUnit.km);
+    double dist3 = h3.greatCircleDistance(nan, nan, LengthUnit.m);
     assertTrue("nan distance results in nan", Double.isNaN(dist1));
     assertTrue("nan distance results in nan", Double.isNaN(dist2));
     assertTrue("nan distance results in nan", Double.isNaN(dist3));
@@ -240,7 +240,7 @@ public class TestMiscellaneous extends BaseTestH3Core {
   public void testPointDistPositiveInfinity() {
     LatLng posInf = new LatLng(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     LatLng zero = new LatLng(0, 0);
-    double dist = h3.distance(posInf, zero, LengthUnit.m);
+    double dist = h3.greatCircleDistance(posInf, zero, LengthUnit.m);
     assertTrue("+Infinity distance results in NaN", Double.isNaN(dist));
   }
 
@@ -248,7 +248,7 @@ public class TestMiscellaneous extends BaseTestH3Core {
   public void testPointDistNegativeInfinity() {
     LatLng negInf = new LatLng(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
     LatLng zero = new LatLng(0, 0);
-    double dist = h3.distance(negInf, zero, LengthUnit.m);
+    double dist = h3.greatCircleDistance(negInf, zero, LengthUnit.m);
     assertTrue("-Infinity distance results in NaN", Double.isNaN(dist));
   }
 
@@ -256,7 +256,7 @@ public class TestMiscellaneous extends BaseTestH3Core {
   public void testPointDistInvalid() {
     LatLng a = new LatLng(0, 0);
     LatLng b = new LatLng(0, 0);
-    h3.distance(a, b, null);
+    h3.greatCircleDistance(a, b, null);
   }
 
   @Test(expected = IllegalArgumentException.class)

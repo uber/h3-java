@@ -99,7 +99,7 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
         polygon->holes = calloc(sizeof(GeoPolygon), polygon->numHoles);
         if (polygon->holes == NULL) {
             ThrowOutOfMemoryError(env);
-            return E_MEMORY;
+            return E_MEMORY_ALLOC;
         }
 
         jint *holeSizesElements =
@@ -107,7 +107,7 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
         if (holeSizesElements == NULL) {
             free(polygon->holes);
             ThrowOutOfMemoryError(env);
-            return E_MEMORY;
+            return E_MEMORY_ALLOC;
         }
 
         jdouble *holeVertsElements =
@@ -117,7 +117,7 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
             (**env).ReleaseIntArrayElements(env, holeSizes, holeSizesElements,
                                             0);
             ThrowOutOfMemoryError(env);
-            return E_MEMORY;
+            return E_MEMORY_ALLOC;
         }
 
         size_t offset = 0;
@@ -136,7 +136,7 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
         return E_SUCCESS;
     } else {
         ThrowOutOfMemoryError(env);
-        return E_MEMORY;
+        return E_MEMORY_ALLOC;
     }
 }
 
@@ -905,41 +905,44 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_cellAreaM2(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    distanceRads
+ * Method:    greatCircleDistanceRads
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceRads(
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_greatCircleDistanceRads(
     JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
     jdouble lng2) {
     LatLng c1 = {.lat = lat1, .lng = lng1};
     LatLng c2 = {.lat = lat2, .lng = lng2};
-    return distanceRads(&c1, &c2);
+    return greatCircleDistanceRads(&c1, &c2);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    distanceKm
+ * Method:    greatCircleDistanceKm
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceKm(
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_greatCircleDistanceKm(
     JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
     jdouble lng2) {
     LatLng c1 = {.lat = lat1, .lng = lng1};
     LatLng c2 = {.lat = lat2, .lng = lng2};
-    return distanceKm(&c1, &c2);
+    return greatCircleDistanceKm(&c1, &c2);
 }
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    distanceM
+ * Method:    greatCircleDistanceM
  * Signature: (DDDD)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_distanceM(
+JNIEXPORT jdouble JNICALL
+Java_com_uber_h3core_NativeMethods_greatCircleDistanceM(
     JNIEnv *env, jobject thiz, jdouble lat1, jdouble lng1, jdouble lat2,
     jdouble lng2) {
     LatLng c1 = {.lat = lat1, .lng = lng1};
     LatLng c2 = {.lat = lat2, .lng = lng2};
-    return distanceM(&c1, &c2);
+    return greatCircleDistanceM(&c1, &c2);
 }
 
 /*
