@@ -844,15 +844,15 @@ public class H3Core {
    * @param unit Unit to return the distance in.
    * @return Distance from point <code>a</code> to point <code>b</code>
    */
-  public double distance(LatLng a, LatLng b, LengthUnit unit) {
+  public double greatCircleDistance(LatLng a, LatLng b, LengthUnit unit) {
     double lat1 = toRadians(a.lat);
     double lng1 = toRadians(a.lng);
     double lat2 = toRadians(b.lat);
     double lng2 = toRadians(b.lng);
 
-    if (unit == LengthUnit.rads) return h3Api.distanceRads(lat1, lng1, lat2, lng2);
-    else if (unit == LengthUnit.km) return h3Api.distanceKm(lat1, lng1, lat2, lng2);
-    else if (unit == LengthUnit.m) return h3Api.distanceM(lat1, lng1, lat2, lng2);
+    if (unit == LengthUnit.rads) return h3Api.greatCircleDistanceRads(lat1, lng1, lat2, lng2);
+    else if (unit == LengthUnit.km) return h3Api.greatCircleDistanceKm(lat1, lng1, lat2, lng2);
+    else if (unit == LengthUnit.m) return h3Api.greatCircleDistanceM(lat1, lng1, lat2, lng2);
     else throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
   }
 

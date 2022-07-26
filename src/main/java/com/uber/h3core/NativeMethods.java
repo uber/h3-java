@@ -86,11 +86,11 @@ final class NativeMethods {
 
   native double cellAreaM2(long h3);
 
-  native double distanceRads(double lat1, double lon1, double lat2, double lon2);
+  native double greatCircleDistanceRads(double lat1, double lon1, double lat2, double lon2);
 
-  native double distanceKm(double lat1, double lon1, double lat2, double lon2);
+  native double greatCircleDistanceKm(double lat1, double lon1, double lat2, double lon2);
 
-  native double distanceM(double lat1, double lon1, double lat2, double lon2);
+  native double greatCircleDistanceM(double lat1, double lon1, double lat2, double lon2);
 
   native double exactEdgeLengthRads(long h3);
 
