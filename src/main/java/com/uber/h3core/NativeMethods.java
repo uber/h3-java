@@ -92,11 +92,11 @@ final class NativeMethods {
 
   native double greatCircleDistanceM(double lat1, double lon1, double lat2, double lon2);
 
-  native double exactEdgeLengthRads(long h3);
+  native double edgeLengthRads(long h3);
 
-  native double exactEdgeLengthKm(long h3);
+  native double edgeLengthKm(long h3);
 
-  native double exactEdgeLengthM(long h3);
+  native double edgeLengthM(long h3);
 
   native double getHexagonAreaAvgKm2(int res);
 

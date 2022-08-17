@@ -8,7 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [4.0.0] - 2022-08-16
 ### Breaking Changes
-- Upgraded the core library to v4.0.0. (#103, #102, #91)
+- Upgraded the core library to v4.0.0. (#104, #103, #102, #91)
 
 ### Added
 - `H3CoreV3` for users who wish to temporarily use old function names. (#91)
@@ -19,6 +19,11 @@ for the Linux x64 and Darwin x64 platforms.
 
 ### Removed
 - Removed support for Linux MIPS and MIPSEL (#98, #92)
+
+## [4.0.0-rc4] - 2022-08-17
+### Breaking Changes
+- Upgraded the core library to v4.0.0-rc5. (#104)
+- `exactEdgeLength` function renamed to `edgeLength`. (#104)
 
 ## [4.0.0-rc3] - 2022-07-26
 ### Breaking Changes
