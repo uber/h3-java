@@ -947,14 +947,14 @@ Java_com_uber_h3core_NativeMethods_greatCircleDistanceM(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    exactEdgeLengthRads
+ * Method:    edgeLengthRads
  * Signature: (J)D
  */
 JNIEXPORT jdouble JNICALL
-Java_com_uber_h3core_NativeMethods_exactEdgeLengthRads(JNIEnv *env,
+Java_com_uber_h3core_NativeMethods_edgeLengthRads(JNIEnv *env,
                                                        jobject thiz, jlong h3) {
     jdouble out;
-    H3Error err = exactEdgeLengthRads(h3, &out);
+    H3Error err = edgeLengthRads(h3, &out);
     if (err) {
         ThrowH3Exception(env, err);
     }
@@ -963,13 +963,13 @@ Java_com_uber_h3core_NativeMethods_exactEdgeLengthRads(JNIEnv *env,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    exactEdgeLengthKm
+ * Method:    edgeLengthKm
  * Signature: (J)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthKm(
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthKm(
     JNIEnv *env, jobject thiz, jlong h3) {
     jdouble out;
-    H3Error err = exactEdgeLengthKm(h3, &out);
+    H3Error err = edgeLengthKm(h3, &out);
     if (err) {
         ThrowH3Exception(env, err);
     }
@@ -978,13 +978,13 @@ JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthKm(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
- * Method:    exactEdgeLengthM
+ * Method:    edgeLengthM
  * Signature: (J)D
  */
-JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_exactEdgeLengthM(
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthM(
     JNIEnv *env, jobject thiz, jlong h3) {
     jdouble out;
-    H3Error err = exactEdgeLengthM(h3, &out);
+    H3Error err = edgeLengthM(h3, &out);
     if (err) {
         ThrowH3Exception(env, err);
     }

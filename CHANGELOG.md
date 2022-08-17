@@ -6,6 +6,11 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
+## [4.0.0-rc4] - 2022-08-17
+### Breaking Changes
+- Upgraded the core library to v4.0.0-rc5. (#104)
+- `exactEdgeLength` function renamed to `edgeLength`. (#104)
+
 ## [4.0.0-rc3] - 2022-07-26
 ### Breaking Changes
 - Upgraded the core library to v4.0.0-rc4. (#102)
