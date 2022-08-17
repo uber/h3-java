@@ -8,8 +8,8 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [4.0.0-rc4] - 2022-08-17
 ### Breaking Changes
-- Upgraded the core library to v4.0.0-rc5.
-- `exactEdgeLength` function renamed to `edgeLength`.
+- Upgraded the core library to v4.0.0-rc5. (#104)
+- `exactEdgeLength` function renamed to `edgeLength`. (#104)
 
 ## [4.0.0-rc3] - 2022-07-26
 ### Breaking Changes
