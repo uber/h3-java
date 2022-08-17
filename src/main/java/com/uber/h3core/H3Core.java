@@ -863,8 +863,8 @@ public class H3Core {
    * @param unit Unit of measure to use.
    * @return Length of the given edge.
    */
-  public double exactEdgeLength(String edgeAddress, LengthUnit unit) {
-    return exactEdgeLength(stringToH3(edgeAddress), unit);
+  public double edgeLength(String edgeAddress, LengthUnit unit) {
+    return edgeLength(stringToH3(edgeAddress), unit);
   }
 
   /**
@@ -874,10 +874,10 @@ public class H3Core {
    * @param unit Unit of measure to use.
    * @return Length of the given edge.
    */
-  public double exactEdgeLength(long edge, LengthUnit unit) {
-    if (unit == LengthUnit.rads) return h3Api.exactEdgeLengthRads(edge);
-    else if (unit == LengthUnit.km) return h3Api.exactEdgeLengthKm(edge);
-    else if (unit == LengthUnit.m) return h3Api.exactEdgeLengthM(edge);
+  public double edgeLength(long edge, LengthUnit unit) {
+    if (unit == LengthUnit.rads) return h3Api.edgeLengthRads(edge);
+    else if (unit == LengthUnit.km) return h3Api.edgeLengthKm(edge);
+    else if (unit == LengthUnit.m) return h3Api.edgeLengthM(edge);
     else throw new IllegalArgumentException(String.format("Invalid unit: %s", unit));
   }
 

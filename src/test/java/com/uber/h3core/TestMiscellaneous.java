@@ -152,19 +152,19 @@ public class TestMiscellaneous extends BaseTestH3Core {
   }
 
   @Test
-  public void testExactEdgeLength() {
+  public void testEdgeLength() {
     for (int res = 0; res <= 15; res++) {
       long cell = h3.latLngToCell(0, 0, res);
 
       for (long edge : h3.originToDirectedEdges(cell)) {
         String edgeAddress = h3.h3ToString(edge);
 
-        double areaAddressM = h3.exactEdgeLength(edgeAddress, LengthUnit.m);
-        double areaAddressKm = h3.exactEdgeLength(edgeAddress, LengthUnit.km);
-        double areaAddressRads = h3.exactEdgeLength(edgeAddress, LengthUnit.rads);
-        double areaM = h3.exactEdgeLength(edge, LengthUnit.m);
-        double areaKm = h3.exactEdgeLength(edge, LengthUnit.km);
-        double areaRads = h3.exactEdgeLength(edge, LengthUnit.rads);
+        double areaAddressM = h3.edgeLength(edgeAddress, LengthUnit.m);
+        double areaAddressKm = h3.edgeLength(edgeAddress, LengthUnit.km);
+        double areaAddressRads = h3.edgeLength(edgeAddress, LengthUnit.rads);
+        double areaM = h3.edgeLength(edge, LengthUnit.m);
+        double areaKm = h3.edgeLength(edge, LengthUnit.km);
+        double areaRads = h3.edgeLength(edge, LengthUnit.rads);
 
         // Only asserts some properties of the functions that the edge lengths
         // should have certain relationships to each other, test isn't specific
@@ -180,21 +180,21 @@ public class TestMiscellaneous extends BaseTestH3Core {
   }
 
   @Test(expected = H3Exception.class)
-  public void testExactEdgeLengthInvalid() {
+  public void testEdgeLengthInvalid() {
     // Passing in a non-edge should not cause a crash
-    h3.exactEdgeLength(h3.latLngToCell(0, 0, 0), LengthUnit.km);
+    h3.edgeLength(h3.latLngToCell(0, 0, 0), LengthUnit.km);
   }
 
   @Test(expected = H3Exception.class)
-  public void testExactEdgeLengthInvalidEdge() {
-    h3.exactEdgeLength(0, LengthUnit.rads);
+  public void testEdgeLengthInvalidEdge() {
+    h3.edgeLength(0, LengthUnit.rads);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testExactEdgeLengthInvalidUnit() {
+  public void testEdgeLengthInvalidUnit() {
     long cell = h3.latLngToCell(0, 0, 0);
     long edge = h3.originToDirectedEdges(cell).get(0);
-    h3.exactEdgeLength(edge, null);
+    h3.edgeLength(edge, null);
   }
 
   @Test

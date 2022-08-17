@@ -623,7 +623,7 @@ public class H3CoreV3 {
    * @return Length of the given edge.
    */
   public double exactEdgeLength(String edgeAddress, LengthUnit unit) {
-    return h3Api.exactEdgeLength(edgeAddress, unit);
+    return h3Api.edgeLength(edgeAddress, unit);
   }
 
   /**
@@ -634,7 +634,7 @@ public class H3CoreV3 {
    * @return Length of the given edge.
    */
   public double exactEdgeLength(long edge, LengthUnit unit) {
-    return h3Api.exactEdgeLength(edge, unit);
+    return h3Api.edgeLength(edge, unit);
   }
 
   /**
