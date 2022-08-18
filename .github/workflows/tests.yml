@@ -42,6 +42,9 @@ jobs:
       - name: Tests
         run: mvn "-Dh3.system.prune=true" -B -V clean test site
 
+      - name: Format check for C
+        run: git diff --exit-code
+
   tests-new-dockcross:
     name: Dockcross ${{ matrix.dockcross-tag }} Java ${{ matrix.java-version }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
