@@ -6,6 +6,20 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
+## [4.0.0] - 2022-08-23
+### Breaking Changes
+- Upgraded the core library to v4.0.0. (#104, #103, #102, #91)
+
+### Added
+- `H3CoreV3` for users who wish to temporarily use old function names. (#91)
+- Vertex mode API. (#91)
+
+### Changed
+- Required version of glibc on Linux is 2.26. (#98)
+
+### Removed
+- Removed support for Linux MIPS and MIPSEL (#98, #92)
+
 ## [4.0.0-rc4] - 2022-08-17
 ### Breaking Changes
 - Upgraded the core library to v4.0.0-rc5. (#104)

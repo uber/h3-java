@@ -1,6 +1,6 @@
 # Migrating from h3-java version 3
 
-The H3 library introduced breaking [changes](https://h3geo.org/docs/next/library/migrating-3.x) in 4.0.0 which are reflected in H3-Java 4.0.0.
+The H3 library introduced breaking [changes](https://h3geo.org/docs/library/migrating-3.x) in 4.0.0 which are reflected in H3-Java 4.0.0.
 
 Cell indexes generated in 3.x and 4.x are the same and can be used in either library version interchangably.
 
