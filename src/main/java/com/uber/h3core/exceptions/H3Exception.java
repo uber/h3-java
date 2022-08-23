@@ -20,7 +20,7 @@ package com.uber.h3core.exceptions;
  *
  * <p>The error code contained in an H3Exception comes from the H3 core library. The H3
  * documentation contains a <a
- * href="https://h3geo.org/docs/next/library/errors/#table-of-error-codes">table of error codes</a>.
+ * href="https://h3geo.org/docs/library/errors/#table-of-error-codes">table of error codes</a>.
  */
 public class H3Exception extends RuntimeException {
   private int code;
