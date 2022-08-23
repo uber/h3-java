@@ -950,9 +950,8 @@ Java_com_uber_h3core_NativeMethods_greatCircleDistanceM(
  * Method:    edgeLengthRads
  * Signature: (J)D
  */
-JNIEXPORT jdouble JNICALL
-Java_com_uber_h3core_NativeMethods_edgeLengthRads(JNIEnv *env,
-                                                       jobject thiz, jlong h3) {
+JNIEXPORT jdouble JNICALL Java_com_uber_h3core_NativeMethods_edgeLengthRads(
+    JNIEnv *env, jobject thiz, jlong h3) {
     jdouble out;
     H3Error err = edgeLengthRads(h3, &out);
     if (err) {
