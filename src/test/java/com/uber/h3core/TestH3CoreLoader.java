@@ -16,9 +16,12 @@
 package com.uber.h3core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import org.junit.Test;
 
 /** H3CoreLoader is mostly tested by {@link TestH3CoreFactory}. This also tests OS detection. */
@@ -64,5 +67,28 @@ public class TestH3CoreLoader {
     tempFile.deleteOnExit();
 
     H3CoreLoader.copyResource("/nonexistant-resource", tempFile);
+  }
+
+  @Test
+  public void testResourcesExist() throws IOException {
+    List<String> resources =
+        ImmutableList.of(
+            "/linux-x64/libh3-java.so",
+            "/linux-x86/libh3-java.so",
+            "/linux-arm64/libh3-java.so",
+            "/linux-armv5/libh3-java.so",
+            "/linux-armv7/libh3-java.so",
+            "/linux-ppc64le/libh3-java.so",
+            "/linux-s390x/libh3-java.so",
+            "/windows-x64/libh3-java.dll",
+            "/windows-x86/libh3-java.dll",
+            "/darwin-x64/libh3-java.dylib",
+            "/darwin-arm/libh3-java.dylib",
+            "/freebsd-x64/libh3-java.so",
+            "/android-arm/libh3-java.so",
+            "/android-arm64/libh3-java.so");
+    for (String name : resources) {
+      assertNotNull(name + " is an included resource", H3CoreLoader.class.getResource(name));
+    }
   }
 }
