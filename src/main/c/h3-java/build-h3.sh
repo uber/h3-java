@@ -181,10 +181,10 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.
     OUTPUT_ROOT=src/main/resources/$image
-    if [ "$image" -eq "windows-static-x64" ]; then
+    if [ "$image" = "windows-static-x64" ]; then
         OUTPUT_ROOT=src/main/resources/windows-x64
     fi
-    if [ "$image" -eq "windows-static-x86" ]; then
+    if [ "$image" = "windows-static-x86" ]; then
         OUTPUT_ROOT=src/main/resources/windows-x86
     fi
     mkdir -p $OUTPUT_ROOT
