@@ -54,7 +54,7 @@ jobs:
         os: [ubuntu-latest]
         java-distribution: [adopt]
         java-version: [17]
-        dockcross-tag: ["20220528-e4627de"]
+        dockcross-tag: ["20220906-e88a3ce"]
 
     steps:
       - uses: actions/checkout@v2.1.1
