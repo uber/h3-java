@@ -7,6 +7,8 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
+
+## [4.0.1] - 2022-09-14
 ### Fixed
 - Fixed the path to Windows resources. (#109)
 
