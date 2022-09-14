@@ -8,7 +8,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 ### Fixed
-- Fixed the path to Windows resources.
+- Fixed the path to Windows resources. (#109)
 
 ## [4.0.0] - 2022-08-23
 ### Breaking Changes
