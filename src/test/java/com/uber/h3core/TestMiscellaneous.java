@@ -102,7 +102,7 @@ public class TestMiscellaneous extends BaseTestH3Core {
   public void testCellArea() {
     double areasKm2[] = {
       2.562182162955496e+06,
-      4.476842018179411e+05,
+      447684.20172018633,
       6.596162242711056e+04,
       9.228872919002590e+03,
       1.318694490797110e+03,
