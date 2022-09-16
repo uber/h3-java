@@ -23,6 +23,13 @@ include(CMakeDependentOption)
 
 # Needed due to CMP0042
 set(CMAKE_MACOSX_RPATH 1)
+if(NOT WIN32)
+    # Compiler options are set only on non-Windows, since these options
+    # are not correct for MSVC.
+    set(CMAKE_C_FLAGS_INIT "-Wall")
+    string(CONCAT CMAKE_C_FLAGS_DEBUG_INIT
+           "-g -gdwarf-2 -g3 -O0 -fno-inline -fno-eliminate-unused-debug-types")
+endif()
 set(LIBRARY_OUTPUT_PATH lib)
 set(H3_SOVERSION 1)
 
