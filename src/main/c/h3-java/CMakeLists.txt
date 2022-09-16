@@ -23,9 +23,6 @@ include(CMakeDependentOption)
 
 # Needed due to CMP0042
 set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
-    CACHE FILEPATH
-    "Toolchain to use for building this project")
 set(LIBRARY_OUTPUT_PATH lib)
 set(H3_SOVERSION 1)
 
