@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.uber/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.uber/h3)
-[![H3 Version](https://img.shields.io/badge/h3-v4.0.0-blue.svg)](https://github.com/uber/h3/releases/tag/v4.0.0)
+[![H3 Version](https://img.shields.io/badge/h3-v4.0.1-blue.svg)](https://github.com/uber/h3/releases/tag/v4.0.1)
 
 This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/).
 
