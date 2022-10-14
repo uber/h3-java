@@ -23,6 +23,7 @@ import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -1130,18 +1131,7 @@ public class H3Core {
 
   /** Creates a new list with all non-zero elements of the array as members. */
   private static List<Long> nonZeroLongArrayToList(long[] out) {
-    // Allocate for the case that we need to copy everything from
-    // the `out` array.
-    List<Long> ret = new ArrayList<>(out.length);
-
-    for (int i = 0; i < out.length; i++) {
-      long h = out[i];
-      if (h != 0) {
-        ret.add(h);
-      }
-    }
-
-    return ret;
+    return Arrays.stream(out).filter(idx -> idx > 0).boxed().collect(Collectors.toList());
   }
 
   /** Returns an array of <code>long</code> with the contents of the collection. */
