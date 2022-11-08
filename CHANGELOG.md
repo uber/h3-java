@@ -8,6 +8,16 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [Unreleased]
 
+## [3.7.3] - 2022-11-10
+### Changed
+- Required version of glibc on Linux is 2.26. (#98, #92 backported in #119)
+
+### Fixed
+- Fixed the path to Windows resources. (#109 backported in #119)
+
+### Removed
+- Removed support for Linux MIPS and MIPSEL (#98, #92 backported in #119)
+
 ## [3.7.2] - 2022-02-07
 ### Added
 - Added Apple M1 build (#89)
