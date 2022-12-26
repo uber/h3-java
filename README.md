@@ -86,7 +86,7 @@ Additional information on how the build process works is available in the [build
 
 ```sh
 # To install build dependencies
-sudo pkg install openjdk11 maven33 cmake
+sudo pkg install openjdk11 maven cmake bash
 # Ensure /usr/local/openjdk11/bin is on your path
 ```
 

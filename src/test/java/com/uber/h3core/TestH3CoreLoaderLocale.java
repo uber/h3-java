@@ -50,6 +50,7 @@ public class TestH3CoreLoaderLocale {
         H3CoreLoader.OperatingSystem.ANDROID, H3CoreLoader.detectOs("ANDROID", "anything"));
     assertEquals(H3CoreLoader.OperatingSystem.WINDOWS, H3CoreLoader.detectOs("vendor", "WINDOWS"));
     assertEquals(H3CoreLoader.OperatingSystem.LINUX, H3CoreLoader.detectOs("vendor", "LINUX"));
+    assertEquals(H3CoreLoader.OperatingSystem.FREEBSD, H3CoreLoader.detectOs("vendor", "FREEBSD"));
 
     assertEquals(
         H3CoreLoader.OperatingSystem.LINUX, H3CoreLoader.detectOs("vendor", "anything else"));

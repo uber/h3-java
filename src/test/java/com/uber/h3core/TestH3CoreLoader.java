@@ -30,6 +30,7 @@ public class TestH3CoreLoader {
     assertEquals(H3CoreLoader.OperatingSystem.DARWIN, H3CoreLoader.detectOs("vendor", "Mac OS X"));
     assertEquals(H3CoreLoader.OperatingSystem.WINDOWS, H3CoreLoader.detectOs("vendor", "Windows"));
     assertEquals(H3CoreLoader.OperatingSystem.LINUX, H3CoreLoader.detectOs("vendor", "Linux"));
+    assertEquals(H3CoreLoader.OperatingSystem.FREEBSD, H3CoreLoader.detectOs("vendor", "FreeBSD"));
 
     assertEquals(
         H3CoreLoader.OperatingSystem.LINUX, H3CoreLoader.detectOs("vendor", "anything else"));

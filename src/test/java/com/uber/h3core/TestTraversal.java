@@ -80,6 +80,13 @@ public class TestTraversal extends BaseTestH3Core {
     assertEquals(expectedCount, hexagons.size());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testKringTooLarge() {
+    int k = 13780510;
+    // Cannot be materialized into Java because the maximum array size is INT32_MAX
+    h3.gridDisk(h3.latLngToCell(0, 0, 15), k);
+  }
+
   @Test
   public void testKringPentagon() {
     List<String> hexagons = h3.gridDisk("821c07fffffffff", 1);
