@@ -139,4 +139,8 @@ final class NativeMethods {
   native void vertexToLatLng(long h3, double[] latLng);
 
   native boolean isValidVertex(long h3);
+
+  native long cellToChildPos(long child, int parentRes);
+
+  native long childPosToCell(long childPos, long parent, int childRes);
 }

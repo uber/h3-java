@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019, 2022 Uber Technologies, Inc.
+ * Copyright 2017-2019, 2022-2023 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1116,6 +1116,38 @@ public class H3Core {
 
   public boolean isValidVertex(String h3Address) {
     return h3Api.isValidVertex(stringToH3(h3Address));
+  }
+
+  /**
+   * Returns the position of the child cell within an ordered list of all children of the cell's
+   * parent at the specified resolution parentRes.
+   */
+  public long cellToChildPos(String childAddress, int parentRes) {
+    return cellToChildPos(stringToH3(childAddress), parentRes);
+  }
+
+  /**
+   * Returns the position of the child cell within an ordered list of all children of the cell's
+   * parent at the specified resolution parentRes.
+   */
+  public long cellToChildPos(long child, int parentRes) {
+    return h3Api.cellToChildPos(child, parentRes);
+  }
+
+  /**
+   * Returns the child cell at a given position within an ordered list of all children of parent at
+   * the specified resolution childRes.
+   */
+  public long childPosToCell(long childPos, long parent, int childRes) {
+    return h3Api.childPosToCell(childPos, parent, childRes);
+  }
+
+  /**
+   * Returns the child cell at a given position within an ordered list of all children of parent at
+   * the specified resolution childRes.
+   */
+  public String childPosToCell(long childPos, String parentAddress, int childRes) {
+    return h3ToString(childPosToCell(childPos, stringToH3(parentAddress), childRes));
   }
 
   /** Transforms a collection of H3 indexes in string form to a list of H3 indexes in long form. */

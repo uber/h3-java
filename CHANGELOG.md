@@ -7,6 +7,13 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
+## [4.1.0] - 2023-01-18
+### Added
+- `cellToChildPos` and `childPosToCell` functions.
+
+### Changed
+- Upgraded the core library to v4.1.0.
+
 ## [4.0.2] - 2022-09-21
 ### Changed
 - Upgraded the core library to v4.0.1. (#113)

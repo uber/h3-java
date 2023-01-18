@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019, 2022 Uber Technologies, Inc.
+ * Copyright 2017-2019, 2022-2023 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1352,4 +1352,36 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_vertexToLatLng(
 JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidVertex(
     JNIEnv *env, jobject thiz, jlong h3) {
     return isValidVertex(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    cellToChildPos
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToChildPos(
+    JNIEnv *env, jobject thiz, jlong child, jint parentRes) {
+    jlong pos;
+    H3Error err = cellToChildPos(child, parentRes, &pos);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return 0;
+    }
+    return pos;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    childPosToCell
+ * Signature: (JJI)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_childPosToCell(
+    JNIEnv *env, jobject thiz, jlong childPos, jlong parent, jint childRes) {
+    H3Index out;
+    H3Error err = childPosToCell(childPos, parent, childRes, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return 0;
+    }
+    return out;
 }

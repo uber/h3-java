@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2022 Uber Technologies, Inc.
+ * Copyright 2019, 2022-2023 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,5 +187,41 @@ public class TestHierarchy extends BaseTestH3Core {
   @Test(expected = IllegalArgumentException.class)
   public void testH3ToCenterChildOutOfRange() {
     h3.cellToCenterChild("8928308280fffff", 16);
+  }
+
+  @Test
+  public void testCellToChildPos() {
+    assertEquals(0, h3.cellToChildPos(0x88283080ddfffffL, 8));
+    assertEquals(6, h3.cellToChildPos(0x88283080ddfffffL, 7));
+    assertEquals(41, h3.cellToChildPos("88283080ddfffff", 6));
+  }
+
+  @Test(expected = H3Exception.class)
+  public void testCellToChildPosError() {
+    h3.cellToChildPos(0x88283080ddfffffL, 9);
+  }
+
+  @Test(expected = H3Exception.class)
+  public void testCellToChildPosError2() {
+    h3.cellToChildPos("88283080ddfffff", 9);
+  }
+
+  @Test
+  public void childPosToCell() {
+    assertEquals(0x88283080ddfffffL, h3.childPosToCell(0, 0x88283080ddfffffL, 8));
+    assertEquals(
+        0x88283080ddfffffL, h3.childPosToCell(6, h3.cellToParent(0x88283080ddfffffL, 7), 8));
+    assertEquals(
+        "88283080ddfffff", h3.childPosToCell(41, h3.cellToParentAddress("88283080ddfffff", 6), 8));
+  }
+
+  @Test(expected = H3Exception.class)
+  public void testChildPosToCellError() {
+    h3.childPosToCell(-1, 0x88283080ddfffffL, 9);
+  }
+
+  @Test(expected = H3Exception.class)
+  public void testChildPosToCellError2() {
+    h3.childPosToCell(10000, "88283080ddfffff", 9);
   }
 }
