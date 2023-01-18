@@ -9,10 +9,10 @@ for the Linux x64 and Darwin x64 platforms.
 ## Unreleased Changes
 ## [4.1.0] - 2023-01-18
 ### Added
-- `cellToChildPos` and `childPosToCell` functions.
+- `cellToChildPos` and `childPosToCell` functions. (#121)
 
 ### Changed
-- Upgraded the core library to v4.1.0.
+- Upgraded the core library to v4.1.0. (#121)
 
 ## [4.0.2] - 2022-09-21
 ### Changed
