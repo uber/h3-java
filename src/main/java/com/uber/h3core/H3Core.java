@@ -719,6 +719,16 @@ public class H3Core {
     return h3ToString(cellToCenterChild(stringToH3(h3), childRes));
   }
 
+  /** Returns the number of children the cell index has at the given resolution. */
+  public long cellToChildrenSize(long cell, int childRes) {
+    return h3Api.cellToChildrenSize(cell, childRes);
+  }
+
+  /** Returns the number of children the cell index has at the given resolution. */
+  public long cellToChildrenSize(String cellAddress, int childRes) {
+    return cellToChildrenSize(stringToH3(cellAddress), childRes);
+  }
+
   /**
    * Returns the center child at the given resolution.
    *

@@ -10,6 +10,7 @@ for the Linux x64 and Darwin x64 platforms.
 ## [4.1.0] - 2023-01-18
 ### Added
 - `cellToChildPos` and `childPosToCell` functions. (#121)
+- Made the `cellToChildrenSize` function public. (#121)
 
 ### Changed
 - Upgraded the core library to v4.1.0. (#121)
