@@ -38,10 +38,16 @@ project(h3-java LANGUAGES C)
 include_directories(${H3_BUILD_ROOT}/src/h3lib/include)
 
 if(USE_NATIVE_JNI)
+    message("USE_NATIVE_JNI")
+    # Disable unneeded parts of FindJNI
+    # https://stackoverflow.com/questions/51047978/cmake-could-not-find-jni
+    set(JAVA_AWT_LIBRARY NotNeeded)
+    set(JAVA_JVM_LIBRARY NotNeeded)
     find_package(JNI REQUIRED)
 
     include_directories(${JNI_INCLUDE_DIRS})
 else()
+    message("using /java")
     include_directories(/java/include)
     # TODO Provide correct jni_md.h
     include_directories(/java/include/linux)
