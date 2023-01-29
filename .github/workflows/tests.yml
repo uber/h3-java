@@ -54,7 +54,7 @@ jobs:
         os: [ubuntu-latest]
         java-distribution: [adopt]
         java-version: [17]
-        dockcross-tag: ["20220906-e88a3ce"]
+        dockcross-tag: ["20220906-e88a3ce", "20230116-670f7f7"]
 
     steps:
       - uses: actions/checkout@v2.1.1
@@ -76,6 +76,15 @@ jobs:
 
       - name: Tests
         run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
+
+      - uses: actions/upload-artifact@v3
+        name: Upload artifacts
+        with:
+          name: docker-built-shared-objects
+          path: |
+            src/main/resources/*/*.so
+            src/main/resources/*/*.dll
+          if-no-files-found: error 
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -108,6 +117,13 @@ jobs:
 
       - name: Tests
         run: mvn -B -V clean test site
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Mac OS Artifacts
+        with:
+          name: macos-built-shared-objects
+          path: src/main/resources/*/*.dylib
+          if-no-files-found: error 
 
   tests-coverage:
     name: Java (Coverage) ${{ matrix.java-version }} ${{ matrix.os }}
