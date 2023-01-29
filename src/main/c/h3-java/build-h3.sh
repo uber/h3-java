@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# Arguments: [git-remote] [git-ref] [use-docker] [remove-images] [github-artifacts]
+# Arguments: [git-remote] [git-ref] [use-docker] [remove-images] [github-artifacts] [github-artifacts-ref]
 # git-remote       - The git remote to pull from. An existing cloned repository
 #                    will not be deleted if a new remote is specified.
 # git-ref          - Specific git ref of H3 to build.
@@ -28,6 +28,8 @@
 # github-artifacts - When set, all build artifacts are retrieved from Github
 #                    Actions artifacts rather than built locally (overrides
 #                    all other settings.)
+# github-artifacts-ref - When set, override the default revision to pull artifacts from
+#                        for `github-artifacts`.
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
@@ -42,11 +44,12 @@ GIT_REVISION=$2
 USE_DOCKER=$3
 SYSTEM_PRUNE=$4
 DOCKCROSS_TAG=$5
-PULL_FROM_GITHUB=$6
+GITHUB_ARTIFACTS=$6
+GITHUB_ARTIFACTS_REF=$7
 
-if $PULL_FROM_GITHUB; then
-    src/main/c/h3-java//pull-from-github.sh
-    exit 0
+if $GITHUB_ARTIFACTS; then
+    src/main/c/h3-java/pull-from-github.sh "$GITHUB_ARTIFACTS_REF"
+    # The build of the library below is still needed for the binding-functions file
 fi
 
 echo Downloading H3 from "$GIT_REMOTE"
@@ -98,6 +101,11 @@ popd # h3-java-build
 cp h3-java-build/build/binding-functions .
 
 popd # target
+
+if $GITHUB_ARTIFACTS; then
+    # Nothing more is needed than the binding-functions to stop now.
+    exit 0
+fi
 
 # Copy the built artifact for this platform.
 case "$(uname -sm)" in

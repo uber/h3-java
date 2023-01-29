@@ -72,7 +72,8 @@
         <h3.use.docker>true</h3.use.docker>
         <h3.system.prune>false</h3.system.prune>
         <h3.dockcross.tag>20210624-de7b1b0</h3.dockcross.tag>
-        <h3.github.artifacts>false</h3.github.artifacts>
+        <h3.github.artifacts.use>false</h3.github.artifacts.use>
+        <h3.github.artifacts.ref />
         <!-- Used for passing additional arguments to surefire when using JaCoCo -->
         <h3.additional.argLine />
 
@@ -263,14 +264,7 @@
                         </goals>
                         <configuration>
                             <executable>${basedir}/src/main/c/h3-java/build-h3.sh</executable>
-                            <arguments>
-                                <argument>${h3.git.remote}</argument>
-                                <argument>${h3.git.reference}</argument>
-                                <argument>${h3.use.docker}</argument>
-                                <argument>${h3.system.prune}</argument>
-                                <argument>${h3.dockcross.tag}</argument>
-                                <argument>${h3.github.artifacts}</argument>
-                            </arguments>
+                            <commandlineArgs>${h3.git.remote} ${h3.git.reference} ${h3.use.docker} ${h3.system.prune} ${h3.dockcross.tag} ${h3.github.artifacts.use} ${h3.github.artifacts.ref}</commandlineArgs>
                         </configuration>
                     </execution>
                 </executions>

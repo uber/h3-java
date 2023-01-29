@@ -24,7 +24,13 @@
 
 set -eox pipefail
 
-GIT_REVISION=$(git rev-parse HEAD)
+GITHUB_ARTIFACTS_REF=$1
+
+if [ -z "$GITHUB_ARTIFACTS_REF" ]; then
+    GIT_REVISION=$(git rev-parse HEAD)
+else
+    GIT_REVISION="$GITHUB_ARTIFACTS_REF"
+fi
 EXTRACT_TO=src/main/resources
 
 echo downloading artifacts for $GIT_REVISION

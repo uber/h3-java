@@ -8,8 +8,8 @@ Release builds should only be run on Mac OSX with Docker. This is needed so that
 
 1. Ensure you are on branch `master` and that the library is building correctly.
 2. Update [CHANGELOG.md](../CHANGELOG.md) to have the correct date and new version number, update [README.md](../README.md) to have the correct version numbers, and commit.
-3. `mvn release:prepare -Dh3.github.artifacts=true` Use the new version number when prompted.
-4. `mvn release:perform -Dh3.github.artifacts=true`
+3. `mvn release:prepare -Dh3.github.artifacts.use=true` Use the new version number when prompted.
+4. `mvn release:perform -Dh3.github.artifacts.use=true`
 5. If this looks good, close and release the build in [Sonatype Nexus Manager](https://oss.sonatype.org/).
 6. Update `CHANGELOG.md` to have an Unreleased section, and commit. The release is now done and development can resume from this point.
 
