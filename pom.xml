@@ -125,14 +125,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>powershell</executable>
-                                    <arguments>
-                                        <argument>-ExecutionPolicy</argument>
-                                        <argument>Bypass</argument>
-                                        <argument>-File</argument>
-                                        <argument>${basedir}/src/main/c/h3-java/build-h3-windows.ps1</argument>
-                                        <argument>${h3.git.remote}</argument>
-                                        <argument>${h3.git.reference}</argument>
-                                    </arguments>
+                                    <commandlineArgs>-ExecutionPolicy Bypass -File ${basedir}/src/main/c/h3-java/build-h3-windows.ps1 ${h3.git.remote} ${h3.git.reference}</commandlineArgs>
                                 </configuration>
                             </execution>
                         </executions>
