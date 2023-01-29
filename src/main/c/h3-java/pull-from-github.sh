@@ -22,7 +22,7 @@
 # This script expects to be run from the project's base directory (where
 # pom.xml is) as part of the Maven build process.
 
-set -ex
+set -eox pipefail
 
 GIT_REVISION=$(git rev-parse HEAD)
 EXTRACT_TO=src/main/resources
