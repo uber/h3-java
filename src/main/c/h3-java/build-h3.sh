@@ -15,16 +15,19 @@
 # limitations under the License.
 #
 
-# Arguments: [git-remote] [git-ref] [use-docker] [remove-images]
-# git-remote    - The git remote to pull from. An existing cloned repository
-#                 will not be deleted if a new remote is specified.
-# git-ref       - Specific git ref of H3 to build.
-# use-docker    - "true" to perform cross compilation via Docker, "false" to
-#                 skip that step.
-# system-prune  - If use-docker is true and this argument is true, Docker
-#                 system prune will be run after each step
-#                 (i.e. for disk space constrained environments like CI)
-# dockcross-tag - Tag name for dockcross
+# Arguments: [git-remote] [git-ref] [use-docker] [remove-images] [github-artifacts]
+# git-remote       - The git remote to pull from. An existing cloned repository
+#                    will not be deleted if a new remote is specified.
+# git-ref          - Specific git ref of H3 to build.
+# use-docker       - "true" to perform cross compilation via Docker, "false" to
+#                    skip that step.
+# system-prune     - If use-docker is true and this argument is true, Docker
+#                    system prune will be run after each step
+#                    (i.e. for disk space constrained environments like CI)
+# dockcross-tag    - Tag name for dockcross
+# github-artifacts - When set, all build artifacts are retrieved from Github
+#                    Actions artifacts rather than built locally (overrides
+#                    all other settings.)
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
@@ -39,6 +42,12 @@ GIT_REVISION=$2
 USE_DOCKER=$3
 SYSTEM_PRUNE=$4
 DOCKCROSS_TAG=$5
+PULL_FROM_GITHUB=$6
+
+if $PULL_FROM_GITHUB; then
+    ./pull-from-github.sh
+    exit 0
+fi
 
 echo Downloading H3 from "$GIT_REMOTE"
 
