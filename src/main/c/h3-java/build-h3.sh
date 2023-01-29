@@ -45,7 +45,7 @@ DOCKCROSS_TAG=$5
 PULL_FROM_GITHUB=$6
 
 if $PULL_FROM_GITHUB; then
-    ./pull-from-github.sh
+    src/main/c/h3-java//pull-from-github.sh
     exit 0
 fi
 

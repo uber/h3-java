@@ -161,3 +161,38 @@ jobs:
         env:
           CI_NAME: github
           COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }} 
+
+  tests-use-built-artifacts:
+    name: Java (Built Artifacts) ${{ matrix.java-version }} ${{ matrix.os }}
+    needs:
+      - tests
+      - tests-no-docker
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java-distribution: [adopt]
+        java-version: [8]
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Coverage report
+        run: |
+          mvn clean test -Dh3.github.artifacts=true

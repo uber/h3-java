@@ -42,7 +42,7 @@ echo $TO_DOWNLOAD | jq -c '.' | while read artifactline; do
     ARTIFACT_ID=$(echo $artifactline | jq .id)
     echo "Downloading $ARTIFACT_NAME: $ARTIFACT_ID"
     gh api "/repos/{owner}/{repo}/actions/artifacts/$ARTIFACT_ID/zip" > "$ARTIFACT_NAME.zip"
-    unzip "$ARTIFACT_NAME.zip" -d "../$EXTRACT_TO"
+    unzip -o "$ARTIFACT_NAME.zip" -d "../$EXTRACT_TO"
 done
 
 popd
