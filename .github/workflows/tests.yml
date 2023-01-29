@@ -45,6 +45,16 @@ jobs:
       - name: Format check for C
         run: git diff --exit-code
 
+      - uses: actions/upload-artifact@v3
+        name: Upload artifacts
+        if: ${{ matrix.java-version == 8 }}
+        with:
+          name: docker-built-shared-objects
+          path: |
+            src/main/resources/*/*.so
+            src/main/resources/*/*.dll
+          if-no-files-found: error 
+
   tests-new-dockcross:
     name: Dockcross ${{ matrix.dockcross-tag }} Java ${{ matrix.java-version }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -76,15 +86,6 @@ jobs:
 
       - name: Tests
         run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" -B -V clean test
-
-      - uses: actions/upload-artifact@v3
-        name: Upload artifacts
-        with:
-          name: docker-built-shared-objects
-          path: |
-            src/main/resources/*/*.so
-            src/main/resources/*/*.dll
-          if-no-files-found: error 
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -120,6 +121,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         name: Upload Mac OS Artifacts
+        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
         with:
           name: macos-built-shared-objects
           path: src/main/resources/*/*.dylib
