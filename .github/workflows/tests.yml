@@ -195,6 +195,6 @@ jobs:
 
       - name: Download and test
         run: |
-          mvn clean test -Dh3.github.artifacts.use=true -Dh3.github.artifacts.ref=${{ github.ref }}
+          mvn clean test -Dh3.github.artifacts.use=true -Dh3.github.artifacts.ref=${{ github.sha }}
         env:
           GH_TOKEN: ${{ github.token }}
