@@ -18,7 +18,7 @@
     <groupId>com.uber</groupId>
     <artifactId>h3</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>4.1.0</version>
     <name>h3</name>
     <url>https://github.com/uber/h3-java</url>
     <description>Java bindings for H3, a hierarchical hexagonal geospatial indexing system.</description>
@@ -40,7 +40,7 @@
         <connection>scm:git:git://github.com/uber/h3-java.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/uber/h3-java.git</developerConnection>
         <url>http://github.com/uber/h3-java/tree/master</url>
-      <tag>HEAD</tag>
+      <tag>v4.1.0</tag>
   </scm>
 
     <developers>
@@ -72,6 +72,8 @@
         <h3.use.docker>true</h3.use.docker>
         <h3.system.prune>false</h3.system.prune>
         <h3.dockcross.tag>20210624-de7b1b0</h3.dockcross.tag>
+        <h3.github.artifacts.use>false</h3.github.artifacts.use>
+        <h3.github.artifacts.by_run />
         <!-- Used for passing additional arguments to surefire when using JaCoCo -->
         <h3.additional.argLine />
 
@@ -112,7 +114,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1.1</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <!-- Override when building on Windows to use PowerShell & MSVC -->
@@ -127,7 +129,7 @@
                                         <argument>-ExecutionPolicy</argument>
                                         <argument>Bypass</argument>
                                         <argument>-File</argument>
-                                        <argument>${basedir}/src/main/c/h3-java/build-h3-windows.ps1</argument>
+                                        <argument>${project.basedir}/src/main/c/h3-java/build-h3-windows.ps1</argument>
                                         <argument>${h3.git.remote}</argument>
                                         <argument>${h3.git.reference}</argument>
                                     </arguments>
@@ -203,7 +205,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>${basedir}/h3version.properties</file>
+                                <file>${project.basedir}/h3version.properties</file>
                             </files>
                         </configuration>
                     </execution>
@@ -223,7 +225,7 @@
 
                         <!-- Generate the native header file -->
                         <arg>-h</arg>
-                        <arg>${basedir}/src/main/c/h3-java/src</arg>
+                        <arg>${project.basedir}/src/main/c/h3-java/src</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
@@ -250,7 +252,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>build-h3-c</id>
@@ -261,13 +263,15 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/src/main/c/h3-java/build-h3.sh</executable>
+                            <executable>${project.basedir}/src/main/c/h3-java/build-h3.sh</executable>
                             <arguments>
                                 <argument>${h3.git.remote}</argument>
                                 <argument>${h3.git.reference}</argument>
                                 <argument>${h3.use.docker}</argument>
                                 <argument>${h3.system.prune}</argument>
                                 <argument>${h3.dockcross.tag}</argument>
+                                <argument>${h3.github.artifacts.use}</argument>
+                                <argument>${h3.github.artifacts.by_run}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -288,7 +292,7 @@
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
+                                    <directory>${project.basedir}/src/main/resources</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
