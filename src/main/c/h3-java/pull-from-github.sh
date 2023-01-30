@@ -24,24 +24,27 @@
 
 set -eox pipefail
 
-GITHUB_ARTIFACTS_REF=$1
+GITHUB_ARTIFACTS_RUN=$1
 
-if [ -z "$GITHUB_ARTIFACTS_REF" ]; then
-    GIT_REVISION=$(git rev-parse HEAD)
-else
-    GIT_REVISION="$GITHUB_ARTIFACTS_REF"
-fi
 EXTRACT_TO=src/main/resources
-
-echo downloading artifacts for $GIT_REVISION
 
 mkdir -p target
 pushd target
 
-TO_DOWNLOAD=$(gh api \
+ARTIFACTS_LIST=$(gh api \
   -H "Accept: application/vnd.github+json" \
-  /repos/{owner}/{repo}/actions/artifacts \
-  | jq ".artifacts[] | select(.workflow_run.head_sha == \"$GIT_REVISION\")")
+  /repos/{owner}/{repo}/actions/artifacts)
+
+if [ -z "$GITHUB_ARTIFACTS_RUN" ]; then
+    GIT_REVISION=$(git rev-parse HEAD)
+    echo "downloading artifacts for sha $GIT_REVISION"
+    TO_DOWNLOAD=$(echo "$ARTIFACTS_LIST" \
+        | jq ".artifacts[] | select(.workflow_run.head_sha == \"$GIT_REVISION\")")
+else
+    echo "downloading artifacts for run $GITHUB_ARTIFACTS_RUN"
+    TO_DOWNLOAD=$(echo "$ARTIFACTS_LIST" \
+        | jq ".artifacts[] | select(.workflow_run.id == \"$GITHUB_ARTIFACTS_RUN\")")
+fi
 
 echo $TO_DOWNLOAD | jq -c '.' | while read artifactline; do
     ARTIFACT_NAME=$(echo $artifactline | jq -r .name)
