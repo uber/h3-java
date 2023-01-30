@@ -15,9 +15,15 @@
 # limitations under the License.
 #
 
-# Retrieves built artifacts from Github. You must install the Github CLI
-# and authenticate with a personal access token (classic) with workflows
-# scope to use this. https://cli.github.com/
+# Retrieves built artifacts from Github. The purpose of this script is
+# to enable deployment from any system, regardless of whether it can
+# run the particular cross compiling steps needed to build native shared
+# objects. Some of the native shared objects require particular Docker
+# setups, or indeed running on Mac OS, which is difficult to maintain.
+#
+# You must install the Github CLI and authenticate with a personal access
+# token (classic) with workflows scope to use this. https://cli.github.com/
+# This script also requires `jq`.
 #
 # This script expects to be run from the project's base directory (where
 # pom.xml is) as part of the Maven build process.

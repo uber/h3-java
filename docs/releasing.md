@@ -15,9 +15,10 @@ Release builds should only be run on Mac OSX with Docker. This is needed so that
 
 ## Troubleshooting
 
-### Github artifacts
+### Dependencies for `pull-from-github.sh`
 
-You should install the [Github CLI](https://cli.github.com) and authenticate with it first. You may need to use a personal access token (classic) with workflows scope.
+* You should install the [Github CLI](https://cli.github.com) and authenticate with it first. You may need to use a personal access token (classic) with workflows scope.
+* `jq`
 
 ### gpg: signing failed: Inappropriate ioctl for device
 
