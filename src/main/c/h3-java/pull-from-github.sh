@@ -28,33 +28,28 @@ GITHUB_ARTIFACTS_RUN=$1
 
 EXTRACT_TO=src/main/resources
 
-mkdir -p target
-pushd target
-
-ARTIFACTS_LIST=$(gh api \
-  -H "Accept: application/vnd.github+json" \
-  /repos/{owner}/{repo}/actions/artifacts)
-
 if [ -z "$GITHUB_ARTIFACTS_RUN" ]; then
-    GIT_REVISION=$(git rev-parse HEAD)
-    echo "downloading artifacts for sha $GIT_REVISION"
-    TO_DOWNLOAD=$(echo "$ARTIFACTS_LIST" \
-        | jq ".artifacts[] | select(.workflow_run.head_sha == \"$GIT_REVISION\")")
-else
+    mkdir -p target
+    pushd target
+
+    ARTIFACTS_LIST=$(gh api \
+    -H "Accept: application/vnd.github+json" \
+    /repos/{owner}/{repo}/actions/artifacts)
+
     echo "downloading artifacts for run $GITHUB_ARTIFACTS_RUN"
     TO_DOWNLOAD=$(echo "$ARTIFACTS_LIST" \
         | jq ".artifacts[] | select(.workflow_run.id == \"$GITHUB_ARTIFACTS_RUN\")")
+
+    echo $TO_DOWNLOAD | jq -c '.' | while read artifactline; do
+        ARTIFACT_NAME=$(echo $artifactline | jq -r .name)
+        ARTIFACT_ID=$(echo $artifactline | jq .id)
+        echo "Downloading $ARTIFACT_NAME: $ARTIFACT_ID"
+        gh api "/repos/{owner}/{repo}/actions/artifacts/$ARTIFACT_ID/zip" > "$ARTIFACT_NAME.zip"
+        unzip -o "$ARTIFACT_NAME.zip" -d "../$EXTRACT_TO"
+    done
+
+    popd
 fi
-
-echo $TO_DOWNLOAD | jq -c '.' | while read artifactline; do
-    ARTIFACT_NAME=$(echo $artifactline | jq -r .name)
-    ARTIFACT_ID=$(echo $artifactline | jq .id)
-    echo "Downloading $ARTIFACT_NAME: $ARTIFACT_ID"
-    gh api "/repos/{owner}/{repo}/actions/artifacts/$ARTIFACT_ID/zip" > "$ARTIFACT_NAME.zip"
-    unzip -o "$ARTIFACT_NAME.zip" -d "../$EXTRACT_TO"
-done
-
-popd
 
 echo Checking that expected images are present:
 

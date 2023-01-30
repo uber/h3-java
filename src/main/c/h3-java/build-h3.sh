@@ -28,8 +28,8 @@
 # github-artifacts - When set, all build artifacts are retrieved from Github
 #                    Actions artifacts rather than built locally (overrides
 #                    all other settings.)
-# github-artifacts-run - When set, override the default revision to pull artifacts from
-#                        for `github-artifacts`.
+# github-artifacts-run - When set, assume the artifacts have already been
+#                        downloaded.
 #
 # This script downloads H3, builds H3 and the H3-Java native library, and
 # cross compiles via Docker.
