@@ -14,6 +14,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ### Changed
 - Upgraded the core library to v4.1.0. (#121)
+- Release artifacts are now built in Github Actions. (#124)
 
 ## [4.0.2] - 2022-09-21
 ### Changed
