@@ -341,6 +341,7 @@
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <releaseProfiles>release-profile</releaseProfiles>
+                    <arguments>-Dh3.github.artifacts.use=true</arguments>
                 </configuration>
             </plugin>
             <plugin>
