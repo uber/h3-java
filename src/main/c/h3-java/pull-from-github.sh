@@ -35,6 +35,7 @@ GITHUB_ARTIFACTS_RUN=$1
 EXTRACT_TO=src/main/resources
 
 if [ -z "$GITHUB_ARTIFACTS_RUN" ]; then
+    GIT_REVISION=$(git rev-parse HEAD)
     mkdir -p target
     pushd target
 
@@ -42,9 +43,9 @@ if [ -z "$GITHUB_ARTIFACTS_RUN" ]; then
     -H "Accept: application/vnd.github+json" \
     /repos/{owner}/{repo}/actions/artifacts)
 
-    echo "downloading artifacts for run $GITHUB_ARTIFACTS_RUN"
+    echo "downloading artifacts for run $GIT_REVISION"
     TO_DOWNLOAD=$(echo "$ARTIFACTS_LIST" \
-        | jq ".artifacts[] | select(.workflow_run.id == \"$GITHUB_ARTIFACTS_RUN\")")
+        | jq ".artifacts[] | select(.workflow_run.head_sha == \"$GIT_REVISION\")")
 
     echo $TO_DOWNLOAD | jq -c '.' | while read artifactline; do
         ARTIFACT_NAME=$(echo $artifactline | jq -r .name)
