@@ -699,17 +699,18 @@ Java_com_uber_h3core_NativeMethods_cellsToLinkedMultiPolygon(JNIEnv *env,
     if (h3Elements != NULL) {
         H3Error err = cellsToLinkedMultiPolygon(h3Elements, numH3, &polygon);
 
-        // Parse the output now
-        LinkedGeoPolygon *currentPolygon = &polygon;
-
-        ConvertLinkedGeoPolygonToManaged(env, currentPolygon, results);
-
-        destroyLinkedMultiPolygon(&polygon);
-
-        (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
-
         if (err) {
+            (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
             ThrowH3Exception(env, err);
+        } else {
+            // Parse the output now
+            LinkedGeoPolygon *currentPolygon = &polygon;
+
+            ConvertLinkedGeoPolygonToManaged(env, currentPolygon, results);
+
+            destroyLinkedMultiPolygon(&polygon);
+
+            (**env).ReleaseLongArrayElements(env, h3, h3Elements, 0);
         }
     } else {
         ThrowOutOfMemoryError(env);
