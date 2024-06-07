@@ -1,0 +1,22 @@
+name: slack-alert
+
+on:
+  workflow_run:
+    workflows: [tests]
+    types: [completed]
+
+jobs:
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Send Slack Alert
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            Github Actions ${{ github.event.workflow_run.conclusion }}
+            Repo: ${{github.event.workflow_run.repository.name }}
+            Workflow URL: ${{ github.event.workflow_run.html_url }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

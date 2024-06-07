@@ -5,6 +5,9 @@ on:
     branches: [master, stable-*]
   pull_request:
     branches: [master, stable-*]
+  schedule:
+    # Every Sunday, rerun
+    - cron: "0 12 * * 0"
 
 jobs:
   tests:
@@ -64,7 +67,7 @@ jobs:
         os: [ubuntu-latest]
         java-distribution: [adopt]
         java-version: [17]
-        dockcross-tag: ["20220906-e88a3ce", "20230116-670f7f7"]
+        dockcross-tag: ["20230116-670f7f7", "20240529-0dade71", "latest"]
 
     steps:
       - uses: actions/checkout@v2.1.1
