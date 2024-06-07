@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import org.junit.Test;
 
 /** H3CoreLoader is mostly tested by {@link TestH3CoreFactory}. This also tests OS detection. */
@@ -60,7 +61,7 @@ public class TestH3CoreLoader {
 
   @Test(expected = UnsatisfiedLinkError.class)
   public void testExtractNonexistant() throws IOException {
-    File tempFile = File.createTempFile("test-extract-resource", null);
+    File tempFile = Files.createTempFile("test-extract-resource", null).toFile();
 
     tempFile.deleteOnExit();
 

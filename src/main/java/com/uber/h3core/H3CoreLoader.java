@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2024 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Locale;
+import java.util.Set;
 
 /** Extracts the native H3 core library to the local filesystem and loads it. */
 public final class H3CoreLoader {
@@ -60,11 +65,6 @@ public final class H3CoreLoader {
    * @throws UnsatisfiedLinkError The resource path does not exist
    */
   static void copyResource(String resourcePath, File newH3LibFile) throws IOException {
-    // Set the permissions
-    newH3LibFile.setReadable(true);
-    newH3LibFile.setWritable(true, true);
-    newH3LibFile.setExecutable(true, true);
-
     // Shove the resource into the file and close it
     try (InputStream resource = H3CoreLoader.class.getResourceAsStream(resourcePath)) {
       if (resource == null) {
@@ -115,8 +115,14 @@ public final class H3CoreLoader {
       final String dirName = String.format("%s-%s", os.getDirName(), arch);
       final String libName = String.format("libh3-java%s", os.getSuffix());
 
-      final File newLibraryFile = File.createTempFile("libh3-java", os.getSuffix());
+      final FileAttribute<Set<PosixFilePermission>> attr =
+          PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+      final File newLibraryFile = Files.createTempFile("libh3-java", os.getSuffix(), attr).toFile();
 
+      // Set permissions in case the Posix permissions were not applied (non-Posix OS)
+      newLibraryFile.setReadable(true, true);
+      newLibraryFile.setWritable(true, true);
+      newLibraryFile.setExecutable(true, true);
       newLibraryFile.deleteOnExit();
 
       copyResource(String.format("/%s/%s", dirName, libName), newLibraryFile);
