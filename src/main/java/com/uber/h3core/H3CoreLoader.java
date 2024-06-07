@@ -65,6 +65,13 @@ public final class H3CoreLoader {
    * @throws UnsatisfiedLinkError The resource path does not exist
    */
   static void copyResource(String resourcePath, File newH3LibFile) throws IOException {
+    // When not a POSIX OS, try to ensure the permissions are secure.
+    // If possible, we try to create the file with the right permissions the first time in
+    // createTempLibraryFile.
+    newH3LibFile.setReadable(true, true);
+    newH3LibFile.setWritable(true, true);
+    newH3LibFile.setExecutable(true, true);
+
     // Shove the resource into the file and close it
     try (InputStream resource = H3CoreLoader.class.getResourceAsStream(resourcePath)) {
       if (resource == null) {
@@ -102,12 +109,7 @@ public final class H3CoreLoader {
           PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
       return Files.createTempFile("libh3-java", os.getSuffix(), attr).toFile();
     } else {
-      // When not a POSIX OS, try to ensure the permissions are secure
-      final File f = Files.createTempFile("libh3-java", os.getSuffix()).toFile();
-      f.setReadable(true, true);
-      f.setWritable(true, true);
-      f.setExecutable(true, true);
-      return f;
+      return Files.createTempFile("libh3-java", os.getSuffix()).toFile();
     }
   }
 
