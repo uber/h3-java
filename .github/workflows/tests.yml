@@ -67,7 +67,7 @@ jobs:
         os: [ubuntu-latest]
         java-distribution: [adopt]
         java-version: [17]
-        dockcross-tag: ["20230116-670f7f7", "20240529-0dade71", "latest"]
+        dockcross-tag: ["20230116-670f7f7", "20240418-88c04a4", "latest"]
 
     steps:
       - uses: actions/checkout@v2.1.1
