@@ -15,7 +15,6 @@
  */
 package com.uber.h3core.benchmarking;
 
-import com.uber.h3core.H3Core;
 import java.io.IOException;
 import java.util.List;
 import org.openjdk.jmh.annotations.Benchmark;

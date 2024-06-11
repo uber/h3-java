@@ -15,12 +15,9 @@
  */
 package com.uber.h3core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Locale;
+import java.io.*;
+
+import static com.uber.h3core.util.H3Static.*;
 
 /** Extracts the native H3 core library to the local filesystem and loads it. */
 public final class H3CoreLoader {
@@ -28,18 +25,6 @@ public final class H3CoreLoader {
     // Prevent instantiation
   }
 
-  /**
-   * Locale used when handling system strings that need to be mapped to resource names. English is
-   * used since that locale was used when building the library.
-   */
-  static final Locale H3_CORE_LOCALE = Locale.ENGLISH;
-
-  // Supported H3 architectures
-  static final String ARCH_X64 = "x64";
-  static final String ARCH_X86 = "x86";
-  static final String ARCH_ARM64 = "arm64";
-
-  private static volatile File libraryFile = null;
 
   /** Read all bytes from <code>in</code> and write them to <code>out</code>. */
   private static void copyStream(InputStream in, OutputStream out) throws IOException {

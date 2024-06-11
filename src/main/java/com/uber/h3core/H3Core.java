@@ -15,18 +15,20 @@
  */
 package com.uber.h3core;
 
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
-
 import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.CoordIJ;
 import com.uber.h3core.util.LatLng;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.uber.h3core.util.H3Static.*;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 /**
  * H3Core provides all functions of the H3 API.
@@ -36,25 +38,6 @@ import java.util.stream.IntStream;
  * <p>Any function in this class may throw {@link H3Exception}.
  */
 public class H3Core {
-  // These constants are from h3api.h and h3Index.h
-  /** Maximum number of vertices for an H3 index */
-  private static final int MAX_CELL_BNDRY_VERTS = 10;
-
-  private static final int NUM_BASE_CELLS = 122;
-  private static final int NUM_PENTAGONS = 12;
-
-  // Constants for the resolution bits in an H3 index.
-  private static final long H3_RES_OFFSET = 52L;
-  private static final long H3_RES_MASK = 0xfL << H3_RES_OFFSET;
-  private static final long H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
-  /**
-   * Mask for the indexing digits in an H3 index.
-   *
-   * <p>The digits are offset by 0, so no shift is needed in the constant.
-   */
-  private static final long H3_DIGIT_MASK = 0x1fffffffffffL;
-
-  private static final long INVALID_INDEX = 0L;
 
   /** Native implementation of the H3 library. */
   private final NativeMethods h3Api;

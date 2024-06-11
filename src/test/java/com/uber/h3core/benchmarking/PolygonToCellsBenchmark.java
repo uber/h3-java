@@ -16,7 +16,6 @@
 package com.uber.h3core.benchmarking;
 
 import com.google.common.collect.ImmutableList;
-import com.uber.h3core.H3Core;
 import com.uber.h3core.util.LatLng;
 import java.io.IOException;
 import java.util.List;
