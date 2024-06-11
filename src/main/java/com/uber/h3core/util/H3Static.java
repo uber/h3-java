@@ -7,6 +7,7 @@ public class H3Static {
 
     private H3Static() {
     }
+
     // These constants are from h3api.h and h3Index.h
     /** Maximum number of vertices for an H3 index */
     public static final int MAX_CELL_BNDRY_VERTS = 10;
