@@ -72,6 +72,7 @@
         <h3.use.docker>true</h3.use.docker>
         <h3.system.prune>false</h3.system.prune>
         <h3.dockcross.tag>20210624-de7b1b0</h3.dockcross.tag>
+        <h3.dockcross.only/>>
         <h3.github.artifacts.use>false</h3.github.artifacts.use>
         <h3.github.artifacts.by_run />
         <!-- Used for passing additional arguments to surefire when using JaCoCo -->
@@ -270,6 +271,7 @@
                                 <argument>${h3.use.docker}</argument>
                                 <argument>${h3.system.prune}</argument>
                                 <argument>${h3.dockcross.tag}</argument>
+                                <argument>${h3.dockcross.only}</argument>
                                 <argument>${h3.github.artifacts.use}</argument>
                                 <argument>${h3.github.artifacts.by_run}</argument>
                             </arguments>

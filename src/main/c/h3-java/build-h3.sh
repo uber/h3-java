@@ -25,6 +25,7 @@
 #                    system prune will be run after each step
 #                    (i.e. for disk space constrained environments like CI)
 # dockcross-tag    - Tag name for dockcross
+# dockcross-only   - When set, build only a specific architecture with dockcross.
 # github-artifacts - When set, all build artifacts are retrieved from Github
 #                    Actions artifacts rather than built locally (overrides
 #                    all other settings.)
@@ -44,8 +45,9 @@ GIT_REVISION=$2
 USE_DOCKER=$3
 SYSTEM_PRUNE=$4
 DOCKCROSS_TAG=$5
-GITHUB_ARTIFACTS=$6
-GITHUB_ARTIFACTS_RUN=$7
+DOCKCROSS_ONLY=$6
+GITHUB_ARTIFACTS=$7
+GITHUB_ARTIFACTS_RUN=$8
 
 if $GITHUB_ARTIFACTS; then
     src/main/c/h3-java/pull-from-github.sh "$GITHUB_ARTIFACTS_RUN"
@@ -180,10 +182,16 @@ UPGRADE_CMAKE=true
 CMAKE_ROOT=target/cmake-3.23.2-linux-x86_64
 mkdir -p $CMAKE_ROOT
 
+DOCKCROSS_IMAGES=android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-s390x \
+    linux-ppc64le linux-x64 linux-x86 windows-static-x64 windows-static-x86
+if ! $DOCKCROSS_ONLY; then
+    DOCKCROSS_IMAGES=$DOCKCROSS_ONLY
+    echo Building only: $DOCKCROSS_IMAGES
+fi
+
 # linux-armv6 excluded because of build failure
 # linux-mips excluded due to manifest error
-for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-s390x \
-    linux-ppc64le linux-x64 linux-x86 windows-static-x64 windows-static-x86; do
+for image in $DOCKCROSS_IMAGES; do
 
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
