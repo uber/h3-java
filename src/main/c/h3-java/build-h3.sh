@@ -210,6 +210,9 @@ for image in android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux
     if [ -e $BUILD_ROOT/lib/libh3-java.dll ]; then cp $BUILD_ROOT/lib/libh3-java.dll $OUTPUT_ROOT ; fi
 
     if $SYSTEM_PRUNE; then
+        # Remove the image we just ran
+        docker rmi dockcross/$image:$DOCKCROSS_TAG
+        # Aggressively try to free more disk space
         docker system prune --force --all
         docker system df
         rm $BUILD_ROOT/dockcross
