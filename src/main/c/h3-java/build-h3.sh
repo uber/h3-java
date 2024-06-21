@@ -217,9 +217,9 @@ for image in $DOCKCROSS_IMAGES; do
     if [ -e $BUILD_ROOT/lib/libh3-java.dll ]; then cp $BUILD_ROOT/lib/libh3-java.dll $OUTPUT_ROOT ; fi
 
     if $SYSTEM_PRUNE; then
-        # Remove the image we just ran
-        docker rmi dockcross/$image:$DOCKCROSS_TAG
-        # Aggressively try to free more disk space
+        # Aggressively try to free more disk space.
+        # If this turns out to be more trouble, split running for different architectures
+        # into different jobs.
         docker system prune --force --all
         docker system df
         rm $BUILD_ROOT/dockcross

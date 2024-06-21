@@ -21,6 +21,7 @@ import java.util.Objects;
 public class LatLng {
   /** Latitude (north-south) coordinate in degrees */
   public final double lat;
+
   /** Longitude (east-west) coordinate in degrees */
   public final double lng;
 
