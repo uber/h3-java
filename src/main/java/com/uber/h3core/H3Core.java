@@ -47,6 +47,7 @@ public class H3Core {
   private static final long H3_RES_OFFSET = 52L;
   private static final long H3_RES_MASK = 0xfL << H3_RES_OFFSET;
   private static final long H3_RES_MASK_NEGATIVE = ~H3_RES_MASK;
+
   /**
    * Mask for the indexing digits in an H3 index.
    *
