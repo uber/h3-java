@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 15, 17]
+        java-version: [8, 11, 17, 21, 22]
 
     steps:
       - uses: actions/checkout@v2.1.1
@@ -66,7 +66,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [17]
+        java-version: [21]
         dockcross-tag: ["20230116-670f7f7", "20240418-88c04a4", "latest"]
         dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
 
@@ -98,10 +98,9 @@ jobs:
     strategy:
       matrix:
         # TODO: Docker on macos-latest running is not working
-        # TODO: Windows pinned back
-        os: [macos-latest, windows-2019]
+        os: [macos-latest, windows-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 15, 17, 22]
+        java-version: [8, 11, 17, 21, 22]
 
     steps:
       - uses: actions/checkout@v2.1.1
