@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Uber Technologies, Inc.
+ * Copyright 2017-2018, 2024 Uber Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Locale;
+import java.util.Set;
 
 /** Extracts the native H3 core library to the local filesystem and loads it. */
 public final class H3CoreLoader {
@@ -60,11 +65,6 @@ public final class H3CoreLoader {
    * @throws UnsatisfiedLinkError The resource path does not exist
    */
   static void copyResource(String resourcePath, File newH3LibFile) throws IOException {
-    // Set the permissions
-    newH3LibFile.setReadable(true);
-    newH3LibFile.setWritable(true, true);
-    newH3LibFile.setExecutable(true, true);
-
     // Shove the resource into the file and close it
     try (InputStream resource = H3CoreLoader.class.getResourceAsStream(resourcePath)) {
       if (resource == null) {
@@ -93,6 +93,24 @@ public final class H3CoreLoader {
     return loadNatives(os, arch);
   }
 
+  private static File createTempLibraryFile(OperatingSystem os) throws IOException {
+    if (os.isPosix()) {
+      // Note this is already done by the implementation of Files.createTempFile that I looked at,
+      // but the javadoc does not seem to gaurantee the permissions will be restricted to owner
+      // write.
+      final FileAttribute<Set<PosixFilePermission>> attr =
+          PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+      return Files.createTempFile("libh3-java", os.getSuffix(), attr).toFile();
+    } else {
+      // When not a POSIX OS, try to ensure the permissions are secure
+      final File f = Files.createTempFile("libh3-java", os.getSuffix()).toFile();
+      f.setReadable(true, true);
+      f.setWritable(true, true);
+      f.setExecutable(true, true);
+      return f;
+    }
+  }
+
   /**
    * For use when the H3 library should be unpacked from the JAR and loaded. The native library for
    * the specified operating system and architecture will be extract.
@@ -115,8 +133,7 @@ public final class H3CoreLoader {
       final String dirName = String.format("%s-%s", os.getDirName(), arch);
       final String libName = String.format("libh3-java%s", os.getSuffix());
 
-      final File newLibraryFile = File.createTempFile("libh3-java", os.getSuffix());
-
+      final File newLibraryFile = createTempLibraryFile(os);
       newLibraryFile.deleteOnExit();
 
       copyResource(String.format("/%s/%s", dirName, libName), newLibraryFile);
@@ -146,13 +163,20 @@ public final class H3CoreLoader {
     ANDROID(".so"),
     DARWIN(".dylib"),
     FREEBSD(".so"),
-    WINDOWS(".dll"),
+    WINDOWS(".dll", false),
     LINUX(".so");
 
     private final String suffix;
+    private final boolean posix;
 
     OperatingSystem(String suffix) {
       this.suffix = suffix;
+      this.posix = true;
+    }
+
+    OperatingSystem(String suffix, boolean posix) {
+      this.suffix = suffix;
+      this.posix = posix;
     }
 
     /** Suffix for native libraries. */
@@ -163,6 +187,11 @@ public final class H3CoreLoader {
     /** How this operating system's name is rendered when extracting the native library. */
     public String getDirName() {
       return name().toLowerCase(H3_CORE_LOCALE);
+    }
+
+    /** Whether to try to use POSIX file permissions when creating the native library temp file. */
+    public boolean isPosix() {
+      return this.posix;
     }
   }
 
