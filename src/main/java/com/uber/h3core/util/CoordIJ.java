@@ -21,6 +21,7 @@ import java.util.Objects;
 public class CoordIJ {
   /** I coordinate */
   public final int i;
+
   /** J coordinate */
   public final int j;
 
