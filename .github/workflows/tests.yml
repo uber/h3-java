@@ -98,7 +98,8 @@ jobs:
     strategy:
       matrix:
         # TODO: Docker on macos-latest running is not working
-        os: [macos-latest, windows-latest]
+        # TODO: Windows pinned back
+        os: [macos-latest, windows-2019]
         java-distribution: [adopt]
         java-version: [8, 11, 17, 21, 22]
 
