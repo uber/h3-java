@@ -46,7 +46,7 @@
     <developers>
         <developer>
             <name>Isaac Brodsky</name>
-            <email>isaac@uber.com</email>
+            <email>isaac@isaacbrodsky.com</email>
             <organization>Uber Technologies, Inc.</organization>
             <organizationUrl>https://github.com/uber/</organizationUrl>
         </developer>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.0.0-jre</version>
+            <version>33.2.1-jre</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
