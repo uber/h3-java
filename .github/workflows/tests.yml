@@ -199,13 +199,13 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Download Docker binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: docker-built-shared-objects
           path: src/main/resources/
 
       - name: Download Mac binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: macos-built-shared-objects
           path: src/main/resources/
