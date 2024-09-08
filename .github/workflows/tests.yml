@@ -48,7 +48,7 @@ jobs:
       - name: Format check for C
         run: git diff --exit-code
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload artifacts
         if: ${{ matrix.java-version == 8 }}
         with:
@@ -124,7 +124,7 @@ jobs:
       - name: Tests
         run: mvn -B -V clean test site
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
         if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
         with:
@@ -199,13 +199,13 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Download Docker binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: docker-built-shared-objects
           path: src/main/resources/
 
       - name: Download Mac binaries
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: macos-built-shared-objects
           path: src/main/resources/
