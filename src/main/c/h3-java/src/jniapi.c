@@ -33,17 +33,38 @@
         return;                        \
     }
 
+static jclass java_util_ArrayList;
 static jclass java_lang_OutOfMemoryError;
 static jclass com_uber_h3core_exceptions_H3Exception;
+static jclass com_uber_h3core_util_LatLng;
 
 static jmethodID com_uber_h3core_exceptions_H3Exception_init;
+static jmethodID com_uber_h3core_util_LatLng_init;
 static jmethodID java_lang_OutOfMemoryError_init;
+static jmethodID java_util_ArrayList_init;
+static jmethodID java_util_ArrayList_add;
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     JNIEnv *env;
     if ((**vm).GetEnv(vm, (void **)&env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     } else {
+        jclass local_arrayListClass =
+            (**env).FindClass(env, "java/util/ArrayList");
+        java_util_ArrayList_init =
+            (**env).GetMethodID(env, local_arrayListClass, "<init>", "()V");
+        java_util_ArrayList_add = (**env).GetMethodID(
+            env, local_arrayListClass, "add", "(Ljava/lang/Object;)Z");
+        java_util_ArrayList =
+            (jclass)(**env).NewGlobalRef(env, local_arrayListClass);
+
+        jclass local_latLngClass =
+            (**env).FindClass(env, "com/uber/h3core/util/LatLng");
+        com_uber_h3core_util_LatLng_init =
+            (**env).GetMethodID(env, local_latLngClass, "<init>", "(DD)V");
+        com_uber_h3core_util_LatLng =
+            (jclass)(**env).NewGlobalRef(env, local_latLngClass);
+
         jclass local_h3eClass =
             (**env).FindClass(env, "com/uber/h3core/exceptions/H3Exception");
         com_uber_h3core_exceptions_H3Exception_init =
@@ -75,6 +96,12 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
         }
         if (java_lang_OutOfMemoryError != NULL) {
             (**env).DeleteGlobalRef(env, java_lang_OutOfMemoryError);
+        }
+        if (java_util_ArrayList != NULL) {
+            (**env).DeleteGlobalRef(env, java_util_ArrayList);
+        }
+        if (com_uber_h3core_util_LatLng != NULL) {
+            (**env).DeleteGlobalRef(env, com_uber_h3core_util_LatLng);
         }
     }
 }
@@ -639,38 +666,9 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polygonToCells(
 void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
                                       LinkedGeoPolygon *currentPolygon,
                                       jobject results) {
-    jclass arrayListClass = (**env).FindClass(env, "java/util/ArrayList");
-    if (arrayListClass == NULL) {
-        ThrowOutOfMemoryError(env);
-        return;
-    }
-    jclass latLngClass = (**env).FindClass(env, "com/uber/h3core/util/LatLng");
-    if (latLngClass == NULL) {
-        ThrowOutOfMemoryError(env);
-        return;
-    }
-    jmethodID arrayListConstructor =
-        (**env).GetMethodID(env, arrayListClass, "<init>", "()V");
-    if (arrayListConstructor == NULL) {
-        ThrowOutOfMemoryError(env);
-        return;
-    }
-    jmethodID arrayListAdd = (**env).GetMethodID(env, arrayListClass, "add",
-                                                 "(Ljava/lang/Object;)Z");
-    if (arrayListAdd == NULL) {
-        ThrowOutOfMemoryError(env);
-        return;
-    }
-    jmethodID latLngConstructor =
-        (**env).GetMethodID(env, latLngClass, "<init>", "(DD)V");
-    if (latLngConstructor == NULL) {
-        ThrowOutOfMemoryError(env);
-        return;
-    }
-
     while (currentPolygon != NULL) {
-        jobject resultLoops =
-            (**env).NewObject(env, arrayListClass, arrayListConstructor);
+        jobject resultLoops = (**env).NewObject(env, java_util_ArrayList,
+                                                java_util_ArrayList_init);
         if (resultLoops == NULL) {
             return;
         }
@@ -681,8 +679,8 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
         if (resultLoops != NULL && currentPolygon->first != NULL) {
             LinkedGeoLoop *currentLoop = currentPolygon->first;
             while (currentLoop != NULL) {
-                jobject resultLoop = (**env).NewObject(env, arrayListClass,
-                                                       arrayListConstructor);
+                jobject resultLoop = (**env).NewObject(
+                    env, java_util_ArrayList, java_util_ArrayList_init);
                 if (resultLoop == NULL) {
                     return;
                 }
@@ -690,26 +688,29 @@ void ConvertLinkedGeoPolygonToManaged(JNIEnv *env,
                 LinkedLatLng *coord = currentLoop->first;
                 while (coord != NULL) {
                     jobject v =
-                        (**env).NewObject(env, latLngClass, latLngConstructor,
+                        (**env).NewObject(env, com_uber_h3core_util_LatLng,
+                                          com_uber_h3core_util_LatLng_init,
                                           coord->vertex.lat, coord->vertex.lng);
                     if (v == NULL) {
                         return;
                     }
 
-                    (**env).CallBooleanMethod(env, resultLoop, arrayListAdd, v);
+                    (**env).CallBooleanMethod(env, resultLoop,
+                                              java_util_ArrayList_add, v);
                     RETURN_ON_EXCEPTION(env);
 
                     coord = coord->next;
                 }
 
-                (**env).CallBooleanMethod(env, resultLoops, arrayListAdd,
-                                          resultLoop);
+                (**env).CallBooleanMethod(env, resultLoops,
+                                          java_util_ArrayList_add, resultLoop);
                 RETURN_ON_EXCEPTION(env);
 
                 currentLoop = currentLoop->next;
             }
 
-            (**env).CallBooleanMethod(env, results, arrayListAdd, resultLoops);
+            (**env).CallBooleanMethod(env, results, java_util_ArrayList_add,
+                                      resultLoops);
             RETURN_ON_EXCEPTION(env);
         }
 
