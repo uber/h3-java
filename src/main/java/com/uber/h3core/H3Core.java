@@ -546,16 +546,18 @@ public class H3Core {
     int[] holeSizes = new int[0];
     double[] holeVerts = new double[0];
     if (holes != null) {
-      holeSizes = new int[holes.size()];
+      int holesSize = holes.size();
+      holeSizes = new int[holesSize];
       int totalSize = 0;
-      for (int i = 0; i < holes.size(); i++) {
-        totalSize += holes.get(i).size() * 2;
+      for (int i = 0; i < holesSize; i++) {
+        int holeSize = holes.get(i).size() * 2;
+        totalSize += holeSize;
         // Note we are storing the number of doubles
-        holeSizes[i] = holes.get(i).size() * 2;
+        holeSizes[i] = holeSize;
       }
       holeVerts = new double[totalSize];
       int offset = 0;
-      for (int i = 0; i < holes.size(); i++) {
+      for (int i = 0; i < holesSize; i++) {
         offset = packGeofenceVertices(holeVerts, holes.get(i), offset);
       }
     }
@@ -576,16 +578,19 @@ public class H3Core {
    * @return Next offset to begin filling from
    */
   private static int packGeofenceVertices(double[] arr, List<LatLng> original, int offset) {
-    assert arr.length >= (original.size() * 2) + offset;
+    int newOffset = (original.size() * 2) + offset;
+    assert arr.length >= newOffset;
 
-    for (int i = 0; i < original.size(); i++) {
+    for (int i = 0, size = original.size(); i < size; i++) {
       LatLng coord = original.get(i);
 
-      arr[(i * 2) + offset] = toRadians(coord.lat);
-      arr[(i * 2) + 1 + offset] = toRadians(coord.lng);
+      int firstOffset = (i * 2) + offset;
+      int secondOffset = firstOffset + 1;
+      arr[firstOffset] = toRadians(coord.lat);
+      arr[secondOffset] = toRadians(coord.lng);
     }
 
-    return (original.size() * 2) + offset;
+    return newOffset;
   }
 
   /** Create polygons from a set of contiguous indexes */
@@ -611,7 +616,7 @@ public class H3Core {
       for (List<LatLng> loop : loops) {
         // For each coordinate in the loop, we need to convert to degrees,
         // and ensure the correct ordering (whether geoJson or not.)
-        for (int vectorInLoop = 0; vectorInLoop < loop.size(); vectorInLoop++) {
+        for (int vectorInLoop = 0, size = loop.size(); vectorInLoop < size; vectorInLoop++) {
           final LatLng v = loop.get(vectorInLoop);
           final double origLat = toDegrees(v.lat);
           final double origLng = toDegrees(v.lng);
@@ -1173,9 +1178,7 @@ public class H3Core {
 
   /** Creates a new list with all non-zero elements of the array as members. */
   private static List<Long> nonZeroLongArrayToList(long[] out) {
-    // Allocate for the case that we need to copy everything from
-    // the `out` array.
-    List<Long> ret = new ArrayList<>(out.length);
+    List<Long> ret = new ArrayList<>();
 
     for (int i = 0; i < out.length; i++) {
       long h = out[i];

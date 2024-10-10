@@ -33,26 +33,63 @@
         return;                        \
     }
 
+static jclass java_lang_OutOfMemoryError;
+static jclass com_uber_h3core_exceptions_H3Exception;
+
+static jmethodID com_uber_h3core_exceptions_H3Exception_init;
+static jmethodID java_lang_OutOfMemoryError_init;
+
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    if ((**vm).GetEnv(vm, (void **)&env, JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    } else {
+        jclass local_h3eClass =
+            (**env).FindClass(env, "com/uber/h3core/exceptions/H3Exception");
+        com_uber_h3core_exceptions_H3Exception_init =
+            (**env).GetMethodID(env, local_h3eClass, "<init>", "(I)V");
+        com_uber_h3core_exceptions_H3Exception =
+            (jclass)(**env).NewGlobalRef(env, local_h3eClass);
+
+        jclass local_oomeClass =
+            (**env).FindClass(env, "java/lang/OutOfMemoryError");
+        java_lang_OutOfMemoryError_init =
+            (**env).GetMethodID(env, local_oomeClass, "<init>", "()V");
+        java_lang_OutOfMemoryError =
+            (jclass)(**env).NewGlobalRef(env, local_oomeClass);
+
+        return JNI_VERSION_1_6;
+    }
+}
+
+void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    if ((**vm).GetEnv(vm, (void **)&env, JNI_VERSION_1_6) != JNI_OK) {
+        // Something is wrong but nothing we can do about this :(
+        return;
+    } else {
+        // delete global references so the GC can collect them
+        if (com_uber_h3core_exceptions_H3Exception != NULL) {
+            (**env).DeleteGlobalRef(env,
+                                    com_uber_h3core_exceptions_H3Exception);
+        }
+        if (java_lang_OutOfMemoryError != NULL) {
+            (**env).DeleteGlobalRef(env, java_lang_OutOfMemoryError);
+        }
+    }
+}
+
 /**
  * Triggers an H3Exception
  */
 void ThrowH3Exception(JNIEnv *env, H3Error err) {
-    jclass h3e =
-        (**env).FindClass(env, "com/uber/h3core/exceptions/H3Exception");
+    jthrowable h3eInstance = (jthrowable)((**env).NewObject(
+        env, com_uber_h3core_exceptions_H3Exception,
+        com_uber_h3core_exceptions_H3Exception_init, err));
 
-    if (h3e != NULL) {
-        jmethodID h3eConstructor =
-            (**env).GetMethodID(env, h3e, "<init>", "(I)V");
-
-        if (h3eConstructor != NULL) {
-            jthrowable h3eInstance =
-                (jthrowable)((**env).NewObject(env, h3e, h3eConstructor, err));
-
-            if (h3eInstance != NULL) {
-                // TODO: Is ExceptionClear needed here?
-                (**env).Throw(env, h3eInstance);
-            }
-        }
+    if (h3eInstance != NULL) {
+        (**env).Throw(env, h3eInstance);
+        (**env).DeleteLocalRef(env, h3eInstance);
     }
 }
 
@@ -65,21 +102,13 @@ void ThrowH3Exception(JNIEnv *env, H3Error err) {
 void ThrowOutOfMemoryError(JNIEnv *env) {
     // Alternately, we could call the JNI function FatalError(JNIEnv *env, const
     // char *msg)
-    jclass oome = (**env).FindClass(env, "java/lang/OutOfMemoryError");
+    jthrowable oomeInstance = (jthrowable)((**env).NewObject(
+        env, java_lang_OutOfMemoryError, java_lang_OutOfMemoryError_init));
 
-    if (oome != NULL) {
-        jmethodID oomeConstructor =
-            (**env).GetMethodID(env, oome, "<init>", "()V");
-
-        if (oomeConstructor != NULL) {
-            jthrowable oomeInstance =
-                (jthrowable)((**env).NewObject(env, oome, oomeConstructor));
-
-            if (oomeInstance != NULL) {
-                (**env).ExceptionClear(env);
-                (**env).Throw(env, oomeInstance);
-            }
-        }
+    if (oomeInstance != NULL) {
+        (**env).ExceptionClear(env);
+        (**env).Throw(env, oomeInstance);
+        (**env).DeleteLocalRef(env, oomeInstance);
     }
 }
 
@@ -96,43 +125,50 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
     if (polygon->geoloop.verts != NULL) {
         polygon->numHoles = (**env).GetArrayLength(env, holeSizes);
 
-        polygon->holes = calloc(sizeof(GeoPolygon), polygon->numHoles);
-        if (polygon->holes == NULL) {
-            ThrowOutOfMemoryError(env);
-            return E_MEMORY_ALLOC;
-        }
+        if (polygon->numHoles > 0) {
+            polygon->holes = calloc(polygon->numHoles, sizeof(GeoPolygon));
+            if (polygon->holes == NULL) {
+                (**env).ReleaseDoubleArrayElements(
+                    env, verts, polygon->geoloop.verts, JNI_ABORT);
+                ThrowOutOfMemoryError(env);
+                return E_MEMORY_ALLOC;
+            }
 
-        jint *holeSizesElements =
-            (**env).GetIntArrayElements(env, holeSizes, 0);
-        if (holeSizesElements == NULL) {
-            free(polygon->holes);
-            ThrowOutOfMemoryError(env);
-            return E_MEMORY_ALLOC;
-        }
+            jint *holeSizesElements =
+                (**env).GetIntArrayElements(env, holeSizes, 0);
+            if (holeSizesElements == NULL) {
+                (**env).ReleaseDoubleArrayElements(
+                    env, verts, polygon->geoloop.verts, JNI_ABORT);
+                free(polygon->holes);
+                ThrowOutOfMemoryError(env);
+                return E_MEMORY_ALLOC;
+            }
 
-        jdouble *holeVertsElements =
-            (**env).GetDoubleArrayElements(env, holeVerts, 0);
-        if (holeVertsElements == NULL) {
-            free(polygon->holes);
+            jdouble *holeVertsElements =
+                (**env).GetDoubleArrayElements(env, holeVerts, 0);
+            if (holeVertsElements == NULL) {
+                (**env).ReleaseDoubleArrayElements(
+                    env, verts, polygon->geoloop.verts, JNI_ABORT);
+                free(polygon->holes);
+                (**env).ReleaseIntArrayElements(env, holeSizes,
+                                                holeSizesElements, JNI_ABORT);
+                ThrowOutOfMemoryError(env);
+                return E_MEMORY_ALLOC;
+            }
+
+            size_t offset = 0;
+            for (int i = 0; i < polygon->numHoles; i++) {
+                // This is the number of doubles, so convert to number of verts
+                polygon->holes[i].numVerts = holeSizesElements[i] / 2;
+                polygon->holes[i].verts = holeVertsElements + offset;
+                offset += holeSizesElements[i];
+            }
             (**env).ReleaseIntArrayElements(env, holeSizes, holeSizesElements,
-                                            0);
-            ThrowOutOfMemoryError(env);
-            return E_MEMORY_ALLOC;
+                                            JNI_ABORT);
+            // holeVertsElements is not released here because it is still being
+            // pointed to by polygon->holes[*].verts. It will be released in
+            // DestroyGeoPolygon.
         }
-
-        size_t offset = 0;
-        for (int i = 0; i < polygon->numHoles; i++) {
-            // This is the number of doubles, so convert to number of verts
-            polygon->holes[i].numVerts = holeSizesElements[i] / 2;
-            polygon->holes[i].verts = holeVertsElements + offset;
-            offset += holeSizesElements[i];
-        }
-
-        (**env).ReleaseIntArrayElements(env, holeSizes, holeSizesElements, 0);
-        // holeVertsElements is not released here because it is still being
-        // pointed to by polygon->holes[*].verts. It will be released in
-        // DestroyGeoPolygon.
-
         return E_SUCCESS;
     } else {
         ThrowOutOfMemoryError(env);
@@ -143,15 +179,16 @@ H3Error CreateGeoPolygon(JNIEnv *env, jdoubleArray verts, jintArray holeSizes,
 void DestroyGeoPolygon(JNIEnv *env, jdoubleArray verts,
                        jintArray holeSizesElements, jdoubleArray holeVerts,
                        GeoPolygon *polygon) {
-    (**env).ReleaseDoubleArrayElements(env, verts, polygon->geoloop.verts, 0);
+    (**env).ReleaseDoubleArrayElements(env, verts, polygon->geoloop.verts,
+                                       JNI_ABORT);
 
     if (polygon->numHoles > 0) {
         // The hole verts were pinned only once, so we don't need to iterate.
         (**env).ReleaseDoubleArrayElements(env, holeVerts,
-                                           polygon->holes[0].verts, 0);
-    }
+                                           polygon->holes[0].verts, JNI_ABORT);
 
-    free(polygon->holes);
+        free(polygon->holes);
+    }
 }
 
 /*
@@ -584,7 +621,6 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polygonToCells(
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
         ThrowOutOfMemoryError(env);
-        return;
     }
 
     DestroyGeoPolygon(env, verts, holeSizes, holeVerts, &polygon);
