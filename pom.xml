@@ -71,7 +71,7 @@
         <h3.git.remote>https://github.com/uber/h3.git</h3.git.remote>
         <h3.use.docker>true</h3.use.docker>
         <h3.system.prune>false</h3.system.prune>
-        <h3.dockcross.tag>20210624-de7b1b0</h3.dockcross.tag>
+        <h3.dockcross.tag>20240812-60fa1b0</h3.dockcross.tag>
         <h3.dockcross.only />
         <h3.github.artifacts.use>false</h3.github.artifacts.use>
         <h3.github.artifacts.by_run />
