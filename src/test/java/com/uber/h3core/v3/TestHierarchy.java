@@ -15,8 +15,9 @@
  */
 package com.uber.h3core.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.uber.h3core.exceptions.H3Exception;
@@ -24,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for grid hierarchy functions (compact, uncompact, children, parent) */
-public class TestHierarchy extends BaseTestH3CoreV3 {
+class TestHierarchy extends BaseTestH3CoreV3 {
   @Test
-  public void testH3ToParent() {
+  void h3ToParent() {
     assertEquals(0x801dfffffffffffL, h3.h3ToParent(0x811d7ffffffffffL, 0));
     assertEquals(0x801dfffffffffffL, h3.h3ToParent(0x801dfffffffffffL, 0));
     assertEquals(0x8828308281fffffL, h3.h3ToParent(0x8928308280fffffL, 8));
@@ -37,28 +38,28 @@ public class TestHierarchy extends BaseTestH3CoreV3 {
     assertEquals("872830828ffffff", h3.h3ToParentAddress("8928308280fffff", 7));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToParentInvalidRes() {
-    h3.h3ToParent(0, 5);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToParentInvalid() {
-    h3.h3ToParent(0x8928308280fffffL, -1);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToParentInvalid2() {
-    h3.h3ToParent(0x8928308280fffffL, 17);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToParentInvalid3() {
-    h3.h3ToParent(0, 17);
+  @Test
+  void h3ToParentInvalidRes() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToParent(0, 5));
   }
 
   @Test
-  public void testH3ToChildren() {
+  void h3ToParentInvalid() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToParent(0x8928308280fffffL, -1));
+  }
+
+  @Test
+  void h3ToParentInvalid2() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToParent(0x8928308280fffffL, 17));
+  }
+
+  @Test
+  void h3ToParentInvalid3() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToParent(0, 17));
+  }
+
+  @Test
+  void h3ToChildren() {
     List<String> sfChildren = h3.h3ToChildren("88283082803ffff", 9);
 
     assertEquals(7, sfChildren.size());
@@ -95,7 +96,7 @@ public class TestHierarchy extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testCompact() {
+  void compact() {
     // Some random location
     String starting = h3.geoToH3Address(30, 20, 6);
 
@@ -115,7 +116,7 @@ public class TestHierarchy extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testCompactLong() {
+  void compactLong() {
     // Some random location
     long starting = h3.geoToH3(30, 20, 6);
 
@@ -134,78 +135,76 @@ public class TestHierarchy extends BaseTestH3CoreV3 {
     assertEquals(new HashSet<>(expanded), new HashSet<>(uncompacted));
   }
 
-  @Test(expected = RuntimeException.class)
-  public void testCompactInvalid() {
-    // Some random location
+  @Test
+  void compactInvalid() {
     String starting = h3.geoToH3Address(30, 20, 6);
-
     List<String> expanded = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
       expanded.add(starting);
     }
-
-    h3.compactAddress(expanded);
+    assertThrows(RuntimeException.class, () -> h3.compactAddress(expanded));
   }
 
   @Test
-  public void testUncompactPentagon() {
+  void uncompactPentagon() {
     List<String> addresses = h3.uncompactAddress(ImmutableList.of("821c07fffffffff"), 3);
     assertEquals(6, addresses.size());
     addresses.stream().forEach(h -> assertEquals(3, h3.h3GetResolution(h)));
   }
 
   @Test
-  public void testUncompactZero() {
+  void uncompactZero() {
     assertEquals(0, h3.uncompactAddress(ImmutableList.of("0"), 3).size());
   }
 
-  @Test(expected = RuntimeException.class)
-  public void testUncompactInvalid() {
-    h3.uncompactAddress(ImmutableList.of("85283473fffffff"), 4);
+  @Test
+  void uncompactInvalid() {
+    assertThrows(
+        RuntimeException.class, () -> h3.uncompactAddress(ImmutableList.of("85283473fffffff"), 4));
   }
 
   @Test
-  public void testH3ToCenterChild() {
+  void h3ToCenterChild() {
     assertEquals(
-        "Same resolution as parent results in same index",
         "8928308280fffff",
-        h3.h3ToCenterChild("8928308280fffff", 9));
+        h3.h3ToCenterChild("8928308280fffff", 9),
+        "Same resolution as parent results in same index");
     assertEquals(
-        "Same resolution as parent results in same index",
         0x8928308280fffffL,
-        h3.h3ToCenterChild(0x8928308280fffffL, 9));
+        h3.h3ToCenterChild(0x8928308280fffffL, 9),
+        "Same resolution as parent results in same index");
 
     assertEquals(
-        "Direct center child is correct",
         "8a28308280c7fff",
-        h3.h3ToCenterChild("8928308280fffff", 10));
+        h3.h3ToCenterChild("8928308280fffff", 10),
+        "Direct center child is correct");
     assertEquals(
-        "Direct center child is correct",
         0x8a28308280c7fffL,
-        h3.h3ToCenterChild(0x8928308280fffffL, 10));
+        h3.h3ToCenterChild(0x8928308280fffffL, 10),
+        "Direct center child is correct");
 
     assertEquals(
-        "Center child skipping a resolution is correct",
         "8b28308280c0fff",
-        h3.h3ToCenterChild("8928308280fffff", 11));
+        h3.h3ToCenterChild("8928308280fffff", 11),
+        "Center child skipping a resolution is correct");
     assertEquals(
-        "Center child skipping a resolution is correct",
         0x8b28308280c0fffL,
-        h3.h3ToCenterChild(0x8928308280fffffL, 11));
+        h3.h3ToCenterChild(0x8928308280fffffL, 11),
+        "Center child skipping a resolution is correct");
   }
 
-  @Test(expected = H3Exception.class)
-  public void testH3ToCenterChildParent() {
-    h3.h3ToCenterChild("8928308280fffff", 8);
+  @Test
+  void h3ToCenterChildParent() {
+    assertThrows(H3Exception.class, () -> h3.h3ToCenterChild("8928308280fffff", 8));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToCenterChildNegative() {
-    h3.h3ToCenterChild("8928308280fffff", -1);
+  @Test
+  void h3ToCenterChildNegative() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToCenterChild("8928308280fffff", -1));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testH3ToCenterChildOutOfRange() {
-    h3.h3ToCenterChild("8928308280fffff", 16);
+  @Test
+  void h3ToCenterChildOutOfRange() {
+    assertThrows(IllegalArgumentException.class, () -> h3.h3ToCenterChild("8928308280fffff", 16));
   }
 }

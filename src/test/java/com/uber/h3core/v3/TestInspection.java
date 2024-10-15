@@ -15,19 +15,19 @@
  */
 package com.uber.h3core.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for index inspection and description functions. */
-public class TestInspection extends BaseTestH3CoreV3 {
+class TestInspection extends BaseTestH3CoreV3 {
   @Test
-  public void testH3IsValid() {
+  void h3IsValid() {
     assertTrue(h3.h3IsValid(22758474429497343L | (1L << 59L)));
     assertFalse(h3.h3IsValid(-1L));
     assertTrue(h3.h3IsValid("8f28308280f18f2"));
@@ -39,7 +39,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3GetResolution() {
+  void h3GetResolution() {
     assertEquals(0, h3.h3GetResolution(0x8029fffffffffffL));
     assertEquals(15, h3.h3GetResolution(0x8f28308280f18f2L));
     assertEquals(14, h3.h3GetResolution(0x8e28308280f18f7L));
@@ -51,7 +51,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3IsResClassIII() {
+  void h3IsResClassIII() {
     String r0 = h3.geoToH3Address(0, 0, 0);
     String r1 = h3.geoToH3Address(10, 0, 1);
     long r2 = h3.geoToH3(0, 10, 2);
@@ -64,7 +64,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3GetBaseCell() {
+  void h3GetBaseCell() {
     assertEquals(20, h3.h3GetBaseCell("8f28308280f18f2"));
     assertEquals(20, h3.h3GetBaseCell(0x8f28308280f18f2L));
     assertEquals(14, h3.h3GetBaseCell("821c07fffffffff"));
@@ -72,7 +72,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3IsPentagon() {
+  void h3IsPentagon() {
     assertFalse(h3.h3IsPentagon("8f28308280f18f2"));
     assertFalse(h3.h3IsPentagon(0x8f28308280f18f2L));
     assertTrue(h3.h3IsPentagon("821c07fffffffff"));
@@ -80,7 +80,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3GetFaces() {
+  void h3GetFaces() {
     assertH3Faces(1, h3.h3GetFaces(0x85283473fffffffL));
     assertH3Faces(1, h3.h3GetFaces("85283473fffffff"));
 
@@ -90,7 +90,7 @@ public class TestInspection extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testH3GetFacesInvalid() {
+  void h3GetFacesInvalid() {
     // Don't crash
     h3.h3GetFaces(0);
   }
@@ -103,6 +103,6 @@ public class TestInspection extends BaseTestH3CoreV3 {
     }
 
     final Set<Integer> deduplicatedFaces = new HashSet<>(faces);
-    assertEquals("All faces are unique", deduplicatedFaces.size(), faces.size());
+    assertEquals(deduplicatedFaces.size(), faces.size(), "All faces are unique");
   }
 }

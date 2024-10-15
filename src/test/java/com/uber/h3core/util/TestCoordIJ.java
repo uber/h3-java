@@ -15,16 +15,16 @@
  */
 package com.uber.h3core.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** */
-public class TestCoordIJ {
+class TestCoordIJ {
   @Test
-  public void test() {
+  void test() {
     CoordIJ ij1 = new CoordIJ(0, 0);
     CoordIJ ij2 = new CoordIJ(1, 10);
     CoordIJ ij3 = new CoordIJ(0, 0);
@@ -40,7 +40,7 @@ public class TestCoordIJ {
     assertNotEquals(ij3, ij2);
     assertEquals(ij1, ij3);
     assertEquals(ij1, ij1);
-    assertNotEquals(ij1, null);
+    assertNotEquals(null, ij1);
 
     assertEquals(ij1.hashCode(), ij3.hashCode());
     // Not strictly needed, but likely
@@ -48,7 +48,7 @@ public class TestCoordIJ {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     CoordIJ ij = new CoordIJ(123, -456);
 
     String toString = ij.toString();

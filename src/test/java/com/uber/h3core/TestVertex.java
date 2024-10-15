@@ -15,9 +15,10 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
@@ -25,32 +26,32 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for vertex functions */
-public class TestVertex extends BaseTestH3Core {
-  @Test(expected = H3Exception.class)
-  public void cellToVertexNegative() {
-    h3.cellToVertex(0x823d6ffffffffffL, -1);
-  }
-
-  @Test(expected = H3Exception.class)
-  public void cellToVertexTooHigh() {
-    h3.cellToVertex(0x823d6ffffffffffL, 6);
-  }
-
-  @Test(expected = H3Exception.class)
-  public void cellToVertexPentagonInvalid() {
-    h3.cellToVertex(0x823007fffffffffL, 5);
-  }
-
-  @Test(expected = H3Exception.class)
-  public void cellToVertexInvalid() {
-    h3.cellToVertex("ffffffffffffffff", 5);
+class TestVertex extends BaseTestH3Core {
+  @Test
+  void cellToVertexNegative() {
+    assertThrows(H3Exception.class, () -> h3.cellToVertex(0x823d6ffffffffffL, -1));
   }
 
   @Test
-  public void isValidVertex() {
+  void cellToVertexTooHigh() {
+    assertThrows(H3Exception.class, () -> h3.cellToVertex(0x823d6ffffffffffL, 6));
+  }
+
+  @Test
+  void cellToVertexPentagonInvalid() {
+    assertThrows(H3Exception.class, () -> h3.cellToVertex(0x823007fffffffffL, 5));
+  }
+
+  @Test
+  void cellToVertexInvalid() {
+    assertThrows(H3Exception.class, () -> h3.cellToVertex("ffffffffffffffff", 5));
+  }
+
+  @Test
+  void isValidVertex() {
     assertFalse(h3.isValidVertex(0xFFFFFFFFFFFFFFFFL));
     assertFalse(h3.isValidVertex(0));
     assertFalse(h3.isValidVertex(0x823d6ffffffffffL));
@@ -60,7 +61,7 @@ public class TestVertex extends BaseTestH3Core {
   }
 
   @Test
-  public void cellToVertexes() {
+  void cellToVertexes() {
     String origin = "823d6ffffffffff";
     Collection<String> verts = h3.cellToVertexes(origin);
     assertEquals(6, verts.size());
@@ -72,7 +73,7 @@ public class TestVertex extends BaseTestH3Core {
   }
 
   @Test
-  public void cellToVertexesPentagon() {
+  void cellToVertexesPentagon() {
     long origin = 0x823007fffffffffL;
     Collection<Long> verts = h3.cellToVertexes(origin);
     assertEquals(5, verts.size());
@@ -84,7 +85,7 @@ public class TestVertex extends BaseTestH3Core {
   }
 
   @Test
-  public void cellToVertex() {
+  void cellToVertex() {
     long origin = 0x823d6ffffffffffL;
     String originAddress = h3.h3ToString(origin);
     Set<String> verts = new HashSet<>();
@@ -95,22 +96,22 @@ public class TestVertex extends BaseTestH3Core {
       assertTrue(h3.isValidVertex(vert));
       verts.add(vertAddress);
     }
-    assertEquals("Vertexes are unique", 6, verts.size());
+    assertEquals(6, verts.size(), "Vertexes are unique");
   }
 
   @Test
-  public void vertexToLatLng() {
+  void vertexToLatLng() {
     String origin = "823d6ffffffffff";
     List<LatLng> bounds = h3.cellToBoundary(origin);
     for (int i = 0; i < 6; i++) {
       String vert = h3.cellToVertex(origin, i);
       LatLng latLng = h3.vertexToLatLng(vert);
-      assertTrue("vertex found in boundary", bounds.contains(latLng));
+      assertTrue(bounds.contains(latLng), "vertex found in boundary");
     }
   }
 
-  @Test(expected = H3Exception.class)
-  public void vertexToLatLngInvalid() {
-    h3.vertexToLatLng("ffffffffffffffff");
+  @Test
+  void vertexToLatLngInvalid() {
+    assertThrows(H3Exception.class, () -> h3.vertexToLatLng("ffffffffffffffff"));
   }
 }

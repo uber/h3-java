@@ -15,16 +15,16 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for {@link H3Core} instantiation. */
-public class TestH3CoreFactory extends BaseTestH3Core {
+class TestH3CoreFactory extends BaseTestH3Core {
   @Test
-  public void testConstructAnother() throws IOException {
+  void constructAnother() throws IOException {
     assertNotNull(h3);
 
     H3Core another = H3Core.newInstance();
@@ -35,7 +35,7 @@ public class TestH3CoreFactory extends BaseTestH3Core {
   }
 
   @Test
-  public void testConstructSpecific() throws IOException {
+  void constructSpecific() throws IOException {
     // This uses the same logic as H3CoreLoader for detecting
     // the OS and architecture, to avoid issues with CI.
     final H3CoreLoader.OperatingSystem os =
@@ -49,7 +49,7 @@ public class TestH3CoreFactory extends BaseTestH3Core {
 
   // H3CoreV3 must be tested here due to method accessibility
   @Test
-  public void testConstructAnotherV3() throws IOException {
+  void constructAnotherV3() throws IOException {
     assertNotNull(h3);
 
     H3CoreV3 another = H3CoreV3.newInstance();
@@ -60,7 +60,7 @@ public class TestH3CoreFactory extends BaseTestH3Core {
   }
 
   @Test
-  public void testConstructSpecificV3() throws IOException {
+  void constructSpecificV3() throws IOException {
     // This uses the same logic as H3CoreLoader for detecting
     // the OS and architecture, to avoid issues with CI.
     final H3CoreLoader.OperatingSystem os =

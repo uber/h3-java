@@ -15,20 +15,21 @@
  */
 package com.uber.h3core.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
 import java.util.Collection;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for unidirectional edge functions. */
-public class TestDirectedEdges extends BaseTestH3CoreV3 {
+class TestDirectedEdges extends BaseTestH3CoreV3 {
   @Test
-  public void testUnidirectionalEdges() {
+  void unidirectionalEdges() {
     String start = "891ea6d6533ffff";
     String adjacent = "891ea6d65afffff";
     String notAdjacent = "891ea6992dbffff";
@@ -60,7 +61,7 @@ public class TestDirectedEdges extends BaseTestH3CoreV3 {
   }
 
   @Test
-  public void testUnidirectionalEdgesLong() {
+  void unidirectionalEdgesLong() {
     long start = 0x891ea6d6533ffffL;
     long adjacent = 0x891ea6d65afffffL;
     long notAdjacent = 0x891ea6992dbffffL;
@@ -91,8 +92,9 @@ public class TestDirectedEdges extends BaseTestH3CoreV3 {
     assertEquals(2, boundary.size());
   }
 
-  @Test(expected = H3Exception.class)
-  public void testUnidirectionalEdgesNotNeighbors() {
-    h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff");
+  @Test
+  void unidirectionalEdgesNotNeighbors() {
+    assertThrows(
+        H3Exception.class, () -> h3.getH3UnidirectionalEdge("891ea6d6533ffff", "891ea6992dbffff"));
   }
 }

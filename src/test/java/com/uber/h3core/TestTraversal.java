@@ -15,18 +15,19 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.CoordIJ;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for grid traversal functions (k-ring, distance and line, and local IJ coordinates). */
-public class TestTraversal extends BaseTestH3Core {
+class TestTraversal extends BaseTestH3Core {
   @Test
-  public void testKring() {
+  void kring() {
     List<String> hexagons = h3.gridDisk("8928308280fffff", 1);
 
     assertEquals(1 + 6, hexagons.size());
@@ -41,7 +42,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testKring2() {
+  void kring2() {
     List<String> hexagons = h3.gridDisk("8928308280fffff", 2);
 
     assertEquals(1 + 6 + 12, hexagons.size());
@@ -68,7 +69,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testKringLarge() {
+  void kringLarge() {
     int k = 50;
     List<String> hexagons = h3.gridDisk("8928308280fffff", k);
 
@@ -80,15 +81,18 @@ public class TestTraversal extends BaseTestH3Core {
     assertEquals(expectedCount, hexagons.size());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testKringTooLarge() {
+  @Test
+  void kringTooLarge() {
     int k = 13780510;
-    // Cannot be materialized into Java because the maximum array size is INT32_MAX
-    h3.gridDisk(h3.latLngToCell(0, 0, 15), k);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Cannot be materialized into Java because the maximum array size is INT32_MAX
+            h3.gridDisk(h3.latLngToCell(0, 0, 15), k));
   }
 
   @Test
-  public void testKringPentagon() {
+  void kringPentagon() {
     List<String> hexagons = h3.gridDisk("821c07fffffffff", 1);
 
     assertEquals(1 + 5, hexagons.size());
@@ -102,7 +106,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testHexRange() {
+  void hexRange() {
     List<List<String>> hexagons = h3.gridDiskUnsafe("8928308280fffff", 1);
 
     assertEquals(2, hexagons.size());
@@ -119,7 +123,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testKRingDistances() {
+  void kRingDistances() {
     List<List<String>> hexagons = h3.gridDiskDistances("8928308280fffff", 1);
 
     assertEquals(2, hexagons.size());
@@ -136,7 +140,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testHexRange2() {
+  void hexRange2() {
     List<List<String>> hexagons = h3.gridDiskDistances("8928308280fffff", 2);
 
     assertEquals(3, hexagons.size());
@@ -166,18 +170,18 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testKRingDistancesPentagon() {
+  void kRingDistancesPentagon() {
     h3.gridDiskDistances("821c07fffffffff", 1);
     // No exception should happen
   }
 
-  @Test(expected = H3Exception.class)
-  public void testHexRangePentagon() {
-    h3.gridDiskUnsafe("821c07fffffffff", 1);
+  @Test
+  void hexRangePentagon() {
+    assertThrows(H3Exception.class, () -> h3.gridDiskUnsafe("821c07fffffffff", 1));
   }
 
   @Test
-  public void testHexRing() {
+  void hexRing() {
     List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 1);
 
     assertEquals(6, hexagons.size());
@@ -191,7 +195,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testHexRing2() {
+  void hexRing2() {
     List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 2);
 
     assertEquals(12, hexagons.size());
@@ -211,7 +215,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testHexRingLarge() {
+  void hexRingLarge() {
     int k = 50;
     List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", k);
 
@@ -220,18 +224,18 @@ public class TestTraversal extends BaseTestH3Core {
     assertEquals(expectedCount, hexagons.size());
   }
 
-  @Test(expected = H3Exception.class)
-  public void testHexRingPentagon() {
-    h3.gridRingUnsafe("821c07fffffffff", 1);
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testHexRingAroundPentagon() {
-    h3.gridRingUnsafe("821c37fffffffff", 2);
+  @Test
+  void hexRingPentagon() {
+    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c07fffffffff", 1));
   }
 
   @Test
-  public void testHexRingSingle() {
+  void hexRingAroundPentagon() {
+    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c37fffffffff", 2));
+  }
+
+  @Test
+  void hexRingSingle() {
     String origin = "8928308280fffff";
     List<String> hexagons = h3.gridRingUnsafe(origin, 0);
 
@@ -239,30 +243,39 @@ public class TestTraversal extends BaseTestH3Core {
     assertEquals("8928308280fffff", hexagons.get(0));
   }
 
-  @Test(expected = H3Exception.class)
-  public void testH3DistanceFailedDistance() {
-    // This fails because of a limitation in the H3 core library.
-    // It cannot find distances when spanning more than one base cell.
-    // Expected correct result is 2.
-    h3.gridDistance("8029fffffffffff", "8079fffffffffff");
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testH3DistanceFailedResolution() {
-    // Cannot find distances when the indexes are not comparable (different resolutions)
-    h3.gridDistance("81283ffffffffff", "8029fffffffffff");
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testH3DistanceFailedPentagonDistortion() {
-    // This fails because of a limitation in the H3 core library.
-    // It cannot find distances from opposite sides of a pentagon.
-    // Expected correct result is 9.
-    h3.gridDistance("821c37fffffffff", "822837fffffffff");
+  @Test
+  void h3DistanceFailedDistance() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // This fails because of a limitation in the H3 core library.
+            // It cannot find distances when spanning more than one base cell.
+            // Expected correct result is 2.
+            h3.gridDistance("8029fffffffffff", "8079fffffffffff"));
   }
 
   @Test
-  public void testH3Distance() {
+  void h3DistanceFailedResolution() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Cannot find distances when the indexes are not comparable (different resolutions)
+            h3.gridDistance("81283ffffffffff", "8029fffffffffff"));
+  }
+
+  @Test
+  void h3DistanceFailedPentagonDistortion() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // This fails because of a limitation in the H3 core library.
+            // It cannot find distances from opposite sides of a pentagon.
+            // Expected correct result is 9.
+            h3.gridDistance("821c37fffffffff", "822837fffffffff"));
+  }
+
+  @Test
+  void h3Distance() {
     // Resolution 0 to some neighbors
     assertEquals(0, h3.gridDistance("8029fffffffffff", "8029fffffffffff"));
     assertEquals(1, h3.gridDistance("8029fffffffffff", "801dfffffffffff"));
@@ -282,29 +295,32 @@ public class TestTraversal extends BaseTestH3Core {
     assertEquals(5, h3.gridDistance("85283083fffffff", "85283447fffffff"));
   }
 
-  @Test(expected = H3Exception.class)
-  public void testDistanceAcrossPentagon() {
-    // Opposite sides of a pentagon.
-    h3.gridDistance("81283ffffffffff", "811dbffffffffff");
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testCellToLocalIjNoncomparable() {
-    h3.cellToLocalIj("832830fffffffff", "822837fffffffff");
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testCellToLocalIjTooFar() {
-    h3.cellToLocalIj("822a17fffffffff", "822837fffffffff");
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testCellToLocalIjPentagonDistortion() {
-    h3.cellToLocalIj("81283ffffffffff", "811cbffffffffff");
+  @Test
+  void distanceAcrossPentagon() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Opposite sides of a pentagon.
+            h3.gridDistance("81283ffffffffff", "811dbffffffffff"));
   }
 
   @Test
-  public void testCellToLocalIjPentagon() {
+  void cellToLocalIjNoncomparable() {
+    assertThrows(H3Exception.class, () -> h3.cellToLocalIj("832830fffffffff", "822837fffffffff"));
+  }
+
+  @Test
+  void cellToLocalIjTooFar() {
+    assertThrows(H3Exception.class, () -> h3.cellToLocalIj("822a17fffffffff", "822837fffffffff"));
+  }
+
+  @Test
+  void cellToLocalIjPentagonDistortion() {
+    assertThrows(H3Exception.class, () -> h3.cellToLocalIj("81283ffffffffff", "811cbffffffffff"));
+  }
+
+  @Test
+  void cellToLocalIjPentagon() {
     final String origin = "811c3ffffffffff";
     assertEquals(new CoordIJ(0, 0), h3.cellToLocalIj(origin, origin));
     assertEquals(new CoordIJ(1, 0), h3.cellToLocalIj(origin, "811d3ffffffffff"));
@@ -312,7 +328,7 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testCellToLocalIjHexagons() {
+  void cellToLocalIjHexagons() {
     final String origin = "8828308281fffff";
     assertEquals(new CoordIJ(392, 336), h3.cellToLocalIj(origin, origin));
     assertEquals(new CoordIJ(387, 336), h3.cellToLocalIj(origin, "88283080c3fffff"));
@@ -320,20 +336,20 @@ public class TestTraversal extends BaseTestH3Core {
   }
 
   @Test
-  public void testLocalIjToCellPentagon() {
+  void localIjToCellPentagon() {
     final String origin = "811c3ffffffffff";
     assertEquals(origin, h3.localIjToCell(origin, new CoordIJ(0, 0)));
     assertEquals("811d3ffffffffff", h3.localIjToCell(origin, new CoordIJ(1, 0)));
     assertEquals("811cfffffffffff", h3.localIjToCell(origin, new CoordIJ(-1, 0)));
   }
 
-  @Test(expected = H3Exception.class)
-  public void testLocalIjToCellTooFar() {
-    h3.localIjToCell("8049fffffffffff", new CoordIJ(2, 0));
+  @Test
+  void localIjToCellTooFar() {
+    assertThrows(H3Exception.class, () -> h3.localIjToCell("8049fffffffffff", new CoordIJ(2, 0)));
   }
 
   @Test
-  public void testH3Line() {
+  void h3Line() {
     for (int res = 0; res < 12; res++) {
       String origin = h3.latLngToCellAddress(37.5, -122, res);
       String destination = h3.latLngToCellAddress(25, -120, res);
@@ -342,24 +358,23 @@ public class TestTraversal extends BaseTestH3Core {
       long distance = h3.gridDistance(origin, destination);
 
       // Need to add 1 to account for the origin as well
-      assertEquals("Distance matches expected", distance + 1, line.size());
+      assertEquals(distance + 1, line.size(), "Distance matches expected");
 
       for (int i = 1; i < line.size(); i++) {
         assertTrue(
-            "Every index in the line is a neighbor of the previous",
-            h3.areNeighborCells(line.get(i - 1), line.get(i)));
+            h3.areNeighborCells(line.get(i - 1), line.get(i)),
+            "Every index in the line is a neighbor of the previous");
       }
 
-      assertTrue("Line contains start", line.contains(origin));
-      assertTrue("Line contains destination", line.contains(destination));
+      assertTrue(line.contains(origin), "Line contains start");
+      assertTrue(line.contains(destination), "Line contains destination");
     }
   }
 
-  @Test(expected = H3Exception.class)
-  public void testH3LineFailed() {
+  @Test
+  void h3LineFailed() {
     long origin = h3.latLngToCell(37.5, -122, 9);
     long destination = h3.latLngToCell(37.5, -122, 10);
-
-    h3.gridPathCells(origin, destination);
+    assertThrows(H3Exception.class, () -> h3.gridPathCells(origin, destination));
   }
 }
