@@ -15,8 +15,9 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -24,12 +25,12 @@ import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for region (polyfill, h3SetToMultiPolygon) functions. */
-public class TestRegion extends BaseTestH3Core {
+class TestRegion extends BaseTestH3Core {
   @Test
-  public void testPolyfill() {
+  void polyfill() {
     List<Long> hexagons =
         h3.polygonToCells(
             ImmutableList.of(
@@ -46,7 +47,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testPolyfillAddresses() {
+  void polyfillAddresses() {
     List<String> hexagons =
         h3.polygonToCellAddresses(
             ImmutableList.<LatLng>of(
@@ -63,7 +64,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testPolyfillWithHole() {
+  void polyfillWithHole() {
     List<Long> hexagons =
         h3.polygonToCells(
             ImmutableList.<LatLng>of(
@@ -84,7 +85,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testPolyfillWithTwoHoles() {
+  void polyfillWithTwoHoles() {
     List<Long> hexagons =
         h3.polygonToCells(
             ImmutableList.<LatLng>of(
@@ -109,7 +110,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testPolyfillKnownHoles() {
+  void polyfillKnownHoles() {
     List<Long> inputHexagons = h3.gridDisk(0x85283083fffffffL, 2);
     inputHexagons.remove(0x8528308ffffffffL);
     inputHexagons.remove(0x85283097fffffffL);
@@ -125,12 +126,12 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonEmpty() {
+  void h3SetToMultiPolygonEmpty() {
     assertEquals(0, h3.cellsToMultiPolygon(new ArrayList<Long>(), false).size());
   }
 
   @Test
-  public void testH3SetToMultiPolygonSingle() {
+  void h3SetToMultiPolygonSingle() {
     long testIndex = 0x89283082837ffffL;
 
     List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
@@ -156,7 +157,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonSingleNonGeoJson() {
+  void h3SetToMultiPolygonSingleNonGeoJson() {
     long testIndex = 0x89283082837ffffL;
 
     List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
@@ -182,7 +183,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonContiguous2() {
+  void h3SetToMultiPolygonContiguous2() {
     long testIndex = 0x89283082837ffffL;
     long testIndex2 = 0x89283082833ffffL;
 
@@ -220,7 +221,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonNonContiguous2() {
+  void h3SetToMultiPolygonNonContiguous2() {
     long testIndex = 0x89283082837ffffL;
     long testIndex2 = 0x8928308280fffffL;
 
@@ -235,7 +236,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonHole() {
+  void h3SetToMultiPolygonHole() {
     // Six hexagons in a ring around a hole
     List<List<List<LatLng>>> multiBounds =
         h3.cellAddressesToMultiPolygon(
@@ -255,7 +256,7 @@ public class TestRegion extends BaseTestH3Core {
   }
 
   @Test
-  public void testH3SetToMultiPolygonLarge() {
+  void h3SetToMultiPolygonLarge() {
     int numHexes = 20000;
 
     List<String> addresses = new ArrayList<>(numHexes);
@@ -272,10 +273,8 @@ public class TestRegion extends BaseTestH3Core {
     }
   }
 
-  @Test(expected = H3Exception.class)
-  public void testH3SetToMultiPolygonIssue753() {
-    // Test case reported in https://github.com/uber/h3/issues/753
-    // Ensure it does not crash
+  @Test
+  void h3SetToMultiPolygonIssue753() {
     List<Long> cells =
         ImmutableList.of(
             617683643010646015L,
@@ -382,6 +381,6 @@ public class TestRegion extends BaseTestH3Core {
             617683648067665919L,
             617683648068976639L,
             617683648028606463L);
-    h3.cellsToMultiPolygon(cells, true);
+    assertThrows(H3Exception.class, () -> h3.cellsToMultiPolygon(cells, true));
   }
 }

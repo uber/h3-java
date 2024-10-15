@@ -15,12 +15,12 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that {@link H3Core#newSystemInstance()} can load the H3 library. This test is only run if
@@ -29,15 +29,15 @@ import org.junit.Test;
  * installing it in a place it can be found, or setting the <code>java.library.path</code> system
  * property before starting the test JVM.
  */
-public class TestH3CoreSystemInstance {
-  @BeforeClass
-  public static void assumptions() {
+class TestH3CoreSystemInstance {
+  @BeforeAll
+  static void assumptions() {
     assumeTrue(
-        "System instance tests enabled", "true".equals(System.getProperty("h3.test.system")));
+        "true".equals(System.getProperty("h3.test.system")), "System instance tests enabled");
   }
 
   @Test
-  public void test() {
+  void test() {
     final H3Core h3 = H3Core.newSystemInstance();
     assertNotNull(h3);
     assertEquals("84194adffffffff", h3.latLngToCellAddress(51.5008796, -0.1253643, 4));

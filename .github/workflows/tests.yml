@@ -45,6 +45,8 @@ jobs:
 
       - name: Tests
         run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.only=${{ matrix.dockcross-only }}" -B -V clean test site
+        env:
+          OCI_EXE: docker
 
       - name: Format check for C
         run: git diff --exit-code
@@ -91,6 +93,8 @@ jobs:
 
       - name: Tests
         run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" "-Dh3.dockcross.only=${{ matrix.dockcross-only }}" -B -V clean test
+        env:
+          OCI_EXE: docker
 
   tests-no-docker:
     name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -215,5 +219,55 @@ jobs:
       - name: Download and test
         run: |
           mvn clean test -Dh3.github.artifacts.use=true -Dh3.github.artifacts.by_run=true
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  tests-native:
+    name: Native image ${{ matrix.java-version }} ${{ matrix.os }}
+    needs:
+      - tests
+      - tests-no-docker
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java-distribution: [ graalvm ]
+        java-version: [ 21 ]
+
+    steps:
+      - uses: actions/checkout@v2.1.1
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: actions/cache@v2
+        id: maven-cache
+        with:
+          path: ~/.m2/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Download Docker binaries
+        uses: actions/download-artifact@v4.1.7
+        with:
+          pattern: docker-built-shared-objects-*
+          merge-multiple: true
+          path: src/main/resources/
+
+      - name: Download Mac binaries
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: macos-built-shared-objects
+          path: src/main/resources/
+
+      - name: Download and test
+        run: |
+          mvn clean verify -Dnative -Dh3.github.artifacts.use=true -Dh3.github.artifacts.by_run=true
         env:
           GH_TOKEN: ${{ github.token }}

@@ -15,7 +15,7 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -24,10 +24,11 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 /** Tests all expected functions are exposed. */
-public class TestBindingCompleteness {
+class TestBindingCompleteness {
   /** Functions to ignore from the bindings. */
   private static final Set<String> WHITELIST =
       ImmutableSet.of(
@@ -35,7 +36,8 @@ public class TestBindingCompleteness {
           "degsToRads", "radsToDegs");
 
   @Test
-  public void test() throws IOException {
+  @DisabledInNativeImage
+  void test() throws IOException {
     Set<String> exposed = new HashSet<>();
     for (Method m : H3Core.class.getMethods()) {
       exposed.add(m.getName());
@@ -50,10 +52,10 @@ public class TestBindingCompleteness {
           continue;
         }
 
-        assertTrue(function + " is exposed in binding", exposed.contains(function));
+        assertTrue(exposed.contains(function), function + " is exposed in binding");
         checkedFunctions++;
       }
     }
-    assertTrue("Checked that the API exists", checkedFunctions > 10);
+    assertTrue(checkedFunctions > 10, "Checked that the API exists");
   }
 }

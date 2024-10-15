@@ -15,17 +15,18 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** H3CoreLoader is mostly tested by {@link TestH3CoreFactory}. This also tests OS detection. */
-public class TestH3CoreLoader {
+class TestH3CoreLoader {
   @Test
-  public void testDetectOs() {
+  void detectOs() {
     assertEquals(
         H3CoreLoader.OperatingSystem.ANDROID, H3CoreLoader.detectOs("Android", "anything"));
     assertEquals(H3CoreLoader.OperatingSystem.DARWIN, H3CoreLoader.detectOs("vendor", "Mac OS X"));
@@ -38,7 +39,7 @@ public class TestH3CoreLoader {
   }
 
   @Test
-  public void testDetectArch() {
+  void detectArch() {
     assertEquals(H3CoreLoader.ARCH_X64, H3CoreLoader.detectArch("amd64"));
     assertEquals(H3CoreLoader.ARCH_X64, H3CoreLoader.detectArch("x86_64"));
     assertEquals(H3CoreLoader.ARCH_X64, H3CoreLoader.detectArch("x64"));
@@ -59,12 +60,12 @@ public class TestH3CoreLoader {
     assertEquals("i286", H3CoreLoader.detectArch("i286"));
   }
 
-  @Test(expected = UnsatisfiedLinkError.class)
-  public void testExtractNonexistant() throws IOException {
+  @Test
+  void extractNonexistant() throws IOException {
     File tempFile = Files.createTempFile("test-extract-resource", null).toFile();
-
     tempFile.deleteOnExit();
-
-    H3CoreLoader.copyResource("/nonexistant-resource", tempFile);
+    assertThrows(
+        UnsatisfiedLinkError.class,
+        () -> H3CoreLoader.copyResource("/nonexistant-resource", tempFile));
   }
 }

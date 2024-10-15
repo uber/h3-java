@@ -15,17 +15,17 @@
  */
 package com.uber.h3core.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.uber.h3core.BaseTestH3Core;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** */
-public class TestLatLng {
+class TestLatLng {
   @Test
-  public void test() {
+  void test() {
     LatLng v1 = new LatLng(0, 1);
     LatLng v2 = new LatLng(1, 0);
     LatLng v3 = new LatLng(0, 1);
@@ -41,7 +41,7 @@ public class TestLatLng {
     assertNotEquals(v3, v2);
     assertEquals(v1, v3);
     assertEquals(v1, v1);
-    assertNotEquals(v1, null);
+    assertNotEquals(null, v1);
 
     assertEquals(v1.hashCode(), v3.hashCode());
     // Not strictly needed, but likely
@@ -49,7 +49,7 @@ public class TestLatLng {
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     LatLng v = new LatLng(123.456, 456.789);
 
     String toString = v.toString();

@@ -15,14 +15,14 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that particular resource names exist in the built artifact when cross compiling. Although we
@@ -30,15 +30,15 @@ import org.junit.Test;
  * that the cross compiler put resources in the right locations. This test is only run if the system
  * property <code>h3.use.docker</code> has the value <code>true</code>.
  */
-public class TestH3CoreCrossCompile {
-  @BeforeClass
-  public static void assumptions() {
+class TestH3CoreCrossCompile {
+  @BeforeAll
+  static void assumptions() {
     assumeTrue(
-        "Docker cross compilation enabled", "true".equals(System.getProperty("h3.use.docker")));
+        "true".equals(System.getProperty("h3.use.docker")), "Docker cross compilation enabled");
   }
 
   @Test
-  public void testResourcesExist() throws IOException {
+  void resourcesExist() throws IOException {
     List<String> resources =
         ImmutableList.of(
             "/linux-x64/libh3-java.so",
@@ -56,7 +56,7 @@ public class TestH3CoreCrossCompile {
             "/android-arm/libh3-java.so",
             "/android-arm64/libh3-java.so");
     for (String name : resources) {
-      assertNotNull(name + " is an included resource", H3CoreLoader.class.getResource(name));
+      assertNotNull(H3CoreLoader.class.getResource(name), name + " is an included resource");
     }
   }
 }

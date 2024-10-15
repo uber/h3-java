@@ -15,18 +15,19 @@
  */
 package com.uber.h3core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.uber.h3core.exceptions.H3Exception;
 import com.uber.h3core.util.LatLng;
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for {@link H3Core} miscellaneous functions. */
-public class TestMiscellaneous extends BaseTestH3Core {
+class TestMiscellaneous extends BaseTestH3Core {
   @Test
-  public void testConstants() {
+  void constants() {
     double lastAreaKm2 = 0;
     double lastAreaM2 = 0;
     double lastEdgeLengthKm = 0;
@@ -57,49 +58,49 @@ public class TestMiscellaneous extends BaseTestH3Core {
   }
 
   @Test
-  public void testGetRes0Indexes() {
+  void getRes0Indexes() {
     Collection<String> indexesAddresses = h3.getRes0CellAddresses();
     Collection<Long> indexes = h3.getRes0Cells();
 
     assertEquals(
-        "Both signatures return the same results (size)", indexes.size(), indexesAddresses.size());
+        indexes.size(), indexesAddresses.size(), "Both signatures return the same results (size)");
 
     for (Long index : indexes) {
-      assertEquals("Index is unique", 1, indexes.stream().filter(i -> i.equals(index)).count());
-      assertTrue("Index is valid", h3.isValidCell(index));
-      assertEquals("Index is res 0", 0, h3.getResolution(index));
+      assertEquals(1, indexes.stream().filter(i -> i.equals(index)).count(), "Index is unique");
+      assertTrue(h3.isValidCell(index), "Index is valid");
+      assertEquals(0, h3.getResolution(index), "Index is res 0");
       assertTrue(
-          "Both signatures return the same results",
-          indexesAddresses.contains(h3.h3ToString(index)));
+          indexesAddresses.contains(h3.h3ToString(index)),
+          "Both signatures return the same results");
     }
   }
 
   @Test
-  public void testGetPentagonIndexes() {
+  void getPentagonIndexes() {
     for (int res = 0; res < 16; res++) {
       Collection<String> indexesAddresses = h3.getPentagonAddresses(res);
       Collection<Long> indexes = h3.getPentagons(res);
 
       assertEquals(
-          "Both signatures return the same results (size)",
           indexes.size(),
-          indexesAddresses.size());
-      assertEquals("There are 12 pentagons per resolution", 12, indexes.size());
+          indexesAddresses.size(),
+          "Both signatures return the same results (size)");
+      assertEquals(12, indexes.size(), "There are 12 pentagons per resolution");
 
       for (Long index : indexes) {
-        assertEquals("Index is unique", 1, indexes.stream().filter(i -> i.equals(index)).count());
-        assertTrue("Index is valid", h3.isValidCell(index));
-        assertEquals(String.format("Index is res %d", res), res, h3.getResolution(index));
+        assertEquals(1, indexes.stream().filter(i -> i.equals(index)).count(), "Index is unique");
+        assertTrue(h3.isValidCell(index), "Index is valid");
+        assertEquals(res, h3.getResolution(index), String.format("Index is res %d", res));
         assertTrue(
-            "Both signatures return the same results",
-            indexesAddresses.contains(h3.h3ToString(index)));
-        assertTrue("Index is a pentagon", h3.isPentagon(index));
+            indexesAddresses.contains(h3.h3ToString(index)),
+            "Both signatures return the same results");
+        assertTrue(h3.isPentagon(index), "Index is a pentagon");
       }
     }
   }
 
   @Test
-  public void testCellArea() {
+  void cellArea() {
     double areasKm2[] = {
       2.562182162955496e+06,
       447684.20172018633,
@@ -130,29 +131,29 @@ public class TestMiscellaneous extends BaseTestH3Core {
       double areaKm2 = h3.cellArea(cell, AreaUnit.km2);
       double areaRads2 = h3.cellArea(cell, AreaUnit.rads2);
 
-      assertEquals("cell area should match expectation", areasKm2[res], areaAddressKm2, EPSILON);
-      assertEquals("rads2 cell area should agree", areaAddressRads2, areaRads2, EPSILON);
-      assertEquals("km2 cell area should agree", areaAddressKm2, areaKm2, EPSILON);
-      assertEquals("m2 cell area should agree", areaAddressM2, areaM2, EPSILON);
-      assertTrue("m2 area greater than km2 area", areaM2 > areaKm2);
-      assertTrue("km2 area greater than rads2 area", areaKm2 > areaRads2);
+      assertEquals(areasKm2[res], areaAddressKm2, EPSILON, "cell area should match expectation");
+      assertEquals(areaAddressRads2, areaRads2, EPSILON, "rads2 cell area should agree");
+      assertEquals(areaAddressKm2, areaKm2, EPSILON, "km2 cell area should agree");
+      assertEquals(areaAddressM2, areaM2, EPSILON, "m2 cell area should agree");
+      assertTrue(areaM2 > areaKm2, "m2 area greater than km2 area");
+      assertTrue(areaKm2 > areaRads2, "km2 area greater than rads2 area");
     }
   }
 
   @Test
-  public void testCellAreaInvalid() {
+  void cellAreaInvalid() {
     // Passing in a zero should not cause a crash
     h3.cellArea(0, AreaUnit.rads2);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testCellAreaInvalidUnit() {
+  @Test
+  void cellAreaInvalidUnit() {
     long cell = h3.latLngToCell(0, 0, 0);
-    h3.cellArea(cell, null);
+    assertThrows(IllegalArgumentException.class, () -> h3.cellArea(cell, null));
   }
 
   @Test
-  public void testEdgeLength() {
+  void edgeLength() {
     for (int res = 0; res <= 15; res++) {
       long cell = h3.latLngToCell(0, 0, res);
 
@@ -169,36 +170,39 @@ public class TestMiscellaneous extends BaseTestH3Core {
         // Only asserts some properties of the functions that the edge lengths
         // should have certain relationships to each other, test isn't specific
         // to a cell's actual values.
-        assertTrue("edge length should match expectation", areaAddressRads > 0);
-        assertEquals("rads edge length should agree", areaAddressRads, areaRads, EPSILON);
-        assertEquals("km edge length should agree", areaAddressKm, areaKm, EPSILON);
-        assertEquals("m edge length should agree", areaAddressM, areaM, EPSILON);
-        assertTrue("m length greater than km length", areaM > areaKm);
-        assertTrue("km length greater than rads length", areaKm > areaRads);
+        assertTrue(areaAddressRads > 0, "edge length should match expectation");
+        assertEquals(areaAddressRads, areaRads, EPSILON, "rads edge length should agree");
+        assertEquals(areaAddressKm, areaKm, EPSILON, "km edge length should agree");
+        assertEquals(areaAddressM, areaM, EPSILON, "m edge length should agree");
+        assertTrue(areaM > areaKm, "m length greater than km length");
+        assertTrue(areaKm > areaRads, "km length greater than rads length");
       }
     }
   }
 
-  @Test(expected = H3Exception.class)
-  public void testEdgeLengthInvalid() {
-    // Passing in a non-edge should not cause a crash
-    h3.edgeLength(h3.latLngToCell(0, 0, 0), LengthUnit.km);
-  }
-
-  @Test(expected = H3Exception.class)
-  public void testEdgeLengthInvalidEdge() {
-    h3.edgeLength(0, LengthUnit.rads);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testEdgeLengthInvalidUnit() {
-    long cell = h3.latLngToCell(0, 0, 0);
-    long edge = h3.originToDirectedEdges(cell).get(0);
-    h3.edgeLength(edge, null);
+  @Test
+  void edgeLengthInvalid() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Passing in a non-edge should not cause a crash
+            h3.edgeLength(h3.latLngToCell(0, 0, 0), LengthUnit.km));
   }
 
   @Test
-  public void testPointDist() {
+  void edgeLengthInvalidEdge() {
+    assertThrows(H3Exception.class, () -> h3.edgeLength(0, LengthUnit.rads));
+  }
+
+  @Test
+  void edgeLengthInvalidUnit() {
+    long cell = h3.latLngToCell(0, 0, 0);
+    long edge = h3.originToDirectedEdges(cell).get(0);
+    assertThrows(IllegalArgumentException.class, () -> h3.edgeLength(edge, null));
+  }
+
+  @Test
+  void pointDist() {
     LatLng[] testA = {new LatLng(10, 10), new LatLng(0, 0), new LatLng(23, 23)};
     LatLng[] testB = {new LatLng(10, -10), new LatLng(-10, 0), new LatLng(23, 23)};
     double[] testDistanceDegrees = {20, 10, 0};
@@ -213,79 +217,79 @@ public class TestMiscellaneous extends BaseTestH3Core {
       double distM = h3.greatCircleDistance(a, b, LengthUnit.m);
 
       // TODO: Epsilon is unusually large in the core H3 tests
-      assertEquals("radians distance is as expected", expectedRads, distRads, EPSILON * 10000);
+      assertEquals(expectedRads, distRads, EPSILON * 10000, "radians distance is as expected");
       if (expectedRads == 0) {
-        assertEquals("m distance is zero", 0, distM, EPSILON);
-        assertEquals("km distance is zero", 0, distKm, EPSILON);
+        assertEquals(0, distM, EPSILON, "m distance is zero");
+        assertEquals(0, distKm, EPSILON, "km distance is zero");
       } else {
-        assertTrue("m distance greater than km distance", distM > distKm);
-        assertTrue("km distance greater than rads distance", distKm > distRads);
+        assertTrue(distM > distKm, "m distance greater than km distance");
+        assertTrue(distKm > distRads, "km distance greater than rads distance");
       }
     }
   }
 
   @Test
-  public void testPointDistNaN() {
+  void pointDistNaN() {
     LatLng zero = new LatLng(0, 0);
     LatLng nan = new LatLng(Double.NaN, Double.NaN);
     double dist1 = h3.greatCircleDistance(nan, zero, LengthUnit.rads);
     double dist2 = h3.greatCircleDistance(zero, nan, LengthUnit.km);
     double dist3 = h3.greatCircleDistance(nan, nan, LengthUnit.m);
-    assertTrue("nan distance results in nan", Double.isNaN(dist1));
-    assertTrue("nan distance results in nan", Double.isNaN(dist2));
-    assertTrue("nan distance results in nan", Double.isNaN(dist3));
+    assertTrue(Double.isNaN(dist1), "nan distance results in nan");
+    assertTrue(Double.isNaN(dist2), "nan distance results in nan");
+    assertTrue(Double.isNaN(dist3), "nan distance results in nan");
   }
 
   @Test
-  public void testPointDistPositiveInfinity() {
+  void pointDistPositiveInfinity() {
     LatLng posInf = new LatLng(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     LatLng zero = new LatLng(0, 0);
     double dist = h3.greatCircleDistance(posInf, zero, LengthUnit.m);
-    assertTrue("+Infinity distance results in NaN", Double.isNaN(dist));
+    assertTrue(Double.isNaN(dist), "+Infinity distance results in NaN");
   }
 
   @Test
-  public void testPointDistNegativeInfinity() {
+  void pointDistNegativeInfinity() {
     LatLng negInf = new LatLng(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
     LatLng zero = new LatLng(0, 0);
     double dist = h3.greatCircleDistance(negInf, zero, LengthUnit.m);
-    assertTrue("-Infinity distance results in NaN", Double.isNaN(dist));
+    assertTrue(Double.isNaN(dist), "-Infinity distance results in NaN");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testPointDistInvalid() {
+  @Test
+  void pointDistInvalid() {
     LatLng a = new LatLng(0, 0);
     LatLng b = new LatLng(0, 0);
-    h3.greatCircleDistance(a, b, null);
+    assertThrows(IllegalArgumentException.class, () -> h3.greatCircleDistance(a, b, null));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testGetPentagonIndexesNegativeRes() {
-    h3.getPentagonAddresses(-1);
+  @Test
+  void getPentagonIndexesNegativeRes() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getPentagonAddresses(-1));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testGetPentagonIndexesOutOfRangeRes() {
-    h3.getPentagonAddresses(20);
+  @Test
+  void getPentagonIndexesOutOfRangeRes() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getPentagonAddresses(20));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testConstantsInvalid() {
-    h3.getHexagonAreaAvg(-1, AreaUnit.km2);
+  @Test
+  void constantsInvalid() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getHexagonAreaAvg(-1, AreaUnit.km2));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testConstantsInvalidUnit() {
-    h3.getHexagonAreaAvg(-1, AreaUnit.rads2);
+  @Test
+  void constantsInvalidUnit() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getHexagonAreaAvg(-1, AreaUnit.rads2));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testConstantsInvalid2() {
-    h3.getHexagonAreaAvg(0, null);
+  @Test
+  void constantsInvalid2() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getHexagonAreaAvg(0, null));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testConstantsInvalid3() {
-    h3.getHexagonEdgeLengthAvg(0, null);
+  @Test
+  void constantsInvalid3() {
+    assertThrows(IllegalArgumentException.class, () -> h3.getHexagonEdgeLengthAvg(0, null));
   }
 }

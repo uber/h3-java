@@ -17,7 +17,7 @@ package com.uber.h3core.v3;
 
 import com.uber.h3core.H3CoreV3;
 import java.io.IOException;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 /** Base class for tests of the class {@link H3CoreV3} */
 public abstract class BaseTestH3CoreV3 {
@@ -25,7 +25,7 @@ public abstract class BaseTestH3CoreV3 {
 
   protected static H3CoreV3 h3;
 
-  @BeforeClass
+  @BeforeAll
   public static void setup() throws IOException {
     h3 = H3CoreV3.newInstance();
   }
