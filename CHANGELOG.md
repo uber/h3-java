@@ -7,8 +7,19 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
+
+## [4.1.2] - 2024-11-01
 ## Fixed
+- Fixed a memory leak in `polygonToCells` and optimize JNI calls. (#150)
+- Use `Files.createTempFile` so temporary file permissions are more restrictive. (#141)
 - Fixed a potential segfault in `cellsToMultiPolygon` on error. (#129)
+
+## Changed
+- Optimize JNI calls. (#154)
+- Added JNI config and tests for native image. (#153, #155)
+- Bumped dockcross versions (#151, #152)
+- Upgrade Guava test dependency. (#146)
+- Test Java 22. (#144)
 
 ## [4.1.1] - 2023-02-03
 The changelog for this release is the same as v4.1.0. The release was run again due to an issue with the release process.
