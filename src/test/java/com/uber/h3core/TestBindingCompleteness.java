@@ -33,7 +33,10 @@ class TestBindingCompleteness {
   private static final Set<String> WHITELIST =
       ImmutableSet.of(
           // These are provided by the Java library (java.lang.Math)
-          "degsToRads", "radsToDegs");
+          "degsToRads",
+          "radsToDegs",
+          // Handled by H3Exception
+          "describeH3Error");
 
   @Test
   @DisabledInNativeImage

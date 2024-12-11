@@ -518,10 +518,68 @@ public class H3Core {
   }
 
   /**
-   * Finds indexes within the given geofence.
+   * Finds indexes within the given geopolygon.
    *
-   * @param points Outline geofence
-   * @param holes Geofences of any internal holes
+   * @param points Outline geopolygon
+   * @param holes Geopolygons of any internal holes
+   * @param res Resolution of the desired indexes
+   */
+  public List<String> polygonToCellAddressesExperimental(
+      List<LatLng> points, List<List<LatLng>> holes, PolygonToCellsFlags flags, int res) {
+    return h3ToStringList(polygonToCellsExperimental(points, holes, flags, res));
+  }
+
+  /**
+   * Finds indexes within the given geopolygon.
+   *
+   * @param points Outline geopolygon
+   * @param holes Geopolygon of any internal holes
+   * @param res Resolution of the desired indexes
+   * @throws IllegalArgumentException Invalid resolution
+   */
+  public List<Long> polygonToCellsExperimental(
+      List<LatLng> points, List<List<LatLng>> holes, PolygonToCellsFlags flags, int res) {
+    checkResolution(res);
+
+    // pack the data for use by the polyfill JNI call
+    double[] verts = new double[points.size() * 2];
+    packGeofenceVertices(verts, points, 0);
+    int[] holeSizes = new int[0];
+    double[] holeVerts = new double[0];
+    if (holes != null) {
+      int holesSize = holes.size();
+      holeSizes = new int[holesSize];
+      int totalSize = 0;
+      for (int i = 0; i < holesSize; i++) {
+        int holeSize = holes.get(i).size() * 2;
+        totalSize += holeSize;
+        // Note we are storing the number of doubles
+        holeSizes[i] = holeSize;
+      }
+      holeVerts = new double[totalSize];
+      int offset = 0;
+      for (int i = 0; i < holesSize; i++) {
+        offset = packGeofenceVertices(holeVerts, holes.get(i), offset);
+      }
+    }
+
+    int flagsInt = flags.toInt();
+    int sz =
+        longToIntSize(
+            h3Api.maxPolygonToCellsSizeExperimental(verts, holeSizes, holeVerts, res, flagsInt));
+
+    long[] results = new long[sz];
+
+    h3Api.polygonToCellsExperimental(verts, holeSizes, holeVerts, res, flagsInt, results);
+
+    return nonZeroLongArrayToList(results);
+  }
+
+  /**
+   * Finds indexes within the given geopolygon.
+   *
+   * @param points Outline geopolygon
+   * @param holes Geopolygons of any internal holes
    * @param res Resolution of the desired indexes
    */
   public List<String> polygonToCellAddresses(
@@ -530,10 +588,10 @@ public class H3Core {
   }
 
   /**
-   * Finds indexes within the given geofence.
+   * Finds indexes within the given geopolygon.
    *
-   * @param points Outline geofence
-   * @param holes Geofences of any internal holes
+   * @param points Outline geopolygon
+   * @param holes Geopolygon of any internal holes
    * @param res Resolution of the desired indexes
    * @throws IllegalArgumentException Invalid resolution
    */
