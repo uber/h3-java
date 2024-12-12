@@ -29,6 +29,7 @@ BUILD_ROOT=$1
 UPGRADE_CMAKE=$2
 CMAKE_ROOT=$3
 
+# TODO: This may no longer be necessary
 if $UPGRADE_CMAKE; then
     pushd "$CMAKE_ROOT"
     if ! [ -e cmake-3.23.2-linux-x86_64.sh ]; then
@@ -51,6 +52,7 @@ mkdir -p build
 pushd build
 
 cmake -DBUILD_SHARED_LIBS=OFF \
+    -DENABLE_WARNINGS=OFF \
     -DCMAKE_C_STANDARD_REQUIRED=ON \
     -DCMAKE_C_STANDARD=99 \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \

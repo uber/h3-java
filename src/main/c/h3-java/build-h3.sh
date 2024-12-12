@@ -184,7 +184,7 @@ CMAKE_ROOT=target/cmake-3.23.2-linux-x86_64
 mkdir -p $CMAKE_ROOT
 
 DOCKCROSS_IMAGES="android-arm android-arm64 linux-arm64 linux-armv5 linux-armv7 linux-s390x linux-ppc64le linux-x64 linux-x86 windows-static-x64 windows-static-x86"
-if ! $DOCKCROSS_ONLY; then
+if ! [ -z $DOCKCROSS_ONLY ]; then
     DOCKCROSS_IMAGES=$DOCKCROSS_ONLY
     echo Building only: $DOCKCROSS_IMAGES
 fi

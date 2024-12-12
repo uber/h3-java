@@ -573,6 +573,32 @@ Java_com_uber_h3core_NativeMethods_maxPolygonToCellsSize(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    maxPolygonToCellsSizeExperimental
+ * Signature: ([D[I[DII)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_uber_h3core_NativeMethods_maxPolygonToCellsSizeExperimental(
+    JNIEnv *env, jobject thiz, jdoubleArray verts, jintArray holeSizes,
+    jdoubleArray holeVerts, jint res, jint flags) {
+    GeoPolygon polygon;
+    if (CreateGeoPolygon(env, verts, holeSizes, holeVerts, &polygon)) {
+        return -1;
+    }
+
+    jlong numHexagons;
+    H3Error err =
+        maxPolygonToCellsSizeExperimental(&polygon, res, flags, &numHexagons);
+
+    DestroyGeoPolygon(env, verts, holeSizes, holeVerts, &polygon);
+
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+    return numHexagons;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    getRes0Cells
  * Signature: ([J)V
  */
@@ -644,6 +670,40 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polygonToCells(
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
         err = polygonToCells(&polygon, res, flags, resultsElements);
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+
+    DestroyGeoPolygon(env, verts, holeSizes, holeVerts, &polygon);
+
+    if (err) {
+        ThrowH3Exception(env, err);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    polygonToCellsExperimental
+ * Signature: ([D[I[DII[J)V
+ */
+JNIEXPORT void JNICALL
+Java_com_uber_h3core_NativeMethods_polygonToCellsExperimental(
+    JNIEnv *env, jobject thiz, jdoubleArray verts, jintArray holeSizes,
+    jdoubleArray holeVerts, jint res, jint flags, jlongArray results) {
+    GeoPolygon polygon;
+    if (CreateGeoPolygon(env, verts, holeSizes, holeVerts, &polygon)) {
+        return;
+    }
+
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+    jsize resultsSize = (**env).GetArrayLength(env, results);
+
+    H3Error err;
+    if (resultsElements != NULL) {
+        err = polygonToCellsExperimental(&polygon, res, flags, resultsSize,
+                                         resultsElements);
 
         (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
     } else {
@@ -1337,7 +1397,7 @@ JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_cellToVertex(
 JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_cellToVertexes(
     JNIEnv *env, jobject thiz, jlong h3, jlongArray vertexes) {
     jsize sz = (**env).GetArrayLength(env, vertexes);
-    jint *vertexesElements = (**env).GetLongArrayElements(env, vertexes, 0);
+    jlong *vertexesElements = (**env).GetLongArrayElements(env, vertexes, 0);
 
     if (vertexesElements != NULL && sz >= 6) {
         H3Error err = cellToVertexes(h3, vertexesElements);

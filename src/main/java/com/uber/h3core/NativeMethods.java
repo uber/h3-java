@@ -66,6 +66,12 @@ final class NativeMethods {
 
   native void gridPathCells(long start, long end, long[] results);
 
+  native long maxPolygonToCellsSizeExperimental(
+      double[] verts, int[] holeSizes, double[] holeVerts, int res, int flags);
+
+  native void polygonToCellsExperimental(
+      double[] verts, int[] holeSizes, double[] holeVerts, int res, int flags, long[] results);
+
   native long maxPolygonToCellsSize(
       double[] verts, int[] holeSizes, double[] holeVerts, int res, int flags);
 
