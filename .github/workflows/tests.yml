@@ -22,7 +22,7 @@ jobs:
         dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -31,7 +31,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
@@ -74,16 +74,16 @@ jobs:
         dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v4
         with:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
@@ -109,7 +109,7 @@ jobs:
         java-version: [8, 11, 17, 21, 22]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -118,7 +118,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
@@ -148,7 +148,7 @@ jobs:
         java-version: [8]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -157,7 +157,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
@@ -186,7 +186,7 @@ jobs:
         java-version: [8]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -195,7 +195,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
@@ -236,7 +236,7 @@ jobs:
         java-version: [ 21 ]
 
     steps:
-      - uses: actions/checkout@v2.1.1
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -245,7 +245,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/
