@@ -525,8 +525,8 @@ public class H3Core {
    * @param res Resolution of the desired indexes
    */
   public List<String> polygonToCellAddressesExperimental(
-      List<LatLng> points, List<List<LatLng>> holes, PolygonToCellsFlags flags, int res) {
-    return h3ToStringList(polygonToCellsExperimental(points, holes, flags, res));
+      List<LatLng> points, List<List<LatLng>> holes, int res, PolygonToCellsFlags flags) {
+    return h3ToStringList(polygonToCellsExperimental(points, holes, res, flags));
   }
 
   /**
@@ -538,7 +538,7 @@ public class H3Core {
    * @throws IllegalArgumentException Invalid resolution
    */
   public List<Long> polygonToCellsExperimental(
-      List<LatLng> points, List<List<LatLng>> holes, PolygonToCellsFlags flags, int res) {
+      List<LatLng> points, List<List<LatLng>> holes, int res, PolygonToCellsFlags flags) {
     checkResolution(res);
 
     // pack the data for use by the polyfill JNI call

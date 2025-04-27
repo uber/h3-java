@@ -41,8 +41,8 @@ class TestRegion extends BaseTestH3Core {
                 new LatLng(37.7835871999971715, -122.5247187000021967),
                 new LatLng(37.8151571999998453, -122.4798767000009008)),
             null,
-            PolygonToCellsFlags.containment_center,
-            9);
+            9,
+            PolygonToCellsFlags.containment_center);
 
     assertTrue(hexagons.size() > 1000);
   }
@@ -59,8 +59,8 @@ class TestRegion extends BaseTestH3Core {
                 new LatLng(37.7835871999971715, -122.5247187000021967),
                 new LatLng(37.8151571999998453, -122.4798767000009008)),
             null,
-            PolygonToCellsFlags.containment_full,
-            9);
+            9,
+            PolygonToCellsFlags.containment_full);
 
     assertTrue(hexagons.size() > 1000);
   }
@@ -77,8 +77,8 @@ class TestRegion extends BaseTestH3Core {
                 new LatLng(37.7835871999971715, -122.5247187000021967),
                 new LatLng(37.8151571999998453, -122.4798767000009008)),
             null,
-            PolygonToCellsFlags.containment_overlapping,
-            9);
+            9,
+            PolygonToCellsFlags.containment_overlapping);
 
     assertTrue(hexagons.size() > 1000);
   }
@@ -95,8 +95,8 @@ class TestRegion extends BaseTestH3Core {
                 new LatLng(37.7835871999971715, -122.5247187000021967),
                 new LatLng(37.8151571999998453, -122.4798767000009008)),
             null,
-            PolygonToCellsFlags.containment_overlapping_bbox,
-            9);
+            9,
+            PolygonToCellsFlags.containment_overlapping_bbox);
 
     assertTrue(hexagons.size() > 1000);
   }
@@ -113,8 +113,8 @@ class TestRegion extends BaseTestH3Core {
                 new LatLng(37.7835871999971715, -122.5247187000021967),
                 new LatLng(37.8151571999998453, -122.4798767000009008)),
             null,
-            PolygonToCellsFlags.containment_center,
-            9);
+            9,
+            PolygonToCellsFlags.containment_center);
 
     assertTrue(hexagons.size() > 1000);
   }
