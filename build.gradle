@@ -1,0 +1,141 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'jacoco'
+    // id 'com.github.spotbugs' version '5.2.1'
+    id 'com.diffplug.spotless' version '6.25.0'
+    // id 'org.graalvm.buildtools.native' version '0.10.3'
+}
+
+group = 'com.uber'
+version = '4.1.3-SNAPSHOT'
+description = 'Java bindings for H3, a hierarchical hexagonal geospatial indexing system.'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.openjdk.jmh:jmh-core:1.19'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
+    testImplementation 'com.google.guava:guava:33.3.1-jre'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.2'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'junit.platform.listeners.uid.tracking.enabled', 'true'
+    finalizedBy jacocoTestReport
+}
+
+// Native build properties
+ext {
+    h3GitRemote = 'https://github.com/uber/h3.git'
+    h3UseDocker = false // TODO: true
+    h3SystemPrune = false
+    h3DockcrossTag = '20240812-60fa1b0'
+    h3DockcrossOnly = ''
+    h3GithubArtifactsUse = false
+    h3GithubArtifactsByRun = ''
+}
+
+// Load H3 version from properties file
+def h3VersionProps = new Properties()
+file("h3version.properties").withInputStream { h3VersionProps.load(it) }
+ext.h3GitReference = h3VersionProps.getProperty('h3.git.reference')
+
+// Task to build H3 native code
+task buildH3(type: Exec) {
+    workingDir "${projectDir}"
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'powershell', '-ExecutionPolicy', 'Bypass', '-File',
+                './src/main/c/h3-java/build-h3-windows.ps1', h3GitRemote, h3GitReference
+    } else {
+        commandLine './src/main/c/h3-java/build-h3.sh', h3GitRemote, h3GitReference, h3UseDocker,
+                h3SystemPrune, h3DockcrossTag, h3DockcrossOnly,
+                h3GithubArtifactsUse, h3GithubArtifactsByRun
+    }
+}
+
+compileJava {
+    options.compilerArgs += ['-h', "${projectDir}/src/main/c/h3-java/src"]
+    finalizedBy buildH3
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+                name = 'h3'
+                url = 'https://github.com/uber/h3-java'
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+                organization {
+                    name = 'Uber Open Source'
+                    url = 'https://github.com/uber/'
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/uber/h3-java.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/uber/h3-java.git'
+                    url = 'http://github.com/uber/h3-java/tree/master'
+                }
+                developers {
+                    developer {
+                        name = 'Isaac Brodsky'
+                        email = 'isaac@isaacbrodsky.com'
+                        organization = 'Uber Technologies, Inc.'
+                        organizationUrl = 'https://github.com/uber/'
+                    }
+                }
+            }
+        }
+    }
+    // repositories {
+    //     maven {
+    //         def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    //         def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+    //         url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+    //         credentials {
+    //             username = project.findProperty('ossrhUsername') ?: ''
+    //             password = project.findProperty('ossrhPassword') ?: ''
+    //         }
+    //     }
+    // }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+} 
