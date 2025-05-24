@@ -40,13 +40,13 @@ test {
 
 // Native build properties
 ext {
-    h3GitRemote = 'https://github.com/uber/h3.git'
-    h3UseDocker = false // TODO: true
-    h3SystemPrune = false
-    h3DockcrossTag = '20240812-60fa1b0'
-    h3DockcrossOnly = ''
-    h3GithubArtifactsUse = false
-    h3GithubArtifactsByRun = ''
+    h3GitRemote = project.findProperty('h3GitRemote') ?: 'https://github.com/uber/h3.git'
+    h3UseDocker = project.findProperty('h3UseDocker') ?: 'true'
+    h3SystemPrune = project.findProperty('h3SystemPrune') ?: 'false'
+    h3DockcrossTag = project.findProperty('h3DockcrossTag') ?: '20240812-60fa1b0'
+    h3DockcrossOnly = project.findProperty('h3DockcrossOnly') ?: ''
+    h3GithubArtifactsUse = project.findProperty('h3GithubArtifactsUse') ?: 'false'
+    h3GithubArtifactsByRun = project.findProperty('h3GithubArtifactsByRun') ?: ''
 }
 
 // Load H3 version from properties file
@@ -68,8 +68,8 @@ task buildH3(type: Exec) {
 }
 
 compileJava {
+    dependsOn buildH3
     options.compilerArgs += ['-h', "${projectDir}/src/main/c/h3-java/src"]
-    finalizedBy buildH3
 }
 
 spotless {
