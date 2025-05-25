@@ -304,6 +304,6 @@ jobs:
 
       - name: Download and test
         run: |
-          ./gradlew clean verify -Pnative -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+          ./gradlew clean test -Pnative -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
         env:
           GH_TOKEN: ${{ github.token }}
