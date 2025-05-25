@@ -163,7 +163,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [21]
 
     steps:
       - uses: actions/checkout@v4
