@@ -666,7 +666,7 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_polygonToCells(
 
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
 
-    H3Error err;
+    H3Error err = E_SUCCESS;
     if (resultsElements != NULL) {
         // if sz is too small, bad things will happen
         err = polygonToCells(&polygon, res, flags, resultsElements);
@@ -700,7 +700,7 @@ Java_com_uber_h3core_NativeMethods_polygonToCellsExperimental(
     jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
     jsize resultsSize = (**env).GetArrayLength(env, results);
 
-    H3Error err;
+    H3Error err = E_SUCCESS;
     if (resultsElements != NULL) {
         err = polygonToCellsExperimental(&polygon, res, flags, resultsSize,
                                          resultsElements);

@@ -54,6 +54,10 @@ def h3VersionProps = new Properties()
 file("h3version.properties").withInputStream { h3VersionProps.load(it) }
 ext.h3GitReference = h3VersionProps.getProperty('h3.git.reference')
 
+compileJava {
+    options.compilerArgs += ['-h', "${projectDir}/src/main/c/h3-java/src"]
+}
+
 // Task to build H3 native code
 task buildH3(type: Exec) {
     workingDir "${projectDir}"
@@ -65,11 +69,7 @@ task buildH3(type: Exec) {
                 h3SystemPrune, h3DockcrossTag, h3DockcrossOnly,
                 h3GithubArtifactsUse, h3GithubArtifactsByRun
     }
-}
-
-compileJava {
-    dependsOn buildH3
-    options.compilerArgs += ['-h', "${projectDir}/src/main/c/h3-java/src"]
+    dependsOn compileJava
 }
 
 spotless {
@@ -87,6 +87,12 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+}
+
+jar {
+    dependsOn buildH3
+    from sourceSets.main.resources
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 publishing {
