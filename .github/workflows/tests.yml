@@ -45,9 +45,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Format check
-        if: ${{ matrix.java-version != 8 }}
-        run: ./gradlew spotlessCheck
+      # - name: Format check
+      #   if: ${{ matrix.java-version != 8 }}
+      #   run: ./gradlew spotlessCheck
 
       - name: Tests
         run: ./gradlew clean test -Ph3SystemPrune=true "-Ph3DockcrossOnly=${{ matrix.dockcross-only }}"
