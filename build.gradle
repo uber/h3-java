@@ -95,6 +95,10 @@ coveralls {
     jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
 }
 
+test {
+    dependsOn buildH3
+}
+
 jar {
     dependsOn buildH3
     from sourceSets.main.resources
