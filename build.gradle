@@ -72,6 +72,16 @@ task buildH3(type: Exec) {
                 h3GithubArtifactsUse, h3GithubArtifactsByRun
     }
     dependsOn compileJava
+    outputs.dir("${projectDir}/src/main/resources")
+}
+
+processResources {
+    dependsOn buildH3
+}
+
+test {
+    dependsOn processResources
+    // finalizedBy jacocoTestReport
 }
 
 // spotless {
@@ -93,10 +103,6 @@ jacocoTestReport {
 
 coveralls {
     jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-}
-
-test {
-    dependsOn buildH3
 }
 
 jar {
