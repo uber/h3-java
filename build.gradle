@@ -118,6 +118,7 @@ publishing {
             pom {
                 name = 'h3'
                 url = 'https://github.com/uber/h3-java'
+                description = project.description
                 licenses {
                     license {
                         name = 'Apache License, Version 2.0'
@@ -136,6 +137,7 @@ publishing {
                 }
                 developers {
                     developer {
+                        id = 'isaacbrodsky'
                         name = 'Isaac Brodsky'
                         email = 'isaac@isaacbrodsky.com'
                         organization = 'Uber Technologies, Inc.'
@@ -145,6 +147,7 @@ publishing {
             }
         }
     }
+
     // repositories {
     //     maven {
     //         def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -159,5 +162,24 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.mavenJava
-} 
+    // Use in-memory PGP signing keys from environment variables
+    useInMemoryPgpKeys(
+        System.getenv("SIGNING_KEY_ID"),       // PGP key ID (short format) – optional, can be null
+        System.getenv("SIGNING_KEY"),          // PGP secret key (ASCII-armored, e.g. base64-encoded)
+        System.getenv("SIGNING_PASSWORD")      // PGP key passphrase
+    )
+    sign(publishing.publications)              // Sign all publications
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            stagingProfileId.set(System.getenv("OSSRH_STAGING_PROFILE_ID"))
+            username.set(System.getenv("OSSRH_USERNAME"))
+            password.set(System.getenv("OSSRH_PASSWORD"))
+            // For newer Sonatype accounts (after Feb 2021) use "s01.oss.sonatype.org":
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
