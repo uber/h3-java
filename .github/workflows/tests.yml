@@ -191,10 +191,9 @@ jobs:
 
       - name: Coverage report
         run: |
-          ./gradlew clean test jacocoTestReport coveralls -Ph3UseDocker=false -Ph3TestSystem=true -Ph3AdditionalArgLine="-Djava.library.path=./src/main/resources/linux-x64/" -PrepoToken=$COVERALLS_SECRET -PpullRequest=${{ github.event.number }}
+          ./gradlew clean test jacocoTestReport coverallsJacoco -Ph3UseDocker=false -Ph3TestSystem=true -Ph3AdditionalArgLine="-Djava.library.path=./src/main/resources/linux-x64/"
         env:
-          CI_NAME: github
-          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   tests-use-built-artifacts:
     name: Java (Built Artifacts) ${{ matrix.java-version }} ${{ matrix.os }}
