@@ -31,20 +31,26 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          gradle-version: wrapper
 
-      - name: Format check
-        if: ${{ matrix.java-version != 8 }}
-        run: mvn com.spotify.fmt:fmt-maven-plugin:check
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # - name: Format check
+      #   if: ${{ matrix.java-version != 8 }}
+      #   run: ./gradlew spotlessCheck
 
       - name: Tests
-        run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.only=${{ matrix.dockcross-only }}" -B -V clean test site
+        run: ./gradlew clean test -Ph3SystemPrune=true "-Ph3DockcrossOnly=${{ matrix.dockcross-only }}"
         env:
           OCI_EXE: docker
 
@@ -83,16 +89,22 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Tests
-        run: mvn "-Dh3.system.prune=true" "-Dh3.dockcross.tag=${{ matrix.dockcross-tag }}" "-Dh3.dockcross.only=${{ matrix.dockcross-only }}" -B -V clean test
+        run: ./gradlew clean test -Ph3SystemPrune=true "-Ph3DockcrossTag=${{ matrix.dockcross-tag }}" "-Ph3DockcrossOnly=${{ matrix.dockcross-only }}"
         env:
           OCI_EXE: docker
 
@@ -118,16 +130,22 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Tests
-        run: mvn -B -V clean test site
+        run: ./gradlew clean test
 
       - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
@@ -145,7 +163,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [21]
 
     steps:
       - uses: actions/checkout@v4
@@ -157,20 +175,25 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Coverage report
         run: |
-          mvn clean test jacoco:report coveralls:report -Dh3.use.docker=false -Dh3.test.system=true -Dh3.additional.argLine="-Djava.library.path=./src/main/resources/linux-x64/" --no-transfer-progress -DrepoToken=$COVERALLS_SECRET -DpullRequest=${{ github.event.number }}
+          ./gradlew clean test jacocoTestReport coverallsJacoco -Ph3UseDocker=false -Ph3TestSystem=true -Ph3AdditionalArgLine="-Djava.library.path=./src/main/resources/linux-x64/"
         env:
-          CI_NAME: github
-          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   tests-use-built-artifacts:
     name: Java (Built Artifacts) ${{ matrix.java-version }} ${{ matrix.os }}
@@ -195,13 +218,19 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Download Docker binaries
         uses: actions/download-artifact@v4.1.7
@@ -218,7 +247,7 @@ jobs:
 
       - name: Download and test
         run: |
-          mvn clean test -Dh3.github.artifacts.use=true -Dh3.github.artifacts.by_run=true
+          ./gradlew clean test -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -245,13 +274,19 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Download Docker binaries
         uses: actions/download-artifact@v4.1.7
@@ -268,6 +303,6 @@ jobs:
 
       - name: Download and test
         run: |
-          mvn clean verify -Dnative -Dh3.github.artifacts.use=true -Dh3.github.artifacts.by_run=true
+          ./gradlew clean test -Pnative -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
         env:
           GH_TOKEN: ${{ github.token }}

@@ -28,3 +28,5 @@ release.properties
 .vscode/
 
 .DS_Store
+build/
+.gradle/

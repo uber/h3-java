@@ -19,21 +19,27 @@ jobs:
           distribution: "adopt"
           java-version: "15"
 
-      - uses: actions/cache@v4
-        id: maven-cache
+      - uses: gradle/actions/setup-gradle@v3
         with:
-          path: ~/.m2/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          gradle-version: wrapper
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-gradle-
 
       - name: Javadocs Build
         run: |
-          mvn -B -V clean site -Dh3.use.docker=false
+          ./gradlew javadoc -Ph3UseDocker=false
 
       # Deploy the book's HTML to gh-pages branch
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/site/apidocs/
+          publish_dir: build/docs/javadoc/
