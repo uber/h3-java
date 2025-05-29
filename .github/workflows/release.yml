@@ -83,8 +83,7 @@ jobs:
 
     strategy:
       matrix:
-        # macos-13 is for Intel Macs
-        os: [macos-latest, macos-13]
+        os: [macos-latest]
         java-distribution: [adopt]
         java-version: [8]
 
@@ -118,7 +117,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
         with:
-          name: macos-built-shared-objects-${{ matrix.os }}
+          name: macos-built-shared-objects
           path: src/main/resources/*/*.dylib
           if-no-files-found: error
 
@@ -178,8 +177,7 @@ jobs:
       - name: Download Mac binaries
         uses: actions/download-artifact@v4.1.7
         with:
-          name: macos-built-shared-objects-*
-          merge-multiple: true
+          name: macos-built-shared-objects
           path: src/main/resources/
 
       - name: Download and test

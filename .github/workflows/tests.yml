@@ -114,10 +114,9 @@ jobs:
 
     strategy:
       matrix:
-        # macos-13 is for Intel Macs
         # TODO: Docker on macos-latest running is not working
         # TODO: Windows pinned back
-        os: [macos-latest, macos-13, windows-2019]
+        os: [macos-latest, windows-2019]
         java-distribution: [adopt]
         java-version: [8, 11, 17, 21, 22]
 
@@ -150,9 +149,9 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
-        if: ${{ (matrix.os == 'macos-latest' || matrix.os == 'macos-13') && matrix.java-version == 8 }}
+        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
         with:
-          name: macos-built-shared-objects-${{ matrix.os }}
+          name: macos-built-shared-objects
           path: src/main/resources/*/*.dylib
           if-no-files-found: error 
 
@@ -243,8 +242,7 @@ jobs:
       - name: Download Mac binaries
         uses: actions/download-artifact@v4.1.7
         with:
-          name: macos-built-shared-objects-*
-          merge-multiple: true
+          name: macos-built-shared-objects
           path: src/main/resources/
 
       - name: Download and test
@@ -300,8 +298,7 @@ jobs:
       - name: Download Mac binaries
         uses: actions/download-artifact@v4.1.7
         with:
-          name: macos-built-shared-objects-*
-          merge-multiple: true
+          name: macos-built-shared-objects
           path: src/main/resources/
 
       - name: Download and test
