@@ -160,11 +160,11 @@ jobs:
                 git config user.email "[email protected]"
                 git commit -am "chore: release $RELEASE_VERSION [skip ci]"
 
-            # - name: Create Git tag for release
-            #   if: ${{ github.event_name == 'workflow_dispatch' }}
-            #   run: |
-            #     git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
-            #     git push origin HEAD:main --follow-tags
+            - name: Create Git tag for release
+              if: ${{ github.event_name == 'workflow_dispatch' }}
+              run: |
+                git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
+                git push origin HEAD:main --follow-tags
 
             - name: Download Docker binaries
               uses: actions/download-artifact@v4.1.7
@@ -181,7 +181,15 @@ jobs:
 
             - name: Download and test
               run: |
-                ./gradlew clean test -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+                ./gradlew clean test assemble -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+
+            - name: WIP test
+              run: |
+                ls -lh build/libs
+                for f in build/libs/*.jar; do
+                    echo "File: $f"
+                    unzip -l "$f"
+                done
 
         #   - name: Publish to Sonatype OSSRH (Maven Central)
         #     env:

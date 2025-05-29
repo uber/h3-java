@@ -113,6 +113,10 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
+sourcesJar {
+    dependsOn buildH3
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
