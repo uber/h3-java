@@ -11,10 +11,6 @@ on:
   push:
     tags:
       - "v*"
-  # For testing:
-  #   pull_request:
-  #     branches:
-  #       - master
 
 jobs:
   # Corresponsd to tests in tests.yml
