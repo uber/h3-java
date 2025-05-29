@@ -17,9 +17,9 @@ on:
   #       - master
 
 jobs:
-  # tests and tests-no-docker are from tests.yml and build the actual native libraries that will be used in the release.
-  tests:
-    name: Java ${{ matrix.java-version }} ${{ matrix.os }} ${{ matrix.dockcross-only }}
+  # Corresponsd to tests in tests.yml
+  build-with-docker:
+    name: Build ${{ matrix.dockcross-only }} (Dockcross)
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -66,21 +66,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # - name: Format check
-      #   if: ${{ matrix.java-version != 8 }}
-      #   run: ./gradlew spotlessCheck
-
       - name: Tests
         run: ./gradlew clean test -Ph3SystemPrune=true "-Ph3DockcrossOnly=${{ matrix.dockcross-only }}"
         env:
           OCI_EXE: docker
 
-      - name: Format check for C
-        run: git diff --exit-code
-
       - uses: actions/upload-artifact@v4
         name: Upload artifacts
-        if: ${{ matrix.java-version == 8 }}
         with:
           name: docker-built-shared-objects-${{ matrix.dockcross-only }}
           path: |
@@ -88,13 +80,15 @@ jobs:
             src/main/resources/*/*.dll
           if-no-files-found: error
 
-  tests-no-docker:
-    name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
+  # Corresponsd to tests-no-docker in tests.yml
+  build:
+    name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-latest]
+        # macos-13 is for Intel Macs
+        os: [macos-latest, macos-13]
         java-distribution: [adopt]
         java-version: [8]
 
@@ -127,9 +121,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
-        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
         with:
-          name: macos-built-shared-objects
+          name: macos-built-shared-objects-${{ matrix.os }}
           path: src/main/resources/*/*.dylib
           if-no-files-found: error
 
@@ -139,8 +132,8 @@ jobs:
       contents: write # allow pushing commits/tags
 
     needs:
-      - tests
-      - tests-no-docker
+      - build-with-docker
+      - build
 
     steps:
       - name: Check out code
@@ -189,7 +182,8 @@ jobs:
       - name: Download Mac binaries
         uses: actions/download-artifact@v4.1.7
         with:
-          name: macos-built-shared-objects
+          name: macos-built-shared-objects-*
+          merge-multiple: true
           path: src/main/resources/
 
       - name: Download and test
