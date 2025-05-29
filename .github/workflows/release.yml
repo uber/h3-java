@@ -1,0 +1,210 @@
+name: Release to Maven Central
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Version to release (if empty, derive from project version)'
+        required: false
+  # Automatic trigger on pushing a version tag (e.g., "v1.2.3")
+  push:
+    tags:
+      - 'v*'
+  # For testing:
+  pull_request:
+    branches:
+      - master
+
+jobs:   
+  tests:
+    name: Java ${{ matrix.java-version }} ${{ matrix.os }} ${{ matrix.dockcross-only }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java-distribution: [adopt]
+        java-version: [8]
+        dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # - name: Format check
+      #   if: ${{ matrix.java-version != 8 }}
+      #   run: ./gradlew spotlessCheck
+
+      - name: Tests
+        run: ./gradlew clean test -Ph3SystemPrune=true "-Ph3DockcrossOnly=${{ matrix.dockcross-only }}"
+        env:
+          OCI_EXE: docker
+
+      - name: Format check for C
+        run: git diff --exit-code
+
+      - uses: actions/upload-artifact@v4
+        name: Upload artifacts
+        if: ${{ matrix.java-version == 8 }}
+        with:
+          name: docker-built-shared-objects-${{ matrix.dockcross-only }}
+          path: |
+            src/main/resources/*/*.so
+            src/main/resources/*/*.dll
+          if-no-files-found: error 
+
+  tests-no-docker:
+    name: Java (No Docker) ${{ matrix.java-version }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        # TODO: Docker on macos-latest running is not working
+        os: [macos-latest]
+        java-distribution: [adopt]
+        java-version: [8]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "${{ matrix.java-distribution }}"
+          java-version: "${{ matrix.java-version }}"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: wrapper
+
+      - uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Tests
+        run: ./gradlew clean test
+
+      - uses: actions/upload-artifact@v4
+        name: Upload Mac OS Artifacts
+        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
+        with:
+          name: macos-built-shared-objects
+          path: src/main/resources/*/*.dylib
+          if-no-files-found: error 
+
+  release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write   # allow pushing commits/tags
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v3
+
+            - name: Set up JDK
+              uses: actions/setup-java@v3
+              with:
+                distribution: 'temurin'
+                java-version: '21'
+
+            - name: Determine release version
+              id: vars
+              run: |
+                # Derive the release version (drop "-SNAPSHOT") from Gradle project or input
+                VERSION_INPUT="${{ github.event.inputs.release_version || '' }}"
+                if [ -n "$VERSION_INPUT" ]; then
+                RELEASE_VERSION="$VERSION_INPUT"
+                else
+                # Read version from build.gradle.kts or gradle.properties
+                RELEASE_VERSION=$(grep -E 'version\s*=' build.gradle.kts | sed -E 's/.*\"(.+)-SNAPSHOT\".*/\1/')
+                fi
+                echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+
+            - name: Remove -SNAPSHOT suffix (prepare release version)
+              if: ${{ github.event_name == 'workflow_dispatch' }}
+              run: |
+                sed -i -E "s/${RELEASE_VERSION}-SNAPSHOT/$RELEASE_VERSION/" build.gradle.kts gradle.properties || true
+                git config user.name "github-actions"
+                git config user.email "[email protected]"
+                git commit -am "chore: release $RELEASE_VERSION [skip ci]"
+
+            # - name: Create Git tag for release
+            #   if: ${{ github.event_name == 'workflow_dispatch' }}
+            #   run: |
+            #     git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
+            #     git push origin HEAD:main --follow-tags
+
+            - name: Download Docker binaries
+              uses: actions/download-artifact@v4.1.7
+              with:
+                pattern: docker-built-shared-objects-*
+                merge-multiple: true
+                path: src/main/resources/
+
+            - name: Download Mac binaries
+              uses: actions/download-artifact@v4.1.7
+              with:
+                name: macos-built-shared-objects
+                path: src/main/resources/
+
+            - name: Download and test
+              run: |
+                ./gradlew clean test -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+
+        #   - name: Publish to Sonatype OSSRH (Maven Central)
+        #     env:
+        #       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+        #       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+        #       ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
+        #       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        #       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        #       OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
+        #     run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+
+        #   - name: Create GitHub Release (with changelog notes)
+        #     # This uses an action to create a release on GitHub
+        #     uses: softprops/action-gh-release@v1
+        #     with:
+        #       tag_name: "v${{ env.RELEASE_VERSION }}"
+        #       release_name: "${{ env.RELEASE_VERSION }}"
+        #       body_path: CHANGELOG.md   # assumes changelog contains latest release notes at top
+        #     env:
+        #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        #   - name: Bump to next snapshot version
+        #     run: |
+        #       # Bump minor version (for example) and append -SNAPSHOT for continued development
+        #       NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. '{$NF += 1; OFS="."; print $0}')  # increment last segment
+        #       NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
+        #       sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" build.gradle.kts gradle.properties || true
+        #       git config user.name "github-actions"
+        #       git config user.email "[email protected]"
+        #       git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
+        #       git push origin HEAD:main
