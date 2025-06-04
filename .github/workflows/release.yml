@@ -13,7 +13,7 @@ on:
       - "v*"
 
 jobs:
-  # Corresponsd to tests in tests.yml
+  # Corresponds to tests in tests.yml
   build-with-docker:
     name: Build ${{ matrix.dockcross-only }} (Dockcross)
     runs-on: ${{ matrix.os }}
@@ -148,15 +148,14 @@ jobs:
           if [ -n "$VERSION_INPUT" ]; then
           RELEASE_VERSION="$VERSION_INPUT"
           else
-          # Read version from build.gradle.kts or gradle.properties
-          RELEASE_VERSION=$(grep -E 'version\s*=' build.gradle.kts | sed -E 's/.*\"(.+)-SNAPSHOT\".*/\1/')
+          RELEASE_VERSION=$(grep -E 'version\s*=' gradle.properties | sed -E 's/.*\"(.+)-SNAPSHOT\".*/\1/')
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
       - name: Remove -SNAPSHOT suffix (prepare release version)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          sed -i -E "s/${RELEASE_VERSION}-SNAPSHOT/$RELEASE_VERSION/" build.gradle.kts gradle.properties || true
+          sed -i -E "s/${RELEASE_VERSION}-SNAPSHOT/$RELEASE_VERSION/" gradle.properties || true
           git config user.name "github-actions"
           git config user.email "[email protected]"
           git commit -am "chore: release $RELEASE_VERSION [skip ci]"
@@ -213,11 +212,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump to next snapshot version
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         run: |
           # Bump minor version (for example) and append -SNAPSHOT for continued development
           NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. '{$NF += 1; OFS="."; print $0}')  # increment last segment
           NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
-          sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" build.gradle.kts gradle.properties || true
+          sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" gradle.properties || true
           git config user.name "github-actions"
           git config user.email "[email protected]"
           git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
