@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.uber/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.uber/h3)
-[![H3 Version](https://img.shields.io/badge/h3-v4.2.1-blue.svg)](https://github.com/uber/h3/releases/tag/v4.2.1)
+[![H3 Version](https://img.shields.io/badge/h3-v4.3.0-blue.svg)](https://github.com/uber/h3/releases/tag/v4.3.0)
 
 This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/).
 
@@ -62,22 +62,10 @@ You may be able to build H3-Java locally if you need to use an operating system 
 
 # Development
 
-Building the library requires a JDK, Maven, CMake, and a C compiler. To install to your local Maven cache, run:
+Building the library requires a JDK, Gradle, CMake, and a C compiler. To build:
 
 ```sh
-mvn install
-```
-
-To build the library, run:
-
-```sh
-mvn package
-```
-
-To format source code as required by CI, run:
-
-```sh
-mvn com.spotify.fmt:fmt-maven-plugin:format
+./gradlew assemble test -Ph3UseDocker=false
 ```
 
 Additional information on how the build process works is available in the [build process documentaiton](docs/library-build.md).
@@ -86,7 +74,7 @@ Additional information on how the build process works is available in the [build
 
 ```sh
 # To install build dependencies
-sudo pkg install openjdk11 maven cmake bash
+sudo pkg install openjdk11 cmake bash
 # Ensure /usr/local/openjdk11/bin is on your path
 ```
 
@@ -95,14 +83,16 @@ sudo pkg install openjdk11 maven cmake bash
 To build Javadocs documentation:
 
 ```sh
-mvn site
+./gradlew javadoc -Ph3UseDocker=false
 ```
 
-Then open the file `target/site/apidocs/index.html`.
+Then open the file `build/docs/javadoc/index.html`.
 
 ## Benchmarking
 
 To run benchmarks, either execute them from IntelliJ or run the following from shell: (Replace the class name as needed)
+
+::: Note: These instructions need to be updated for Gradle.
 
 ```sh
 mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.uber.h3core.benchmarking.H3CoreBenchmark" -Dexec.classpathScope="test"

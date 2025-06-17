@@ -325,6 +325,34 @@ public class H3Core {
    * @param k Number of rings around the origin
    * @return All indexes <code>k</code> away from the origin
    */
+  public List<String> gridRing(String h3Address, int k) {
+    return h3ToStringList(gridRing(stringToH3(h3Address), k));
+  }
+
+  /**
+   * Returns in order neighbor traversal, of indexes with distance of <code>k</code>.
+   *
+   * @param h3 Origin index
+   * @param k Number of rings around the origin
+   * @return All indexes <code>k</code> away from the origin
+   */
+  public List<Long> gridRing(long h3, int k) {
+    int sz = k == 0 ? 1 : 6 * k;
+
+    long[] out = new long[sz];
+
+    h3Api.gridRing(h3, k, out);
+
+    return nonZeroLongArrayToList(out);
+  }
+
+  /**
+   * Returns in order neighbor traversal, of indexes with distance of <code>k</code>.
+   *
+   * @param h3Address Origin index
+   * @param k Number of rings around the origin
+   * @return All indexes <code>k</code> away from the origin
+   */
   public List<String> gridRingUnsafe(String h3Address, int k) {
     return h3ToStringList(gridRingUnsafe(stringToH3(h3Address), k));
   }
