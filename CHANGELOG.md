@@ -9,6 +9,7 @@ for the Linux x64 and Darwin x64 platforms.
 ## Unreleased Changes
 ## Added
 - `polygonToCellsExperimental` functions from H3 v4.2.0. (#163)
+- `gridRing` function from H3 v4.3.0. (#169)
 
 ## Fixed
 - Corrected order of `polygonToCellsExperimental` arguments. (#166)
