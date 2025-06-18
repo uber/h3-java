@@ -54,6 +54,8 @@ final class NativeMethods {
 
   native void gridDiskUnsafe(long h3, int k, long[] results);
 
+  native void gridRing(long h3, int k, long[] results);
+
   native void gridRingUnsafe(long h3, int k, long[] results);
 
   native long gridDistance(long a, long b);
