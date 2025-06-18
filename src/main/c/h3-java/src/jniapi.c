@@ -425,6 +425,28 @@ JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridDiskUnsafe(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    gridRing
+ * Signature: (JI[J)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_gridRing(
+    JNIEnv *env, jobject thiz, jlong h3, jint k, jlongArray results) {
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+
+    if (resultsElements != NULL) {
+        // if sz is too small, bad things will happen
+        H3Error err = gridRing(h3, k, resultsElements);
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    gridRingUnsafe
  * Signature: (JI[J)V
  */

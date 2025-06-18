@@ -182,7 +182,7 @@ class TestTraversal extends BaseTestH3Core {
 
   @Test
   void hexRing() {
-    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 1);
+    List<String> hexagons = h3.gridRing("8928308280fffff", 1);
 
     assertEquals(6, hexagons.size());
 
@@ -196,7 +196,7 @@ class TestTraversal extends BaseTestH3Core {
 
   @Test
   void hexRing2() {
-    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 2);
+    List<String> hexagons = h3.gridRing("8928308280fffff", 2);
 
     assertEquals(12, hexagons.size());
 
@@ -217,7 +217,7 @@ class TestTraversal extends BaseTestH3Core {
   @Test
   void hexRingLarge() {
     int k = 50;
-    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", k);
+    List<String> hexagons = h3.gridRing("8928308280fffff", k);
 
     int expectedCount = 50 * 6;
 
@@ -226,16 +226,104 @@ class TestTraversal extends BaseTestH3Core {
 
   @Test
   void hexRingPentagon() {
-    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c07fffffffff", 1));
+    List<String> hexagons = h3.gridRing("821c07fffffffff", 1);
+
+    assertEquals(5, hexagons.size());
+
+    assertTrue(hexagons.contains("821c37fffffffff"));
+    assertTrue(hexagons.contains("821c17fffffffff"));
+    assertTrue(hexagons.contains("821c1ffffffffff"));
+    assertTrue(hexagons.contains("821c27fffffffff"));
+    assertTrue(hexagons.contains("821c2ffffffffff"));
+
+    List<String> hexagons2 = h3.gridRing("821c07fffffffff", 2);
+
+    assertEquals(10, hexagons2.size());
   }
 
   @Test
   void hexRingAroundPentagon() {
-    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c37fffffffff", 2));
+    List<String> hexagons = h3.gridRing("821c37fffffffff", 1);
+
+    assertEquals(6, hexagons.size());
+
+    assertTrue(hexagons.contains("821d8ffffffffff"));
+    assertTrue(hexagons.contains("821c07fffffffff"));
+    assertTrue(hexagons.contains("821c17fffffffff"));
+    assertTrue(hexagons.contains("821d1ffffffffff"));
+    assertTrue(hexagons.contains("821c27fffffffff"));
+    assertTrue(hexagons.contains("821daffffffffff"));
+
+    List<String> hexagons2 = h3.gridRing("821c37fffffffff", 2);
+
+    assertEquals(11, hexagons2.size());
   }
 
   @Test
   void hexRingSingle() {
+    String origin = "8928308280fffff";
+    List<String> hexagons = h3.gridRing(origin, 0);
+
+    assertEquals(1, hexagons.size());
+    assertEquals("8928308280fffff", hexagons.get(0));
+  }
+
+  @Test
+  void hexRingUnsafe() {
+    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 1);
+
+    assertEquals(6, hexagons.size());
+
+    assertTrue(hexagons.contains("8928308280bffff"));
+    assertTrue(hexagons.contains("89283082807ffff"));
+    assertTrue(hexagons.contains("89283082877ffff"));
+    assertTrue(hexagons.contains("89283082803ffff"));
+    assertTrue(hexagons.contains("89283082873ffff"));
+    assertTrue(hexagons.contains("8928308283bffff"));
+  }
+
+  @Test
+  void hexRing2Unsafe() {
+    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", 2);
+
+    assertEquals(12, hexagons.size());
+
+    assertTrue(hexagons.contains("89283082813ffff"));
+    assertTrue(hexagons.contains("89283082817ffff"));
+    assertTrue(hexagons.contains("8928308281bffff"));
+    assertTrue(hexagons.contains("89283082863ffff"));
+    assertTrue(hexagons.contains("89283082823ffff"));
+    assertTrue(hexagons.contains("8928308287bffff"));
+    assertTrue(hexagons.contains("89283082833ffff"));
+    assertTrue(hexagons.contains("8928308282bffff"));
+    assertTrue(hexagons.contains("89283082857ffff"));
+    assertTrue(hexagons.contains("892830828abffff"));
+    assertTrue(hexagons.contains("89283082847ffff"));
+    assertTrue(hexagons.contains("89283082867ffff"));
+  }
+
+  @Test
+  void hexRingLargeUnsafe() {
+    int k = 50;
+    List<String> hexagons = h3.gridRingUnsafe("8928308280fffff", k);
+
+    int expectedCount = 50 * 6;
+
+    assertEquals(expectedCount, hexagons.size());
+  }
+
+  @Test
+  void hexRingPentagonUnsafe() {
+    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c07fffffffff", 1));
+  }
+
+  @Test
+  void hexRingAroundPentagonUnsafe() {
+    assertThrows(H3Exception.class, () -> h3.gridRingUnsafe("821c37fffffffff", 2));
+  }
+
+  @Test
+  void hexRingSingleUnsafe() {
     String origin = "8928308280fffff";
     List<String> hexagons = h3.gridRingUnsafe(origin, 0);
 
