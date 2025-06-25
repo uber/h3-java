@@ -180,7 +180,8 @@ signing {
 nexusPublishing {
     repositories {
         sonatype {
-            stagingProfileId.set(System.getenv("OSSRH_STAGING_PROFILE_ID"))
+            // Performance optimization, not needed:
+            // stagingProfileId.set(System.getenv("OSSRH_STAGING_PROFILE_ID"))
             username.set(System.getenv("OSSRH_USERNAME"))
             password.set(System.getenv("OSSRH_PASSWORD"))
             // For newer Sonatype accounts (after Feb 2021) use "s01.oss.sonatype.org":
