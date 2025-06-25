@@ -151,23 +151,23 @@ jobs:
           if [ -n "$VERSION_INPUT" ]; then
           RELEASE_VERSION="$VERSION_INPUT"
           else
-          RELEASE_VERSION=$(grep -E 'version\s*=' gradle.properties | sed -E 's/.*\"(.+)-SNAPSHOT\".*/\1/')
+          RELEASE_VERSION=$(grep -E 'version=' gradle.properties | sed -E 's/version=//')
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
-      # - name: Remove -SNAPSHOT suffix (prepare release version)
-      #   if: ${{ github.event_name == 'workflow_dispatch' }}
-      #   run: |
-      #     sed -i -E "s/${RELEASE_VERSION}-SNAPSHOT/$RELEASE_VERSION/" gradle.properties || true
-      #     git config user.name "github-actions"
-      #     git config user.email "[email protected]"
-      #     git commit -am "chore: release $RELEASE_VERSION [skip ci]"
+      - name: Remove -SNAPSHOT suffix (prepare release version)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          sed -i -E "s/${RELEASE_VERSION}-SNAPSHOT/$RELEASE_VERSION/" gradle.properties || true
+          git config user.name "github-actions"
+          git config user.email "[email protected]"
+          git commit -am "chore: release $RELEASE_VERSION [skip ci]"
 
-      # - name: Create Git tag for release
-      #   if: ${{ github.event_name == 'workflow_dispatch' }}
-      #   run: |
-      #     git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
-      #     git push origin HEAD:main --follow-tags
+      - name: Create Git tag for release
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
+          git push origin HEAD:main --follow-tags
 
       - name: Download Docker binaries
         uses: actions/download-artifact@v4.1.7
@@ -202,27 +202,26 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
-        run: ./gradlew publishToSonatype -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
-        # closeAndReleaseSonatypeStagingRepository
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
 
       - name: Create GitHub Release (with changelog notes)
         # This uses an action to create a release on GitHub
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ env.RELEASE_VERSION }}"
-          release_name: "${{ env.RELEASE_VERSION }}"
+          name: "${{ env.RELEASE_VERSION }}"
           body_path: CHANGELOG.md # assumes changelog contains latest release notes at top
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Bump to next snapshot version
-      #   if: ${{ github.event_name != 'workflow_dispatch' }}
-      #   run: |
-      #     # Bump minor version (for example) and append -SNAPSHOT for continued development
-      #     NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. '{$NF += 1; OFS="."; print $0}')  # increment last segment
-      #     NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
-      #     sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" gradle.properties || true
-      #     git config user.name "github-actions"
-      #     git config user.email "[email protected]"
-      #     git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
-      #     git push origin HEAD:main
+      - name: Bump to next snapshot version
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: |
+          # Bump minor version (for example) and append -SNAPSHOT for continued development
+          NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. -v OFS="." '{$NF += 1; print $0}')  # increment last segment
+          NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
+          sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" gradle.properties || true
+          git config user.name "github-actions"
+          git config user.email "[email protected]"
+          git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
+          git push origin HEAD:main
