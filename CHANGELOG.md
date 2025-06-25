@@ -6,27 +6,27 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
-## Added
+### Added
 - `polygonToCellsExperimental` functions from H3 v4.2.0. (#163)
 - `gridRing` function from H3 v4.3.0. (#169)
 
-## Fixed
+### Fixed
 - Corrected order of `polygonToCellsExperimental` arguments. (#166)
 - Fixed build on ARM Linux. (#162)
 
-## Changed
+### Changed
 - Converted build system to Gradle and automated deploys. Added separate build steps for mac OS on M1 (ARM) and x64. (#167, #168)
 - Upgraded the core library to v4.2.1. (#165)
 
 ## [4.1.2] - 2024-11-01
 Note: This release is not available in Maven Central.
 
-## Fixed
+### Fixed
 - Fixed a memory leak in `polygonToCells` and optimize JNI calls. (#150)
 - Use `Files.createTempFile` so temporary file permissions are more restrictive. (#141)
 - Fixed a potential segfault in `cellsToMultiPolygon` on error. (#129)
 
-## Changed
+### Changed
 - Optimize JNI calls. (#154)
 - Added JNI config and tests for native image. (#153, #155)
 - Bumped dockcross versions (#151, #152)
