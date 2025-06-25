@@ -164,7 +164,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git tag -a "v${RELEASE_VERSION}" -m "Release $RELEASE_VERSION"
-          git push origin HEAD:main --follow-tags
+          git push origin HEAD:master --follow-tags
 
       - name: Download Docker binaries
         uses: actions/download-artifact@v4.1.7
@@ -221,4 +221,4 @@ jobs:
           git config user.name "github-actions"
           git config user.email "[email protected]"
           git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
-          git push origin HEAD:main
+          git push origin HEAD:master
