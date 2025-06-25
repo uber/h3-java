@@ -11,9 +11,6 @@ on:
   push:
     tags:
       - "v*"
-  pull_request:
-    branches:
-      - master
 
 jobs:
   # Corresponds to tests in tests.yml
