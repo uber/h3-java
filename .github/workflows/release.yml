@@ -202,7 +202,7 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
-        run: ./gradlew publishToSonatype closeSonatypeStagingRepository -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+        run: ./gradlew publishToSonatype -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
         # closeAndReleaseSonatypeStagingRepository
 
       - name: Create GitHub Release (with changelog notes)
