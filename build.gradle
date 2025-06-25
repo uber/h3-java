@@ -132,10 +132,10 @@ publishing {
                         distribution = 'repo'
                     }
                 }
-                # organization {
-                #     name = 'Uber Open Source'
-                #     url = 'https://github.com/uber/'
-                # }
+                // organization {
+                //     name = 'Uber Open Source'
+                //     url = 'https://github.com/uber/'
+                // }
                 scm {
                     connection = 'scm:git:git://github.com/isaacbrodsky/h3-java.git'
                     developerConnection = 'scm:git:ssh://git@github.com/isaacbrodsky/h3-java.git'
