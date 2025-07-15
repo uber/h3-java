@@ -95,7 +95,6 @@ cmake -DUSE_NATIVE_JNI=ON \
     -DBUILD_SHARED_LIBS=ON \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
     ../../src/main/c/h3-java
 cmake --build . --target h3-java --config Release
 
@@ -144,7 +143,6 @@ if [ "$(uname -sm)" == "Darwin x86_64" ]; then
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_OSX_ARCHITECTURES="arm64" \
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
         ../../h3
     cmake --build . --target h3 --config Release
     H3_BUILD_ROOT="$(pwd)"
