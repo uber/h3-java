@@ -95,6 +95,7 @@ cmake -DUSE_NATIVE_JNI=ON \
     -DBUILD_SHARED_LIBS=ON \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
     ../../src/main/c/h3-java
 cmake --build . --target h3-java --config Release
 
@@ -143,6 +144,7 @@ if [ "$(uname -sm)" == "Darwin x86_64" ]; then
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_OSX_ARCHITECTURES="arm64" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
         ../../h3
     cmake --build . --target h3 --config Release
     H3_BUILD_ROOT="$(pwd)"
@@ -200,8 +202,16 @@ for image in $DOCKCROSS_IMAGES; do
     docker run --rm dockcross/$image:$DOCKCROSS_TAG > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
 
+    SPECIAL_ANDROID_FLAGS=""
+    if [ "$image" = "android-arm" ]; then
+        SPECIAL_ANDROID_FLAGS="-DH3_JAVA_ANDROID=ON"
+    fi
+    if [ "$image" = "android-arm64" ]; then
+        SPECIAL_ANDROID_FLAGS="-DH3_JAVA_ANDROID=ON"
+    fi
+
     # Perform the actual build inside Docker
-    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT"
+    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT" "$SPECIAL_ANDROID_FLAGS"
 
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.
