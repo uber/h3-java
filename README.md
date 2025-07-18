@@ -2,13 +2,13 @@
 
 # H3-Java
 
-[![tests](https://github.com/uber/h3-java/workflows/tests/badge.svg)](https://github.com/uber/h3-java/actions)
-[![Coverage Status](https://coveralls.io/repos/github/uber/h3-java/badge.svg?branch=master)](https://coveralls.io/github/uber/h3-java?branch=master)
+[![tests](https://github.com/isaacbrodsky/h3-java/workflows/tests/badge.svg)](https://github.com/isaacbrodsky/h3-java/actions)
+[![Coverage Status](https://coveralls.io/repos/github/isaacbrodsky/h3-java/badge.svg?branch=master)](https://coveralls.io/github/isaacbrodsky/h3-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.uber/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.uber/h3)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.isaacbrodsky/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.isaacbrodsky/h3)
 [![H3 Version](https://img.shields.io/badge/h3-v4.3.0-blue.svg)](https://github.com/uber/h3/releases/tag/v4.3.0)
 
-This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/).
+This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/). It provides the same API as [uber/h3-java](https://github.com/uber/h3-java) from which it is based.
 
 # Usage
 
@@ -16,16 +16,16 @@ Add it to your pom.xml:
 
 ```xml
 <dependency>
-    <groupId>com.uber</groupId>
+    <groupId>io.github.isaacbrodsky</groupId>
     <artifactId>h3</artifactId>
-    <version>4.1.1</version>
+    <version>4.3.0</version>
 </dependency>
 ```
 
 Or, using Gradle:
 
 ```gradle
-compile("com.uber:h3:4.1.1")
+compile("io.github.isaacbrodsky:h3:4.3.0")
 ```
 
 Encode a location into a hexagon address:
@@ -108,6 +108,8 @@ Before we can merge your changes, you must agree to the [Uber Contributor Licens
 ## Legal and Licensing
 
 H3-Java is licensed under the [Apache 2.0 License](./LICENSE).
+
+H3-Java Copyright 2017 Uber Technologies, Inc.
 
 DGGRID
 Copyright (c) 2015 Southern Oregon University
