@@ -8,7 +8,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.isaacbrodsky/h3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.isaacbrodsky/h3)
 [![H3 Version](https://img.shields.io/badge/h3-v4.3.0-blue.svg)](https://github.com/uber/h3/releases/tag/v4.3.0)
 
-This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/).
+This library provides Java bindings for the [H3 Core Library](https://github.com/uber/h3). For API reference, please see the [H3 Documentation](https://h3geo.org/). It provides the same API as [uber/h3-java](https://github.com/uber/h3-java) from which it is based.
 
 # Usage
 
