@@ -59,7 +59,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         name: Upload artifacts
-        if: ${{ matrix.java-version == 8 }}
+        if: ${{ matrix.java-version == 11 }}
         with:
           name: docker-built-shared-objects-${{ matrix.dockcross-only }}
           path: |
@@ -149,7 +149,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         name: Upload Mac OS Artifacts
-        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 8 }}
+        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 11 }}
         with:
           name: macos-built-shared-objects
           path: src/main/resources/*/*.dylib
