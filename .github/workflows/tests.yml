@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8, 11, 17, 21, 22]
+        java-version: [11, 17, 21, 22]
         dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
 
     steps:
@@ -118,7 +118,7 @@ jobs:
         # TODO: Windows pinned back
         os: [macos-latest, windows-2022]
         java-distribution: [adopt]
-        java-version: [8, 11, 17, 21, 22]
+        java-version: [11, 17, 21, 22]
 
     steps:
       - uses: actions/checkout@v4
@@ -206,7 +206,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [11]
 
     steps:
       - uses: actions/checkout@v4

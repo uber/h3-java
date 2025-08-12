@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [11]
         dockcross-only:
           [
             "android-arm",
@@ -85,7 +85,7 @@ jobs:
       matrix:
         os: [macos-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [11]
 
     steps:
       - uses: actions/checkout@v4
