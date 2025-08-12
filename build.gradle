@@ -27,8 +27,6 @@ description = 'Java bindings for H3, a hierarchical hexagonal geospatial indexin
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-    withJavadocJar()
-    withSourcesJar()
 }
 
 repositories {
@@ -116,10 +114,6 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
-sourcesJar {
-    dependsOn buildH3
-}
-
 mavenPublishing {
   coordinates(project.group, "h3", project.version)
 
@@ -162,4 +156,8 @@ mavenPublishing {
   publishToMavenCentral()
 
   signAllPublications()
+}
+
+sourcesJar {
+    dependsOn buildH3
 }
