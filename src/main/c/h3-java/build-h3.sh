@@ -196,18 +196,20 @@ for image in $DOCKCROSS_IMAGES; do
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
-    # Handle dockcross images built for more than one host architecture
-    if [ "$image" = "linux-arm64" ]; then
-        CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG-amd64"
-    else
-        CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG"
-    fi
-    docker pull dockcross/$image:$CURRENT_DOCKCROSS_TAG
-    docker run --rm dockcross/$image:$CURRENT_DOCKCROSS_TAG > $BUILD_ROOT/dockcross
+    docker pull dockcross/$image:$DOCKCROSS_TAG
+    docker run --rm dockcross/$image:$DOCKCROSS_TAG > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
 
+    SPECIAL_ANDROID_FLAGS=""
+    if [ "$image" = "android-arm" ]; then
+        SPECIAL_ANDROID_FLAGS="-DH3_JAVA_ANDROID=ON"
+    fi
+    if [ "$image" = "android-arm64" ]; then
+        SPECIAL_ANDROID_FLAGS="-DH3_JAVA_ANDROID=ON"
+    fi
+
     # Perform the actual build inside Docker
-    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT"
+    $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT" "$SPECIAL_ANDROID_FLAGS"
 
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.

@@ -15,10 +15,11 @@
 # limitations under the License.
 #
 
-# Arguments: [build-root] [upgrade-cmake]
-# build-root    - Location to build the library.
-# upgrade-cmake - Whether to download and install a new version of CMake
-# cmake-root    - Where to download and install the new version of CMake
+# Arguments: [build-root] [upgrade-cmake] [cmake-root] [cmake-additional]
+# build-root       - Location to build the library.
+# upgrade-cmake    - Whether to download and install a new version of CMake
+# cmake-root       - Where to download and install the new version of CMake
+# cmake-additional - Additional arguments to pass to CMake
 #
 # Builds H3 and H3-Java in the given directory. This is intended to be
 # called from build-h3.sh as part of the cross compilation process.
@@ -28,6 +29,7 @@ set -ex
 BUILD_ROOT=$1
 UPGRADE_CMAKE=$2
 CMAKE_ROOT=$3
+CMAKE_ADDITIONAL=$4
 
 # TODO: This may no longer be necessary
 if $UPGRADE_CMAKE; then
@@ -58,6 +60,7 @@ cmake -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=lib \
+    $CMAKE_ADDITIONAL \
     ../../h3
 make h3
 H3_BUILD_ROOT="$(pwd)"
@@ -67,5 +70,6 @@ popd
 cmake -DBUILD_SHARED_LIBS=ON \
     "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
     -DCMAKE_BUILD_TYPE=Release \
+    $CMAKE_ADDITIONAL \
     /work/src/main/c/h3-java
 make h3-java
