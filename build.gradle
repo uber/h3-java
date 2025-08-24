@@ -15,8 +15,7 @@ plugins {
     id 'signing'
     id 'jacoco'
     // id 'com.github.spotbugs' version '5.2.1'
-    // TODO: Requires Java 11
-    // id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '7.2.1'
     id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
     id 'com.vanniktech.maven.publish' version '0.34.0'
 }
@@ -52,7 +51,7 @@ ext {
     h3GitRemote = project.findProperty('h3GitRemote') ?: 'https://github.com/uber/h3.git'
     h3UseDocker = project.findProperty('h3UseDocker') ?: 'true'
     h3SystemPrune = project.findProperty('h3SystemPrune') ?: 'false'
-    h3DockcrossTag = project.findProperty('h3DockcrossTag') ?: '20240812-60fa1b0'
+    h3DockcrossTag = project.findProperty('h3DockcrossTag') ?: '20250818-0a27819'
     h3DockcrossOnly = project.findProperty('h3DockcrossOnly') ?: ''
     h3GithubArtifactsUse = project.findProperty('h3GithubArtifactsUse') ?: 'false'
     h3GithubArtifactsByRun = project.findProperty('h3GithubArtifactsByRun') ?: ''
@@ -91,11 +90,11 @@ test {
     // finalizedBy jacocoTestReport
 }
 
-// spotless {
-//     java {
-//         googleJavaFormat()
-//     }
-// }
+spotless {
+    java {
+        googleJavaFormat()
+    }
+}
 
 jacoco {
     toolVersion = '0.8.12'
