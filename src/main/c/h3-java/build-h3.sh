@@ -196,6 +196,12 @@ for image in $DOCKCROSS_IMAGES; do
     # Setup for using dockcross
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
+    # Handle dockcross images built for more than one host architecture
+    if [ $image -eq "linux-arm64" ]; then
+        CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG-amd64"
+    else
+        CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG"
+    fi
     docker pull dockcross/$image:$DOCKCROSS_TAG
     docker run --rm dockcross/$image:$DOCKCROSS_TAG > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
