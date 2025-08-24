@@ -202,8 +202,8 @@ for image in $DOCKCROSS_IMAGES; do
     else
         CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG"
     fi
-    docker pull dockcross/$image:$DOCKCROSS_TAG
-    docker run --rm dockcross/$image:$DOCKCROSS_TAG > $BUILD_ROOT/dockcross
+    docker pull dockcross/$image:$CURRENT_DOCKCROSS_TAG
+    docker run --rm dockcross/$image:$CURRENT_DOCKCROSS_TAG > $BUILD_ROOT/dockcross
     chmod +x $BUILD_ROOT/dockcross
 
     # Perform the actual build inside Docker
