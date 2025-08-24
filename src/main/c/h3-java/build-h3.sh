@@ -197,7 +197,7 @@ for image in $DOCKCROSS_IMAGES; do
     BUILD_ROOT=target/h3-java-build-$image
     mkdir -p $BUILD_ROOT
     # Handle dockcross images built for more than one host architecture
-    if [ $image -eq "linux-arm64" ]; then
+    if [ "$image" = "linux-arm64" ]; then
         CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG-amd64"
     else
         CURRENT_DOCKCROSS_TAG="$DOCKCROSS_TAG"
