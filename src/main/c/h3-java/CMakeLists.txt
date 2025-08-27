@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_C_STANDARD_REQUIRED 1)
 set(CMAKE_C_STANDARD 11)
@@ -66,6 +66,11 @@ set(H3_CORE_LIBRARY_PATH "/lib/libh3" CACHE STRING "Path to the built core libra
 mark_as_advanced(H3_CORE_LIBRARY_PATH)
 
 target_link_libraries(h3-java "${H3_BUILD_ROOT}/${H3_CORE_LIBRARY_PATH}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+option(H3_JAVA_ANDROID "Whether to enable Android specific build flags")
+if(H3_JAVA_ANDROID)
+    target_link_options(h3-java PRIVATE "-Wl,-z,max-page-size=16384")
+endif()
 
 find_library(M_LIB m)
 if(M_LIB)

@@ -15,8 +15,7 @@ plugins {
     id 'signing'
     id 'jacoco'
     // id 'com.github.spotbugs' version '5.2.1'
-    // TODO: Requires Java 11
-    // id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '7.2.1'
     id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
     id 'com.vanniktech.maven.publish' version '0.34.0'
 }
@@ -91,11 +90,11 @@ test {
     // finalizedBy jacocoTestReport
 }
 
-// spotless {
-//     java {
-//         googleJavaFormat()
-//     }
-// }
+spotless {
+    java {
+        googleJavaFormat()
+    }
+}
 
 jacoco {
     toolVersion = '0.8.12'
