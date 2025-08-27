@@ -5,10 +5,12 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
-## Unreleased Changes
+## [4.3.1] - 2025-08-27
 ### Changed
-- Reverted Ubuntu build to 22.04 for older glibc compatibility.
-- Upgraded dockcross version for Android 16kb support.
+- Upgraded build process for Android 16kb support. (#181)
+
+### Fixed
+- Fixed the build process crashing at the end of the release. (#181)
 
 ## [4.3.0] - 2025-08-21
 ### Added
