@@ -251,6 +251,18 @@ sourcesJar {
     dependsOn buildH3
 }
 
+
+
+// Android sources JAR
+task androidSourcesJar(type: Jar) {
+    archiveBaseName = 'h3-android'
+    archiveVersion = project.version
+    archiveClassifier = 'sources'
+    
+    from sourceSets.main.allSource
+}
+
+
 // Android-specific publishing configuration
 publishing {
     publications {
@@ -261,11 +273,12 @@ publishing {
             
             artifact androidAar
             artifact androidJar
+            artifact androidSourcesJar
             
             // Generate POM for Android
             pom {
-                name = 'h3-android'
-                description = 'Android bindings for H3, a hierarchical hexagonal geospatial indexing system.'
+                name = 'h3'
+                description = 'H3 library with Android support - hierarchical hexagonal geospatial indexing system.'
                 url = 'https://github.com/uber/h3-java'
                 
                 licenses {
@@ -303,25 +316,31 @@ publishing {
     }
 }
 
-// Android sources JAR
-task androidSourcesJar(type: Jar) {
-    archiveBaseName = 'h3-android'
-    archiveVersion = project.version
-    archiveClassifier = 'sources'
-    
-    from sourceSets.main.allSource
-}
-
-// Add sources JAR to Android publication
-publishing.publications.androidMaven.artifact androidSourcesJar
-
 // Convenience tasks
 task buildAndroid {
     dependsOn androidAar, androidJar, androidSourcesJar
     description = 'Build all Android artifacts'
+    group = 'build'
 }
 
 task publishAndroidLocal {
     dependsOn publishAndroidMavenPublicationToMavenLocal
     description = 'Publish Android artifacts to local repository'
+    group = 'publishing'
+    
+    doLast {
+        // Copy artifacts from com/uber/h3-android to com/uber/h3 to maintain naming but change path
+        def m2Repo = "${System.getProperty('user.home')}/.m2/repository"
+        def sourceDir = "${m2Repo}/com/uber/h3-android/${project.version}"
+        def targetDir = "${m2Repo}/com/uber/h3/${project.version}"
+        
+        if (file(sourceDir).exists()) {
+            copy {
+                from sourceDir
+                into targetDir
+                include "h3-android-${project.version}*.*"
+            }
+            println "Copied Android artifacts to com/uber/h3/${project.version}/"
+        }
+    }
 }

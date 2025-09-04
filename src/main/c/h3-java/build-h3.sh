@@ -179,7 +179,7 @@ if ! command -v docker; then
 fi
 
 # Needed for older versions of dockcross
-UPGRADE_CMAKE=true
+UPGRADE_CMAKE=false
 CMAKE_ROOT=target/cmake-3.23.2-linux-x86_64
 mkdir -p $CMAKE_ROOT
 
