@@ -299,10 +299,7 @@ publishing {
     }
     
     repositories {
-        maven {
-            name = 'local'
-            url = uri("${buildDir}/repo")
-        }
+        mavenLocal()
     }
 }
 
@@ -325,6 +322,6 @@ task buildAndroid {
 }
 
 task publishAndroidLocal {
-    dependsOn publishAndroidMavenPublicationToLocalRepository
+    dependsOn publishAndroidMavenPublicationToMavenLocal
     description = 'Publish Android artifacts to local repository'
 }
