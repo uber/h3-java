@@ -341,6 +341,10 @@ task publishAndroidLocal {
                 include "h3-android-${project.version}*.*"
             }
             println "Copied Android artifacts to com/uber/h3/${project.version}/"
+            
+            // Clean up the intermediate h3-android directory
+            delete "${m2Repo}/com/uber/h3-android"
+            println "Cleaned up intermediate h3-android directory"
         }
     }
 }
