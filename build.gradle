@@ -329,7 +329,7 @@ task publishAndroidLocal {
     group = 'publishing'
     
     doLast {
-        // Copy artifacts from com/uber/h3-android to com/uber/h3 to maintain naming but change path
+        // Copy artifacts from com/uber/h3-android to com/uber/h3 to maintain naming but change coordinates
         def m2Repo = "${System.getProperty('user.home')}/.m2/repository"
         def sourceDir = "${m2Repo}/com/uber/h3-android/${project.version}"
         def targetDir = "${m2Repo}/com/uber/h3/${project.version}"
@@ -338,7 +338,6 @@ task publishAndroidLocal {
             copy {
                 from sourceDir
                 into targetDir
-                include "h3-android-${project.version}*.*"
             }
             println "Copied Android artifacts to com/uber/h3/${project.version}/"
             
