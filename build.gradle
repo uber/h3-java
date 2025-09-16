@@ -272,7 +272,6 @@ publishing {
             version = project.version
             
             artifact androidAar
-            artifact androidJar
             artifact androidSourcesJar
             
             // Generate POM for Android
@@ -325,25 +324,15 @@ task buildAndroid {
 
 task publishAndroidLocal {
     dependsOn publishAndroidMavenPublicationToMavenLocal
-    description = 'Publish Android artifacts to local repository'
+    description = 'Publish Android artifacts to local repository in dedicated h3-android directory'
     group = 'publishing'
     
     doLast {
-        // Copy artifacts from com/uber/h3-android to com/uber/h3 to maintain naming but change coordinates
         def m2Repo = "${System.getProperty('user.home')}/.m2/repository"
-        def sourceDir = "${m2Repo}/com/uber/h3-android/${project.version}"
-        def targetDir = "${m2Repo}/com/uber/h3/${project.version}"
+        def androidDir = "${m2Repo}/com/uber/h3-android/${project.version}"
         
-        if (file(sourceDir).exists()) {
-            copy {
-                from sourceDir
-                into targetDir
-            }
-            println "Copied Android artifacts to com/uber/h3/${project.version}/"
-            
-            // Clean up the intermediate h3-android directory
-            delete "${m2Repo}/com/uber/h3-android"
-            println "Cleaned up intermediate h3-android directory"
+        if (file(androidDir).exists()) {
+            println "Published Android artifacts to com/uber/h3-android/${project.version}/"
         }
     }
 }
