@@ -187,10 +187,14 @@ task androidAar(type: Zip) {
     archiveVersion = project.version
     archiveExtension = 'aar'
     
-    from('src/main/resources') {
-        include 'android-arm/**'
-        include 'android-arm64/**'
-        into 'jni'
+    // Map android-arm to armeabi-v7a (32-bit ARM)
+    from('src/main/resources/android-arm') {
+        into 'jni/armeabi-v7a'
+    }
+    
+    // Map android-arm64 to arm64-v8a (64-bit ARM)
+    from('src/main/resources/android-arm64') {
+        into 'jni/arm64-v8a'
     }
     
     from(androidJar.outputs.files) {
