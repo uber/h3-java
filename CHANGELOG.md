@@ -5,7 +5,7 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
-## [4.3.2] - 2025-09-16
+## Unreleased Changes
 ### Changed
 - Added option to build and publish as an Android module into h3-android
 
