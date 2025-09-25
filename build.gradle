@@ -3,9 +3,11 @@ import com.vanniktech.maven.publish.JavadocJar
 
 buildscript {
     repositories {
+        google()
         mavenCentral()
         jcenter()
     }
+
 }
 
 plugins {
@@ -18,6 +20,7 @@ plugins {
     id 'com.diffplug.spotless' version '7.2.1'
     id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
     id 'com.vanniktech.maven.publish' version '0.34.0'
+
 }
 
 group = 'com.uber'
@@ -29,6 +32,7 @@ java {
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -81,6 +85,16 @@ task buildH3(type: Exec) {
     outputs.dir("${projectDir}/src/main/resources")
 }
 
+// Task to build H3 native code for Android only
+task buildH3Android(type: Exec) {
+    workingDir "${projectDir}"
+    commandLine './src/main/c/h3-java/build-h3.sh', h3GitRemote, h3GitReference, 'true',
+            h3SystemPrune, h3DockcrossTag, 'android-arm android-arm64',
+            h3GithubArtifactsUse, h3GithubArtifactsByRun
+    dependsOn compileJava
+    outputs.dir("${projectDir}/src/main/resources")
+}
+
 processResources {
     dependsOn buildH3
 }
@@ -111,6 +125,86 @@ jar {
     dependsOn buildH3
     from sourceSets.main.resources
     duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+// Android-specific configurations
+configurations {
+    androidCompile
+    androidRuntime
+}
+
+// Android compilation task - compiles Java without native build
+task compileAndroidJava(type: JavaCompile) {
+    source = sourceSets.main.java
+    classpath = sourceSets.main.compileClasspath
+    destinationDirectory = file("${buildDir}/android-classes")
+    options.compilerArgs += ['-h', "${projectDir}/src/main/c/h3-java/src"]
+}
+
+// Android JAR task - creates JAR with only Android native libraries
+task androidJar(type: Jar) {
+    dependsOn compileAndroidJava
+    archiveBaseName = 'h3-android'
+    archiveVersion = project.version
+    
+    from compileAndroidJava.destinationDirectory
+    from(sourceSets.main.resources) {
+        include 'android-arm/**'
+        include 'android-arm64/**'
+        include 'META-INF/**'
+    }
+    
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    
+    manifest {
+        attributes(
+            'Implementation-Title': 'H3 Android',
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'Uber Technologies, Inc.'
+        )
+    }
+}
+
+// Generate AndroidManifest.xml
+task generateAndroidManifest {
+    def manifestFile = file("${buildDir}/android/AndroidManifest.xml")
+    outputs.file manifestFile
+    
+    doLast {
+        manifestFile.parentFile.mkdirs()
+        manifestFile.text = '''<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.uber.h3core">
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="34" />
+</manifest>'''
+    }
+}
+
+// Android AAR task - creates AAR file
+task androidAar(type: Zip) {
+    dependsOn androidJar, generateAndroidManifest
+    archiveBaseName = 'h3-android'
+    archiveVersion = project.version
+    archiveExtension = 'aar'
+    
+    // Map android-arm to armeabi-v7a (32-bit ARM)
+    from('src/main/resources/android-arm') {
+        into 'jni/armeabi-v7a'
+    }
+    
+    // Map android-arm64 to arm64-v8a (64-bit ARM)
+    from('src/main/resources/android-arm64') {
+        into 'jni/arm64-v8a'
+    }
+    
+    from(androidJar.outputs.files) {
+        rename { 'classes.jar' }
+    }
+    
+    // Create AndroidManifest.xml for AAR
+    from(generateAndroidManifest.outputs.files) {
+        into '/'
+    }
 }
 
 mavenPublishing {
@@ -159,4 +253,90 @@ mavenPublishing {
 
 sourcesJar {
     dependsOn buildH3
+}
+
+
+
+// Android sources JAR
+task androidSourcesJar(type: Jar) {
+    archiveBaseName = 'h3-android'
+    archiveVersion = project.version
+    archiveClassifier = 'sources'
+    
+    from sourceSets.main.allSource
+}
+
+
+// Android-specific publishing configuration
+publishing {
+    publications {
+        androidMaven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'h3-android'
+            version = project.version
+            
+            artifact androidAar
+            artifact androidSourcesJar
+            
+            // Generate POM for Android
+            pom {
+                name = 'h3'
+                description = 'H3 library with Android support - hierarchical hexagonal geospatial indexing system.'
+                url = 'https://github.com/uber/h3-java'
+                
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                
+                organization {
+                    name = 'Uber Open Source'
+                    url = 'https://github.com/uber/'
+                }
+                
+                developers {
+                    developer {
+                        id = 'isaacbrodsky'
+                        name = 'Isaac Brodsky'
+                        email = 'isaac@isaacbrodsky.com'
+                    }
+                }
+                
+                scm {
+                    url = 'http://github.com/uber/h3-java/tree/master'
+                    connection = 'scm:git:git://github.com/uber/h3-java.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/uber/h3-java.git'
+                }
+            }
+        }
+    }
+    
+    repositories {
+        mavenLocal()
+    }
+}
+
+// Convenience tasks
+task buildAndroid {
+    dependsOn androidAar, androidJar, androidSourcesJar
+    description = 'Build all Android artifacts'
+    group = 'build'
+}
+
+task publishAndroidLocal {
+    dependsOn publishAndroidMavenPublicationToMavenLocal
+    description = 'Publish Android artifacts to local repository in dedicated h3-android directory'
+    group = 'publishing'
+    
+    doLast {
+        def m2Repo = "${System.getProperty('user.home')}/.m2/repository"
+        def androidDir = "${m2Repo}/com/uber/h3-android/${project.version}"
+        
+        if (file(androidDir).exists()) {
+            println "Published Android artifacts to com/uber/h3-android/${project.version}/"
+        }
+    }
 }
