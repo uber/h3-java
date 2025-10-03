@@ -124,7 +124,7 @@ jacocoTestReport {
 jar {
     dependsOn buildH3
     from sourceSets.main.resources
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // Android-specific configurations
@@ -154,7 +154,7 @@ task androidJar(type: Jar) {
         include 'META-INF/**'
     }
     
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
     manifest {
         attributes(

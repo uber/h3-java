@@ -7,7 +7,10 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 ### Changed
-- Added option to build and publish as an Android module into h3-android
+- Added option to build and publish as an Android module into h3-android. (#184)
+
+### Fixed
+- Removed duplicate native code resources from the built artifacts. (#186)
 
 ## [4.3.1] - 2025-08-27
 ### Changed
