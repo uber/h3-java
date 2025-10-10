@@ -73,6 +73,7 @@ compileJava {
 // Task to build H3 native code
 task buildH3(type: Exec) {
     workingDir "${projectDir}"
+    dependsOn compileJava
     if (System.getProperty('os.name').toLowerCase().contains('windows')) {
         commandLine 'powershell', '-ExecutionPolicy', 'Bypass', '-File',
                 './src/main/c/h3-java/build-h3-windows.ps1', h3GitRemote, h3GitReference
@@ -81,21 +82,22 @@ task buildH3(type: Exec) {
                 h3SystemPrune, h3DockcrossTag, h3DockcrossOnly,
                 h3GithubArtifactsUse, h3GithubArtifactsByRun
     }
-    dependsOn compileJava
     outputs.dir("${projectDir}/src/main/resources")
 }
 
 // Task to build H3 native code for Android only
 task buildH3Android(type: Exec) {
+    mustRunAfter buildH3
+    dependsOn compileJava
     workingDir "${projectDir}"
     commandLine './src/main/c/h3-java/build-h3.sh', h3GitRemote, h3GitReference, 'true',
             h3SystemPrune, h3DockcrossTag, 'android-arm android-arm64',
             h3GithubArtifactsUse, h3GithubArtifactsByRun
-    dependsOn compileJava
     outputs.dir("${projectDir}/src/main/resources")
 }
 
 processResources {
+    mustRunAfter buildH3Android
     dependsOn buildH3
 }
 
@@ -123,6 +125,7 @@ jacocoTestReport {
 
 jar {
     dependsOn buildH3
+    mustRunAfter buildH3Android
     from sourceSets.main.resources
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -143,7 +146,7 @@ task compileAndroidJava(type: JavaCompile) {
 
 // Android JAR task - creates JAR with only Android native libraries
 task androidJar(type: Jar) {
-    dependsOn compileAndroidJava
+    dependsOn compileAndroidJava, buildH3Android
     archiveBaseName = 'h3-android'
     archiveVersion = project.version
     
@@ -253,12 +256,15 @@ mavenPublishing {
 
 sourcesJar {
     dependsOn buildH3
+    mustRunAfter buildH3Android
 }
 
 
 
 // Android sources JAR
 task androidSourcesJar(type: Jar) {
+    dependsOn buildH3Android
+
     archiveBaseName = 'h3-android'
     archiveVersion = project.version
     archiveClassifier = 'sources'
