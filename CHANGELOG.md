@@ -5,7 +5,21 @@ The public API of this library consists of the public functions declared in
 file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
-## [4.3.0] - 2025-06-25
+## [4.3.2] - 2025-10-10
+### Changed
+- Added option to build and publish as an Android module into h3-android. (#184)
+
+### Fixed
+- Removed duplicate native code resources from the built artifacts. (#186)
+
+## [4.3.1] - 2025-08-27
+### Changed
+- Upgraded build process for Android 16kb support. (#181)
+
+### Fixed
+- Fixed the build process crashing at the end of the release. (#181)
+
+## [4.3.0] - 2025-08-21
 ### Added
 - `polygonToCellsExperimental` functions from H3 v4.2.0. (#163)
 - `gridRing` function from H3 v4.3.0. (#169)

@@ -2,7 +2,7 @@
 
 The H3-Java library is published to Maven Central via OSSRH.
 
-Before releasing, make sure the version of the project is in the form `1.2.3-SNAPSHOT` where `1.2.3` is the version you wish to release. The release is triggered via GitHub Actions, when a tag of the form `v1.2.3` is pushed. (Workflow dispatch can be used but is not tested.)
+Before releasing, make sure the version of the project is in the form `1.2.3` (no `-SNAPSHOT`) where `1.2.3` is the version you wish to release. The release is triggered via GitHub Actions, when a tag of the form `v1.2.3` is pushed. (Workflow dispatch can be used but is not tested.)
 
 ## Old instructions for manual releasing
 
