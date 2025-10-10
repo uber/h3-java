@@ -125,6 +125,7 @@ jacocoTestReport {
 
 jar {
     dependsOn buildH3
+    mustRunAfter buildH3Android
     from sourceSets.main.resources
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -255,6 +256,7 @@ mavenPublishing {
 
 sourcesJar {
     dependsOn buildH3
+    mustRunAfter buildH3Android
 }
 
 
