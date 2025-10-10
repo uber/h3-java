@@ -18,14 +18,14 @@ Add it to your pom.xml:
 <dependency>
     <groupId>io.github.isaacbrodsky</groupId>
     <artifactId>h3</artifactId>
-    <version>4.3.0</version>
+    <version>4.3.2</version>
 </dependency>
 ```
 
 Or, using Gradle:
 
 ```gradle
-compile("io.github.isaacbrodsky:h3:4.3.0")
+compile("io.github.isaacbrodsky:h3:4.3.2")
 ```
 
 Encode a location into a hexagon address:

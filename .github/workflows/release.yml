@@ -20,9 +20,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [11]
         dockcross-only:
           [
             "android-arm",
@@ -85,7 +85,7 @@ jobs:
       matrix:
         os: [macos-latest]
         java-distribution: [adopt]
-        java-version: [8]
+        java-version: [11]
 
     steps:
       - uses: actions/checkout@v4
@@ -122,7 +122,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write # allow pushing commits/tags
 
@@ -193,13 +193,13 @@ jobs:
 
       - name: Publish to Sonatype OSSRH (Maven Central)
         env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
+          # OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
+        run: ./gradlew publishAndReleaseToMavenCentral -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
 
       - name: Create GitHub Release (with changelog notes)
         # This uses an action to create a release on GitHub
@@ -211,14 +211,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Bump to next snapshot version
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        run: |
-          # Bump minor version (for example) and append -SNAPSHOT for continued development
-          NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. -v OFS="." '{$NF += 1; print $0}')  # increment last segment
-          NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
-          sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" gradle.properties || true
-          git config user.name "github-actions"
-          git config user.email "[email protected]"
-          git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
-          git push origin HEAD:master
+      # This doesn't work because we don't permit pushes directly to main.
+      # - name: Bump to next snapshot version
+      #   if: ${{ github.event_name != 'workflow_dispatch' }}
+      #   run: |
+      #     # Bump minor version (for example) and append -SNAPSHOT for continued development
+      #     NEXT_VERSION=$(echo $RELEASE_VERSION | awk -F. -v OFS="." '{$NF += 1; print $0}')  # increment last segment
+      #     NEXT_VERSION="$NEXT_VERSION-SNAPSHOT"
+      #     sed -i -E "s/$RELEASE_VERSION/$NEXT_VERSION/" gradle.properties || true
+      #     git config user.name "github-actions"
+      #     git config user.email "[email protected]"
+      #     git commit -am "chore: start next development cycle $NEXT_VERSION [skip ci]"
+      #     git push origin HEAD:master
+

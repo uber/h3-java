@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# Arguments: [build-root] [upgrade-cmake]
+# Arguments: [build-root] [upgrade-cmake] [cmake-root] [cmake-additional]
 # build-root       - Location to build the library.
 # upgrade-cmake    - Whether to download and install a new version of CMake
 # cmake-root       - Where to download and install the new version of CMake
