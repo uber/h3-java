@@ -37,8 +37,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.openjdk.jmh:jmh-core:1.19'
-    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
     testImplementation 'com.google.guava:guava:33.3.1-jre'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.2'
@@ -97,6 +97,26 @@ task buildH3Android(type: Exec) {
 
 processResources {
     dependsOn buildH3
+}
+
+def benchmarkClasses = [
+    'benchmarkH3Core': 'H3CoreBenchmark',
+    'benchmarkGridDisk': 'GridDiskBenchmark',
+    'benchmarkH3ParentChild': 'H3ParentChildBenchmark',
+    'benchmarkCellsToMultipolygon': 'CellsToMultiPolygonBenchmark',
+    'benchmarkPolygonToCells': 'PolygonToCellsBenchmark'
+]
+
+benchmarkClasses.each { taskName, className ->
+    tasks.register(taskName, JavaExec) {
+        dependsOn processResources
+        mainClass = "com.uber.h3core.benchmarking.${className}"
+        classpath = sourceSets.test.runtimeClasspath
+    }
+}
+
+task benchmark {
+    dependsOn benchmarkClasses.keySet()
 }
 
 test {
