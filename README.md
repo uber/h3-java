@@ -90,13 +90,10 @@ Then open the file `build/docs/javadoc/index.html`.
 
 ## Benchmarking
 
-To run benchmarks, either execute them from IntelliJ or run the following from shell: (Replace the class name as needed)
-
-> [!TIP]  
-> These instructions need to be updated for Gradle.
+To run benchmarks, either execute them from IntelliJ or run the following from shell:
 
 ```sh
-mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.uber.h3core.benchmarking.H3CoreBenchmark" -Dexec.classpathScope="test"
+./gradlew benchmark -Ph3UseDocker=false
 ```
 
 ## Contributing
