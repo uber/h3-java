@@ -68,6 +68,14 @@ public class H3Exception extends RuntimeException {
         return "Bounds of provided memory were insufficient";
       case 15:
         return "Mode or flags argument was not valid";
+      case 16:
+        return "Index argument was not valid";
+      case 17:
+        return "Base cell number was outside of acceptable range";
+      case 18:
+        return "Child indexing digits invalid";
+      case 19:
+        return "Child indexing digits refer to a deleted subsequence";
       default:
         return "Unknown error";
     }

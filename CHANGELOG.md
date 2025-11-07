@@ -6,8 +6,12 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
+### Added
+- `constructCell`, `isValidIndex`, and `getIndexDigit` functions.
+
 ### Changed
 - Restored benchmark target to the build script. (#188)
+- Upgraded the core library to v4.4.0
 
 ## [4.3.2] - 2025-10-10
 ### Changed

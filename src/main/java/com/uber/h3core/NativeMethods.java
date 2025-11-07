@@ -34,7 +34,11 @@ final class NativeMethods {
 
   native long cellToCenterChild(long h3, int childRes);
 
+  native long constructCell(int res, int baseCell, int[] digits);
+
   native boolean isValidCell(long h3);
+
+  native boolean isValidIndex(long h3);
 
   native int getBaseCellNumber(long h3);
 

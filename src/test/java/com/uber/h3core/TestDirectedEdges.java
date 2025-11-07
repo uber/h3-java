@@ -43,6 +43,8 @@ class TestDirectedEdges extends BaseTestH3Core {
 
     assertTrue(h3.isValidDirectedEdge(edge));
     assertFalse(h3.isValidDirectedEdge(start));
+    assertTrue(h3.isValidIndex(edge));
+    assertFalse(h3.isValidCell(edge));
 
     assertEquals(start, h3.getDirectedEdgeOrigin(edge));
     assertEquals(adjacent, h3.getDirectedEdgeDestination(edge));

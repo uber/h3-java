@@ -18,6 +18,10 @@ package com.uber.h3core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import com.google.common.collect.ImmutableList;
+import com.uber.h3core.exceptions.H3Exception;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +31,7 @@ import org.junit.jupiter.api.Test;
 /** Tests for index inspection and description functions. */
 class TestInspection extends BaseTestH3Core {
   @Test
-  void h3IsValid() {
+  void h3IsValidCell() {
     assertTrue(h3.isValidCell(22758474429497343L | (1L << 59L)));
     assertFalse(h3.isValidCell(-1L));
     assertTrue(h3.isValidCell("8f28308280f18f2"));
@@ -36,6 +40,33 @@ class TestInspection extends BaseTestH3Core {
 
     assertFalse(h3.isValidCell(0x8f28308280f18f2L | (1L << 63L)));
     assertFalse(h3.isValidCell(0x8f28308280f18f2L | (1L << 58L)));
+  }
+
+  @Test
+  void h3IsValidIndex() {
+    assertTrue(h3.isValidIndex(22758474429497343L | (1L << 59L)));
+    assertFalse(h3.isValidIndex(-1L));
+    assertTrue(h3.isValidIndex("8f28308280f18f2"));
+    assertTrue(h3.isValidIndex("8F28308280F18F2"));
+    assertTrue(h3.isValidIndex("08f28308280f18f2"));
+
+    assertFalse(h3.isValidIndex(0x8f28308280f18f2L | (1L << 63L)));
+    assertFalse(h3.isValidIndex(0x8f28308280f18f2L | (1L << 58L)));
+  }
+
+  @Test
+  void constructCell() {
+    h3.constructCellAddress(0, 0, ImmutableList.of());
+    h3.constructCell(0, 0, ImmutableList.of());
+  }
+
+  @Test
+  void constructCellErrors() {
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Invalid index
+            h3.constructCell(1, 4, ImmutableList.of(1)));
   }
 
   @Test
