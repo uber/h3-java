@@ -124,7 +124,7 @@ public class H3Core {
   }
 
   /** Construct a cell index from component parts */
-  public long constructCell(int res, int baseCell, List<Integer> digits) {
+  public long constructCell(int res, int baseCellNumber, List<Integer> digits) {
     int[] digitsArray = digits.stream().mapToInt(Integer::intValue).toArray();
     if (digitsArray.length < res) {
       throw new IllegalArgumentException(
@@ -138,12 +138,12 @@ public class H3Core {
               "Additional unused digits provided, must be at most 15 but was %d",
               digitsArray.length));
     }
-    return h3Api.constructCell(res, baseCell, digitsArray);
+    return h3Api.constructCell(res, baseCellNumber, digitsArray);
   }
 
   /** Construct a cell index from component parts */
-  public String constructCellAddress(int res, int baseCell, List<Integer> digits) {
-    return h3ToString(constructCell(res, baseCell, digits));
+  public String constructCellAddress(int res, int baseCellNumber, List<Integer> digits) {
+    return h3ToString(constructCell(res, baseCellNumber, digits));
   }
 
   /** Returns the base cell number for this index. */
