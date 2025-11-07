@@ -126,9 +126,12 @@ public class H3Core {
   /** Construct a cell index from component parts */
   public long constructCell(int res, int baseCell, List<Integer> digits) {
     int[] digitsArray = digits.stream().mapToInt(Integer::intValue).toArray();
-      if (digitsArray.length < res) {
-        throw new IllegalArgumentException(String.format("Number of provided digits is too few, must be at least %d, was %d", res - 1, digitsArray.length));
-      }
+    if (digitsArray.length < res) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Number of provided digits is too few, must be at least %d, was %d",
+              res - 1, digitsArray.length));
+    }
     return h3Api.constructCell(res, baseCell, digitsArray);
   }
 
@@ -756,7 +759,8 @@ public class H3Core {
     return (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
   }
 
-  /** Returns the indexing digit of the index at `res`
+  /**
+   * Returns the indexing digit of the index at `res`
    *
    * @param h3 H3 index.
    * @param res Resolution of the digit, <code>1 &lt;= res &lt;= 15</code>
@@ -766,7 +770,8 @@ public class H3Core {
     return getIndexDigit(stringToH3(h3Address), res);
   }
 
-  /** Returns the indexing digit of the index at `res`
+  /**
+   * Returns the indexing digit of the index at `res`
    *
    * @param h3 H3 index.
    * @param res Resolution of the digit, <code>1 &lt;= res &lt;= 15</code>
