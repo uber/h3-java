@@ -221,25 +221,26 @@ void DestroyGeoPolygon(JNIEnv *env, jdoubleArray verts,
 /*
  * Class:     com_uber_h3core_NativeMethods
  * Method:    constructCell
- * Signature: (II[I)Z
+ * Signature: (II[I)J
  */
 JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_constructCell(
     JNIEnv *env, jobject thiz, jint res, jint baseCell, jintArray digits) {
+    H3Index result = 0;
     jint *digitsElements = (**env).GetIntArrayElements(env, digits, 0);
 
     if (digitsElements != NULL) {
         // if sz is too small, bad things will happen
-        H3Index result;
+        // TODO: Confirm jint == int on the current platform
         H3Error err = constructCell(res, baseCell, digitsElements, &result);
 
         (**env).ReleaseIntArrayElements(env, digits, digitsElements, 0);
         if (err) {
             ThrowH3Exception(env, err);
         }
-        return results;
     } else {
         ThrowOutOfMemoryError(env);
     }
+    return result;
 }
 
 /*

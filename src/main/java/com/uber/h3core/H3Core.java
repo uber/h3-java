@@ -132,6 +132,12 @@ public class H3Core {
               "Number of provided digits is too few, must be at least %d, was %d",
               res - 1, digitsArray.length));
     }
+    if (digitsArray.length > 15) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Additional unused digits provided, must be at most 15 but was %d",
+              digitsArray.length));
+    }
     return h3Api.constructCell(res, baseCell, digitsArray);
   }
 
@@ -782,7 +788,7 @@ public class H3Core {
       throw new IllegalArgumentException(
           String.format("resolution %d is out of range (must be 1 <= res <= 15)", res));
     }
-    return (int) ((h3 >> (res * 3)) & 7);
+    return (int) ((h3 >> ((15 - res) * 3)) & 7);
   }
 
   /**
