@@ -120,6 +120,140 @@ class TestRegion extends BaseTestH3Core {
   }
 
   @Test
+  void polyfillExperimentalAddressesCenter() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            null,
+            9,
+            PolygonToCellsFlags.containment_center);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalAddressesFull() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            null,
+            9,
+            PolygonToCellsFlags.containment_full);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalAddressesOverlapping() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            null,
+            9,
+            PolygonToCellsFlags.containment_overlapping);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalAddressesOverlappingBbox() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            null,
+            9,
+            PolygonToCellsFlags.containment_overlapping_bbox);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalAddresses() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            null,
+            9,
+            PolygonToCellsFlags.containment_center);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalWithHole() {
+    List<Long> hexagons =
+        h3.polygonToCellsExperimental(
+            ImmutableList.<LatLng>of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            ImmutableList.<List<LatLng>>of(
+                ImmutableList.<LatLng>of(
+                    new LatLng(37.7869802, -122.4471197),
+                    new LatLng(37.7664102, -122.4590777),
+                    new LatLng(37.7710682, -122.4137097))),
+            9,
+            PolygonToCellsFlags.containment_center);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
+  void polyfillExperimentalAddressesWithHole() {
+    List<String> hexagons =
+        h3.polygonToCellAddressesExperimental(
+            ImmutableList.<LatLng>of(
+                new LatLng(37.813318999983238, -122.4089866999972145),
+                new LatLng(37.7866302000007224, -122.3805436999997056),
+                new LatLng(37.7198061999978478, -122.3544736999993603),
+                new LatLng(37.7076131999975672, -122.5123436999983966),
+                new LatLng(37.7835871999971715, -122.5247187000021967),
+                new LatLng(37.8151571999998453, -122.4798767000009008)),
+            ImmutableList.<List<LatLng>>of(
+                ImmutableList.<LatLng>of(
+                    new LatLng(37.7869802, -122.4471197),
+                    new LatLng(37.7664102, -122.4590777),
+                    new LatLng(37.7710682, -122.4137097))),
+            9,
+            PolygonToCellsFlags.containment_center);
+
+    assertTrue(hexagons.size() > 1000);
+  }
+
+  @Test
   void polyfill() {
     List<Long> hexagons =
         h3.polygonToCells(
