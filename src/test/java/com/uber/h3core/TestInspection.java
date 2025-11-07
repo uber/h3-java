@@ -109,8 +109,12 @@ class TestInspection extends BaseTestH3Core {
     assertEquals(
         h3.constructCell(15, 100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
         0x8fc8539714e5c53L);
-    // Too many digits -- ignored
-    h3.constructCell(15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Too many digits
+            h3.constructCell(
+                15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
   }
 
   @Test
@@ -148,8 +152,12 @@ class TestInspection extends BaseTestH3Core {
         h3.constructCellAddress(
             15, 100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
         "8fc8539714e5c53");
-    // Too many digits -- ignored
-    h3.constructCellAddress(15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Too many digits
+            h3.constructCellAddress(
+                15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
   }
 
   @Test
