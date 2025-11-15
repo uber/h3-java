@@ -124,13 +124,13 @@ public class H3Core {
   }
 
   /** Construct a cell index from component parts */
-  public long constructCell(int res, int baseCellNumber, List<Integer> digits) {
+  public long constructCell(int baseCellNumber, List<Integer> digits, int res) {
     int[] digitsArray = digits.stream().mapToInt(Integer::intValue).toArray();
-    if (digitsArray.length < res) {
+    if (digitsArray.length != res) {
       throw new IllegalArgumentException(
           String.format(
-              "Number of provided digits is too few, must be at least %d, was %d",
-              res - 1, digitsArray.length));
+              "Number of provided digits is incorrect, must be %d, was %d",
+              res, digitsArray.length));
     }
     if (digitsArray.length > 15) {
       throw new IllegalArgumentException(
@@ -142,8 +142,18 @@ public class H3Core {
   }
 
   /** Construct a cell index from component parts */
-  public String constructCellAddress(int res, int baseCellNumber, List<Integer> digits) {
-    return h3ToString(constructCell(res, baseCellNumber, digits));
+  public long constructCell(int baseCellNumber, List<Integer> digits) {
+    return constructCell(baseCellNumber, digits, digits.size());
+  }
+
+  /** Construct a cell index from component parts */
+  public String constructCellAddress(int baseCellNumber, List<Integer> digits) {
+    return h3ToString(constructCell(baseCellNumber, digits, digits.size()));
+  }
+
+  /** Construct a cell index from component parts */
+  public String constructCellAddress(int baseCellNumber, List<Integer> digits, int res) {
+    return h3ToString(constructCell(baseCellNumber, digits, res));
   }
 
   /** Returns the base cell number for this index. */

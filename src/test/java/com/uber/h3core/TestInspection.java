@@ -77,96 +77,135 @@ class TestInspection extends BaseTestH3Core {
 
   @Test
   void constructCell() {
-    assertEquals(h3.constructCell(0, 0, ImmutableList.of()), 576495936675512319L);
+    assertEquals(h3.constructCell(0, ImmutableList.of()), 576495936675512319L);
+    assertEquals(h3.constructCell(0, ImmutableList.of(), 0), 576495936675512319L);
     assertThrows(
-        H3Exception.class,
+        IllegalArgumentException.class,
         () ->
             // Invalid res
-            h3.constructCell(-1, 0, ImmutableList.of()));
+            h3.constructCell(0, ImmutableList.of(), -1));
     assertThrows(
         H3Exception.class,
         () ->
             // Invalid base cell
-            h3.constructCell(0, -1, ImmutableList.of()));
+            h3.constructCell(-1, ImmutableList.of()));
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Invalid base cell
+            h3.constructCell(-1, ImmutableList.of(), 0));
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Invalid digit list
-            h3.constructCell(1, 5, ImmutableList.of()));
-    // Invalid digit list -- ignored
-    h3.constructCell(1, 5, ImmutableList.of(1, 2));
-    assertEquals(h3.constructCell(1, 5, ImmutableList.of(1)), 581149069884260351L);
+            h3.constructCell(5, ImmutableList.of(), 1));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Invalid digit list
+            h3.constructCell(5, ImmutableList.of(1, 2), 1));
+    assertEquals(h3.constructCell(5, ImmutableList.of(1)), 581149069884260351L);
+    assertEquals(h3.constructCell(5, ImmutableList.of(1), 1), 581149069884260351L);
     assertThrows(
         H3Exception.class,
         () ->
             // Deleted subsequence
-            h3.constructCell(1, 4, ImmutableList.of(1)));
+            h3.constructCell(4, ImmutableList.of(1)));
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Deleted subsequence
+            h3.constructCell(4, ImmutableList.of(1), 1));
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Too few digits
-            h3.constructCell(7, 20, ImmutableList.of(1, 2, 3, 4, 5, 6)));
+            h3.constructCell(20, ImmutableList.of(1, 2, 3, 4, 5, 6), 7));
     assertEquals(
-        h3.constructCell(15, 100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
+        h3.constructCell(100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
+        0x8fc8539714e5c53L);
+    assertEquals(
+        h3.constructCell(100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3), 15),
         0x8fc8539714e5c53L);
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Too many digits
             h3.constructCell(
-                15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
+                20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Too many digits
+            h3.constructCell(
+                20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0), 15));
   }
 
   @Test
   void constructCellAddress() {
-    assertEquals(h3.constructCellAddress(0, 0, ImmutableList.of()), "8001fffffffffff");
+    assertEquals(h3.constructCellAddress(0, ImmutableList.of()), "8001fffffffffff");
+    assertEquals(h3.constructCellAddress(0, ImmutableList.of(), 0), "8001fffffffffff");
     assertThrows(
-        H3Exception.class,
+        IllegalArgumentException.class,
         () ->
             // Invalid res
-            h3.constructCellAddress(-1, 0, ImmutableList.of()));
+            h3.constructCellAddress(0, ImmutableList.of(), -1));
     assertThrows(
         H3Exception.class,
         () ->
             // Invalid base cell
-            h3.constructCellAddress(0, -1, ImmutableList.of()));
+            h3.constructCellAddress(-1, ImmutableList.of()));
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Invalid base cell
+            h3.constructCellAddress(-1, ImmutableList.of(), 0));
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Invalid digit list
-            h3.constructCellAddress(1, 5, ImmutableList.of()));
-    // Invalid digit list -- ignored
-    h3.constructCellAddress(1, 5, ImmutableList.of(1, 2));
-    assertEquals(h3.constructCellAddress(1, 5, ImmutableList.of(1)), "810a7ffffffffff");
+            h3.constructCellAddress(5, ImmutableList.of(), 1));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            // Invalid digit list
+            h3.constructCellAddress(5, ImmutableList.of(1, 2), 1));
+    assertEquals(h3.constructCellAddress(5, ImmutableList.of(1)), "810a7ffffffffff");
+    assertEquals(h3.constructCellAddress(5, ImmutableList.of(1), 1), "810a7ffffffffff");
     assertThrows(
         H3Exception.class,
         () ->
             // Deleted subsequence
-            h3.constructCellAddress(1, 4, ImmutableList.of(1)));
+            h3.constructCellAddress(4, ImmutableList.of(1)));
+    assertThrows(
+        H3Exception.class,
+        () ->
+            // Deleted subsequence
+            h3.constructCellAddress(4, ImmutableList.of(1), 1));
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Too few digits
-            h3.constructCellAddress(7, 20, ImmutableList.of(1, 2, 3, 4, 5, 6)));
+            h3.constructCellAddress(20, ImmutableList.of(1, 2, 3, 4, 5, 6), 7));
+    assertEquals(
+        h3.constructCellAddress(100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
+        "8fc8539714e5c53");
     assertEquals(
         h3.constructCellAddress(
-            15, 100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3)),
+            100, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3), 15),
         "8fc8539714e5c53");
     assertThrows(
         IllegalArgumentException.class,
         () ->
             // Too many digits
             h3.constructCellAddress(
-                15, 20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
-  }
-
-  @Test
-  void constructCellErrors() {
+                20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0)));
     assertThrows(
-        H3Exception.class,
+        IllegalArgumentException.class,
         () ->
-            // Invalid index
-            h3.constructCell(1, 4, ImmutableList.of(1)));
+            // Too many digits
+            h3.constructCellAddress(
+                20, ImmutableList.of(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 0, 0, 0), 15));
   }
 
   @Test
