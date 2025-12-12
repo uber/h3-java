@@ -103,14 +103,57 @@ public class H3Core {
     this.h3Api = h3Api;
   }
 
-  /** Returns true if this is a valid H3 index. */
+  /** Returns true if this is a valid H3 cell index. */
   public boolean isValidCell(long h3) {
     return h3Api.isValidCell(h3);
   }
 
-  /** Returns true if this is a valid H3 index. */
+  /** Returns true if this is a valid H3 cell index. */
   public boolean isValidCell(String h3Address) {
     return isValidCell(stringToH3(h3Address));
+  }
+
+  /** Returns true if this is a valid H3 index. */
+  public boolean isValidIndex(long h3) {
+    return h3Api.isValidIndex(h3);
+  }
+
+  /** Returns true if this is a valid H3 index. */
+  public boolean isValidIndex(String h3Address) {
+    return isValidIndex(stringToH3(h3Address));
+  }
+
+  /** Construct a cell index from component parts */
+  public long constructCell(int baseCellNumber, List<Integer> digits, int res) {
+    int[] digitsArray = digits.stream().mapToInt(Integer::intValue).toArray();
+    if (digitsArray.length != res) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Number of provided digits is incorrect, must be %d, was %d",
+              res, digitsArray.length));
+    }
+    if (digitsArray.length > 15) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Additional unused digits provided, must be at most 15 but was %d",
+              digitsArray.length));
+    }
+    return h3Api.constructCell(res, baseCellNumber, digitsArray);
+  }
+
+  /** Construct a cell index from component parts */
+  public long constructCell(int baseCellNumber, List<Integer> digits) {
+    return constructCell(baseCellNumber, digits, digits.size());
+  }
+
+  /** Construct a cell index from component parts */
+  public String constructCellAddress(int baseCellNumber, List<Integer> digits) {
+    return h3ToString(constructCell(baseCellNumber, digits, digits.size()));
+  }
+
+  /** Construct a cell index from component parts */
+  public String constructCellAddress(int baseCellNumber, List<Integer> digits, int res) {
+    return h3ToString(constructCell(baseCellNumber, digits, res));
   }
 
   /** Returns the base cell number for this index. */
@@ -727,9 +770,35 @@ public class H3Core {
     return getResolution(stringToH3(h3Address));
   }
 
-  /** Returns the resolution of the provided index */
+  /** Returns the resolution of the provided index. */
   public int getResolution(long h3) {
     return (int) ((h3 & H3_RES_MASK) >> H3_RES_OFFSET);
+  }
+
+  /**
+   * Returns the indexing digit of the index at `res`
+   *
+   * @param h3 H3 index.
+   * @param res Resolution of the digit, <code>1 &lt;= res &lt;= 15</code>
+   * @throws IllegalArgumentException <code>res</code> is not between 0 and 15, inclusive.
+   */
+  public int getIndexDigit(String h3Address, int res) {
+    return getIndexDigit(stringToH3(h3Address), res);
+  }
+
+  /**
+   * Returns the indexing digit of the index at `res`
+   *
+   * @param h3 H3 index.
+   * @param res Resolution of the digit, <code>1 &lt;= res &lt;= 15</code>
+   * @throws IllegalArgumentException <code>res</code> is not between 0 and 15, inclusive.
+   */
+  public int getIndexDigit(long h3, int res) {
+    if (res < 1 || res > 15) {
+      throw new IllegalArgumentException(
+          String.format("resolution %d is out of range (must be 1 <= res <= 15)", res));
+    }
+    return (int) ((h3 >> ((15 - res) * 3)) & 7);
   }
 
   /**

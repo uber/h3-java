@@ -26,7 +26,7 @@ class TestH3Exception {
   @Test
   void test() {
     Set<String> messages = new HashSet<>();
-    int maxErrorCode = 16;
+    int maxErrorCode = 20;
     for (int i = 0; i < maxErrorCode + 10; i++) {
       H3Exception e = new H3Exception(i);
       messages.add(e.getMessage());

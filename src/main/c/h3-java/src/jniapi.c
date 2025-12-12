@@ -220,12 +220,49 @@ void DestroyGeoPolygon(JNIEnv *env, jdoubleArray verts,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    constructCell
+ * Signature: (II[I)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_constructCell(
+    JNIEnv *env, jobject thiz, jint res, jint baseCell, jintArray digits) {
+    H3Index result = 0;
+    jint *digitsElements = (**env).GetIntArrayElements(env, digits, 0);
+
+    if (digitsElements != NULL) {
+        // if sz is too small, bad things will happen
+        // note: We assume int can at least contain `jint` on the current
+        // platform. This may not be true if sizeof(int) < 32, but we don't
+        // support any platforms where this would be the case.
+        H3Error err = constructCell(res, baseCell, digitsElements, &result);
+
+        (**env).ReleaseIntArrayElements(env, digits, digitsElements, 0);
+        if (err) {
+            ThrowH3Exception(env, err);
+        }
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+    return result;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    isValidCell
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidCell(
     JNIEnv *env, jobject thiz, jlong h3) {
     return isValidCell(h3);
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
+ * Method:    isValidIndex
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidIndex(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    return isValidIndex(h3);
 }
 
 /*
