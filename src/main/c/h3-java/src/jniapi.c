@@ -230,7 +230,9 @@ JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_constructCell(
 
     if (digitsElements != NULL) {
         // if sz is too small, bad things will happen
-        // TODO: Confirm jint == int on the current platform
+        // note: We assume int can at least contain `jint` on the current platform.
+        // This may not be true if sizeof(int) < 32, but we don't support any platforms
+        // where this would be the case.
         H3Error err = constructCell(res, baseCell, digitsElements, &result);
 
         (**env).ReleaseIntArrayElements(env, digits, digitsElements, 0);
