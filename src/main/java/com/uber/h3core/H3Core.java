@@ -778,7 +778,7 @@ public class H3Core {
   /**
    * Returns the indexing digit of the index at `res`
    *
-   * @param h3 H3 index.
+   * @param h3 H3 index. TODO
    * @param res Resolution of the digit, <code>1 &lt;= res &lt;= 15</code>
    * @throws IllegalArgumentException <code>res</code> is not between 0 and 15, inclusive.
    */
