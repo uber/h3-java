@@ -190,7 +190,7 @@ jobs:
 
       - name: Coverage report
         run: |
-          ./gradlew clean test jacocoTestReport coverallsJacoc javadoc -Ph3UseDocker=false -Ph3TestSystem=true -Ph3AdditionalArgLine="-Djava.library.path=./src/main/resources/linux-x64/"
+          ./gradlew clean test jacocoTestReport coverallsJacoco javadoc -Ph3UseDocker=false -Ph3TestSystem=true -Ph3AdditionalArgLine="-Djava.library.path=./src/main/resources/linux-x64/"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
