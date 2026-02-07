@@ -39,11 +39,11 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v5
         with:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
@@ -52,7 +52,7 @@ jobs:
         with:
           gradle-version: wrapper
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: gradle-cache
         with:
           path: |
@@ -67,7 +67,7 @@ jobs:
         env:
           OCI_EXE: docker
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         name: Upload artifacts
         with:
           name: docker-built-shared-objects-${{ matrix.dockcross-only }}
@@ -88,11 +88,11 @@ jobs:
         java-version: [11]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v5
         with:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
@@ -101,7 +101,7 @@ jobs:
         with:
           gradle-version: wrapper
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: gradle-cache
         with:
           path: |
@@ -114,7 +114,7 @@ jobs:
       - name: Tests
         run: ./gradlew clean test
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         name: Upload Mac OS Artifacts
         with:
           name: macos-built-shared-objects
@@ -132,10 +132,10 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "21"
@@ -167,14 +167,14 @@ jobs:
           git push origin HEAD:master --follow-tags
 
       - name: Download Docker binaries
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v7.0.0
         with:
           pattern: docker-built-shared-objects-*
           merge-multiple: true
           path: src/main/resources/
 
       - name: Download Mac binaries
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v7.0.0
         with:
           name: macos-built-shared-objects
           path: src/main/resources/
