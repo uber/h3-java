@@ -31,7 +31,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
@@ -88,7 +88,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
@@ -129,7 +129,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
@@ -174,7 +174,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
@@ -217,7 +217,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
@@ -273,7 +273,7 @@ jobs:
           distribution: "${{ matrix.java-distribution }}"
           java-version: "${{ matrix.java-version }}"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: wrapper
 
