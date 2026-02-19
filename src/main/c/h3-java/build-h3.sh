@@ -129,12 +129,12 @@ esac
 mkdir -p src/main/resources/$LIBRARY_DIR
 cp target/h3-java-build/lib/libh3-java* src/main/resources/$LIBRARY_DIR
 
-# Cross compile from Mac x64 to Mac arm64
-if [ "$(uname -sm)" == "Darwin x86_64" ]; then
+# Cross compile from Mac arm64 to Mac x64
+if [ "$(uname -sm)" == "Darwin arm64" ]; then
     pushd target
 
-    mkdir -p h3-java-build-mac-arm64
-    pushd h3-java-build-mac-arm64
+    mkdir -p h3-java-build-mac-x64
+    pushd h3-java-build-mac-x64
 
     mkdir -p build
     pushd build
@@ -142,7 +142,7 @@ if [ "$(uname -sm)" == "Darwin x86_64" ]; then
     cmake -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_OSX_ARCHITECTURES="arm64" \
+        -DCMAKE_OSX_ARCHITECTURES="x86_64" \
         ../../h3
     cmake --build . --target h3 --config Release
     H3_BUILD_ROOT="$(pwd)"
@@ -153,7 +153,7 @@ if [ "$(uname -sm)" == "Darwin x86_64" ]; then
         -DBUILD_SHARED_LIBS=ON \
         "-DH3_BUILD_ROOT=$H3_BUILD_ROOT" \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_OSX_ARCHITECTURES="arm64" \
+        -DCMAKE_OSX_ARCHITECTURES="x86_64" \
         ../../src/main/c/h3-java
     cmake --build . --target h3-java --config Release
 
@@ -161,8 +161,8 @@ if [ "$(uname -sm)" == "Darwin x86_64" ]; then
 
     popd # target
 
-    mkdir -p src/main/resources/darwin-arm64
-    cp target/h3-java-build-mac-arm64/lib/libh3-java* src/main/resources/darwin-arm64
+    mkdir -p src/main/resources/darwin-x64
+    cp target/h3-java-build-mac-x64/lib/libh3-java* src/main/resources/darwin-x64
 fi
 
 #
