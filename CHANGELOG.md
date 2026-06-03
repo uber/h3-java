@@ -7,10 +7,10 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 ### Added
-- `reverseDirectedEdge` function.
+- `reverseDirectedEdge` function. (#207)
 
 ### Changed
-- Upgraded the core library to v4.5.0.
+- Upgraded the core library to v4.5.0. (#207)
 
 ## [4.4.0] - 2025-12-12
 ### Added
