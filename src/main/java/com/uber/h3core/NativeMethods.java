@@ -140,6 +140,8 @@ final class NativeMethods {
 
   native int directedEdgeToBoundary(long h3, double[] verts);
 
+  native long reverseDirectedEdge(long h3);
+
   native int maxFaceCount(long h3);
 
   native void getIcosahedronFaces(long h3, int[] faces);

@@ -1228,6 +1228,16 @@ public class H3Core {
     return directedEdgeToBoundary(stringToH3(h3));
   }
 
+  /** Returns the directed edge with origin and destination cells reversed. */
+  public long reverseDirectedEdge(long h3) {
+    return h3Api.reverseDirectedEdge(h3);
+  }
+
+  /** Returns the directed edge with origin and destination cells reversed. */
+  public String reverseDirectedEdge(String h3) {
+    return h3ToString(reverseDirectedEdge(stringToH3(h3)));
+  }
+
   /**
    * Find all icosahedron faces intersected by a given H3 index, represented as integers from 0-19.
    *
