@@ -370,7 +370,7 @@ class TestRegion extends BaseTestH3Core {
     assertEquals(1, multiBounds.get(0).size());
     assertEquals(actualBounds.size() + 1, multiBounds.get(0).get(0).size());
 
-    int[] expectedIndices = {0, 1, 2, 3, 4, 5, 0};
+    int[] expectedIndices = {3, 4, 5, 0, 1, 2, 3};
 
     for (int i = 0; i < actualBounds.size(); i++) {
       assertEquals(
@@ -396,7 +396,7 @@ class TestRegion extends BaseTestH3Core {
     assertEquals(1, multiBounds.get(0).size());
     assertEquals(actualBounds.size(), multiBounds.get(0).get(0).size());
 
-    int[] expectedIndices = {0, 1, 2, 3, 4, 5};
+    int[] expectedIndices = {3, 4, 5, 0, 1, 2, 3};
 
     for (int i = 0; i < actualBounds.size(); i++) {
       assertEquals(
@@ -422,26 +422,26 @@ class TestRegion extends BaseTestH3Core {
     assertEquals(1, multiBounds.get(0).size());
     assertEquals(10, multiBounds.get(0).get(0).size());
 
-    assertEquals(actualBounds.get(1).lat, multiBounds.get(0).get(0).get(0).lat, EPSILON);
-    assertEquals(actualBounds.get(2).lat, multiBounds.get(0).get(0).get(1).lat, EPSILON);
-    assertEquals(actualBounds.get(3).lat, multiBounds.get(0).get(0).get(2).lat, EPSILON);
-    assertEquals(actualBounds.get(4).lat, multiBounds.get(0).get(0).get(3).lat, EPSILON);
-    assertEquals(actualBounds.get(5).lat, multiBounds.get(0).get(0).get(4).lat, EPSILON);
-    assertEquals(actualBounds2.get(4).lat, multiBounds.get(0).get(0).get(5).lat, EPSILON);
-    assertEquals(actualBounds2.get(5).lat, multiBounds.get(0).get(0).get(6).lat, EPSILON);
-    assertEquals(actualBounds2.get(0).lat, multiBounds.get(0).get(0).get(7).lat, EPSILON);
-    assertEquals(actualBounds2.get(1).lat, multiBounds.get(0).get(0).get(8).lat, EPSILON);
-    assertEquals(actualBounds2.get(2).lat, multiBounds.get(0).get(0).get(9).lat, EPSILON);
-    assertEquals(actualBounds.get(1).lng, multiBounds.get(0).get(0).get(0).lng, EPSILON);
-    assertEquals(actualBounds.get(2).lng, multiBounds.get(0).get(0).get(1).lng, EPSILON);
-    assertEquals(actualBounds.get(3).lng, multiBounds.get(0).get(0).get(2).lng, EPSILON);
-    assertEquals(actualBounds.get(4).lng, multiBounds.get(0).get(0).get(3).lng, EPSILON);
-    assertEquals(actualBounds.get(5).lng, multiBounds.get(0).get(0).get(4).lng, EPSILON);
-    assertEquals(actualBounds2.get(4).lng, multiBounds.get(0).get(0).get(5).lng, EPSILON);
-    assertEquals(actualBounds2.get(5).lng, multiBounds.get(0).get(0).get(6).lng, EPSILON);
-    assertEquals(actualBounds2.get(0).lng, multiBounds.get(0).get(0).get(7).lng, EPSILON);
-    assertEquals(actualBounds2.get(1).lng, multiBounds.get(0).get(0).get(8).lng, EPSILON);
-    assertEquals(actualBounds2.get(2).lng, multiBounds.get(0).get(0).get(9).lng, EPSILON);
+    assertEquals(actualBounds.get(1).lat, multiBounds.get(0).get(0).get(8).lat, EPSILON);
+    assertEquals(actualBounds.get(2).lat, multiBounds.get(0).get(0).get(9).lat, EPSILON);
+    assertEquals(actualBounds.get(3).lat, multiBounds.get(0).get(0).get(0).lat, EPSILON);
+    assertEquals(actualBounds.get(4).lat, multiBounds.get(0).get(0).get(1).lat, EPSILON);
+    assertEquals(actualBounds.get(5).lat, multiBounds.get(0).get(0).get(2).lat, EPSILON);
+    assertEquals(actualBounds2.get(4).lat, multiBounds.get(0).get(0).get(3).lat, EPSILON);
+    assertEquals(actualBounds2.get(5).lat, multiBounds.get(0).get(0).get(4).lat, EPSILON);
+    assertEquals(actualBounds2.get(0).lat, multiBounds.get(0).get(0).get(5).lat, EPSILON);
+    assertEquals(actualBounds2.get(1).lat, multiBounds.get(0).get(0).get(6).lat, EPSILON);
+    assertEquals(actualBounds2.get(2).lat, multiBounds.get(0).get(0).get(7).lat, EPSILON);
+    assertEquals(actualBounds.get(1).lng, multiBounds.get(0).get(0).get(8).lng, EPSILON);
+    assertEquals(actualBounds.get(2).lng, multiBounds.get(0).get(0).get(9).lng, EPSILON);
+    assertEquals(actualBounds.get(3).lng, multiBounds.get(0).get(0).get(0).lng, EPSILON);
+    assertEquals(actualBounds.get(4).lng, multiBounds.get(0).get(0).get(1).lng, EPSILON);
+    assertEquals(actualBounds.get(5).lng, multiBounds.get(0).get(0).get(2).lng, EPSILON);
+    assertEquals(actualBounds2.get(4).lng, multiBounds.get(0).get(0).get(3).lng, EPSILON);
+    assertEquals(actualBounds2.get(5).lng, multiBounds.get(0).get(0).get(4).lng, EPSILON);
+    assertEquals(actualBounds2.get(0).lng, multiBounds.get(0).get(0).get(5).lng, EPSILON);
+    assertEquals(actualBounds2.get(1).lng, multiBounds.get(0).get(0).get(6).lng, EPSILON);
+    assertEquals(actualBounds2.get(2).lng, multiBounds.get(0).get(0).get(7).lng, EPSILON);
   }
 
   @Test
