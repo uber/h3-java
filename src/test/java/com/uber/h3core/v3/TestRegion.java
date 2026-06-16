@@ -137,14 +137,32 @@ class TestRegion extends BaseTestH3CoreV3 {
         h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), true);
 
     // This is tricky, because output in an order starting from any vertex
-    // would also be correct, but that's difficult to assert and there's
-    // value in being specific here
+    // would also be correct, but that's difficult to assert. We try to find
+    // some valid ordering and then assert from there.
 
     assertEquals(1, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
     assertEquals(actualBounds.size() + 1, multiBounds.get(0).get(0).size());
 
-    int[] expectedIndices = {3, 4, 5, 0, 1, 2, 3};
+    int startOffset = -1;
+    for (int i = 0; i < actualBounds.size(); i++) {
+      if (floatEquals(actualBounds.get(i).lat, multiBounds.get(0).get(0).get(0).lat)
+          && floatEquals(actualBounds.get(i).lng, multiBounds.get(0).get(0).get(0).lng)) {
+        startOffset = i;
+        break;
+      }
+    }
+    assertTrue(startOffset >= 0);
+
+    int[] expectedIndices = {
+      startOffset,
+      (startOffset + 1) % 6,
+      (startOffset + 2) % 6,
+      (startOffset + 3) % 6,
+      (startOffset + 4) % 6,
+      (startOffset + 5) % 6,
+      startOffset
+    };
 
     for (int i = 0; i < actualBounds.size(); i++) {
       assertEquals(
@@ -163,14 +181,32 @@ class TestRegion extends BaseTestH3CoreV3 {
         h3.h3SetToMultiPolygon(ImmutableList.of(testIndex), false);
 
     // This is tricky, because output in an order starting from any vertex
-    // would also be correct, but that's difficult to assert and there's
-    // value in being specific here
+    // would also be correct, but that's difficult to assert. We try to find
+    // some valid ordering and then assert from there.
 
     assertEquals(1, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
     assertEquals(actualBounds.size(), multiBounds.get(0).get(0).size());
 
-    int[] expectedIndices = {3, 4, 5, 0, 1, 2, 3};
+    int startOffset = -1;
+    for (int i = 0; i < actualBounds.size(); i++) {
+      if (floatEquals(actualBounds.get(i).lat, multiBounds.get(0).get(0).get(0).lat)
+          && floatEquals(actualBounds.get(i).lng, multiBounds.get(0).get(0).get(0).lng)) {
+        startOffset = i;
+        break;
+      }
+    }
+    assertTrue(startOffset >= 0);
+
+    int[] expectedIndices = {
+      startOffset,
+      (startOffset + 1) % 6,
+      (startOffset + 2) % 6,
+      (startOffset + 3) % 6,
+      (startOffset + 4) % 6,
+      (startOffset + 5) % 6,
+      startOffset
+    };
 
     for (int i = 0; i < actualBounds.size(); i++) {
       assertEquals(

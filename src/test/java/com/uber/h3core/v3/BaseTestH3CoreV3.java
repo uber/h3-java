@@ -29,4 +29,12 @@ public abstract class BaseTestH3CoreV3 {
   public static void setup() throws IOException {
     h3 = H3CoreV3.newInstance();
   }
+
+  public static boolean floatEquals(double f1, double f2) {
+    return floatEquals(f1, f2, EPSILON);
+  }
+
+  public static boolean floatEquals(double f1, double f2, double epsilon) {
+    return (Math.abs(f1 - f2) < epsilon);
+  }
 }
