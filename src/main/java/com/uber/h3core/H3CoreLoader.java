@@ -97,7 +97,7 @@ public final class H3CoreLoader {
     // Check if the user specified a custom directory for native libraries
     String customDir = System.getProperty("h3.native.dir");
     File dir = customDir != null ? new File(customDir) : null;
-    
+
     // Ensure the custom directory exists
     if (dir != null && !dir.exists()) {
       dir.mkdirs();
@@ -109,7 +109,7 @@ public final class H3CoreLoader {
       // write.
       final FileAttribute<Set<PosixFilePermission>> attr =
           PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-      
+
       if (dir != null) {
         return Files.createTempFile(dir.toPath(), "libh3-java", os.getSuffix(), attr).toFile();
       } else {
