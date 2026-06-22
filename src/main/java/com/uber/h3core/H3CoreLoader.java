@@ -94,16 +94,35 @@ public final class H3CoreLoader {
   }
 
   private static File createTempLibraryFile(OperatingSystem os) throws IOException {
+    // Check if the user specified a custom directory for native libraries
+    String customDir = System.getProperty("h3.native.dir");
+    File dir = customDir != null ? new File(customDir) : null;
+    
+    // Ensure the custom directory exists
+    if (dir != null && !dir.exists()) {
+      dir.mkdirs();
+    }
+
     if (os.isPosix()) {
       // Note this is already done by the implementation of Files.createTempFile that I looked at,
       // but the javadoc does not seem to gaurantee the permissions will be restricted to owner
       // write.
       final FileAttribute<Set<PosixFilePermission>> attr =
           PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-      return Files.createTempFile("libh3-java", os.getSuffix(), attr).toFile();
+      
+      if (dir != null) {
+        return Files.createTempFile(dir.toPath(), "libh3-java", os.getSuffix(), attr).toFile();
+      } else {
+        return Files.createTempFile("libh3-java", os.getSuffix(), attr).toFile();
+      }
     } else {
       // When not a POSIX OS, try to ensure the permissions are secure
-      final File f = Files.createTempFile("libh3-java", os.getSuffix()).toFile();
+      final File f;
+      if (dir != null) {
+        f = Files.createTempFile(dir.toPath(), "libh3-java", os.getSuffix()).toFile();
+      } else {
+        f = Files.createTempFile("libh3-java", os.getSuffix()).toFile();
+      }
       f.setReadable(true, true);
       f.setWritable(true, true);
       f.setExecutable(true, true);
