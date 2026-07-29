@@ -2,6 +2,12 @@
 
 This directory contains documentation for building and integrating H3-Java.
 
+## Formatting
+
+```
+./gradlew spotlessApply
+```
+
 ## Troubleshooting
 
 ### docker: Error response from daemon: error while creating mount source path

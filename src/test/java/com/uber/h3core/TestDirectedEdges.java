@@ -60,6 +60,10 @@ class TestDirectedEdges extends BaseTestH3Core {
 
     List<LatLng> boundary = h3.directedEdgeToBoundary(edge);
     assertEquals(2, boundary.size());
+
+    String reversed = h3.reverseDirectedEdge(edge);
+    assertEquals(adjacent, h3.getDirectedEdgeOrigin(reversed));
+    assertEquals(start, h3.getDirectedEdgeDestination(reversed));
   }
 
   @Test

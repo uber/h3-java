@@ -1396,6 +1396,23 @@ Java_com_uber_h3core_NativeMethods_directedEdgeToBoundary(JNIEnv *env,
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    reverseDirectedEdge
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_uber_h3core_NativeMethods_reverseDirectedEdge(
+    JNIEnv *env, jobject thiz, jlong h3) {
+    H3Index out;
+    H3Error err = reverseDirectedEdge(h3, &out);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return -1;
+    }
+
+    return out;
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    maxFaceCount
  * Signature: (J)I
  */
