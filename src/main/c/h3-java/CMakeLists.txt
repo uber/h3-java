@@ -70,11 +70,12 @@ target_link_libraries(h3-java "${H3_BUILD_ROOT}/${H3_CORE_LIBRARY_PATH}${CMAKE_S
 option(H3_JAVA_ANDROID "Whether to enable Android specific build flags")
 if(H3_JAVA_ANDROID)
     target_link_options(h3-java PRIVATE "-Wl,-z,max-page-size=16384")
-endif()
-
-find_library(M_LIB m)
-if(M_LIB)
-    target_link_libraries(h3-java ${M_LIB})
+    target_link_libraries(h3-java m)
+else()
+    find_library(M_LIB m)
+    if(M_LIB)
+        target_link_libraries(h3-java ${M_LIB})
+    endif()
 endif()
 
 find_program(CLANG_FORMAT_PATH clang-format)

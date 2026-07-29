@@ -211,6 +211,11 @@ for image in $DOCKCROSS_IMAGES; do
     # Perform the actual build inside Docker
     $BUILD_ROOT/dockcross --args "-v $JAVA_HOME:/java" src/main/c/h3-java/build-h3-docker.sh "$BUILD_ROOT" "$UPGRADE_CMAKE" "$CMAKE_ROOT" "$SPECIAL_ANDROID_FLAGS"
 
+    if [[ "$image" == android-* ]]; then
+        $BUILD_ROOT/dockcross readelf -d "$BUILD_ROOT/lib/libh3-java.so" |
+            grep -q 'Shared library: \[libm.so\]'
+    fi
+
     # Copy the built artifact into the source tree so it can be included in the
     # built JAR.
     OUTPUT_ROOT=src/main/resources/$image
