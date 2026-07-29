@@ -15,6 +15,7 @@
  */
 package com.uber.h3core;
 
+import com.uber.h3core.util.LatLng;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -35,5 +36,13 @@ public abstract class BaseTestH3Core {
 
   public static boolean floatEquals(double f1, double f2, double epsilon) {
     return (Math.abs(f1 - f2) < epsilon);
+  }
+
+  public static boolean latLngEquals(LatLng l1, LatLng l2) {
+    return latLngEquals(l1, l2, EPSILON);
+  }
+
+  public static boolean latLngEquals(LatLng l1, LatLng l2, double epsilon) {
+    return floatEquals(l1.lat, l2.lat, epsilon) && floatEquals(l1.lng, l2.lng, epsilon);
   }
 }
