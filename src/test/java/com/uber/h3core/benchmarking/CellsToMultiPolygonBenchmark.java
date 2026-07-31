@@ -36,13 +36,13 @@ public class CellsToMultiPolygonBenchmark {
   @Benchmark
   @BenchmarkMode(Mode.Throughput)
   public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon2() {
-    return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list2, false);
+    return BenchmarkState.h3Core.cellsToMultiPolygon(new java.util.HashSet<>(BenchmarkState.list2), false);
   }
 
   @Benchmark
   @BenchmarkMode(Mode.Throughput)
   public List<List<List<LatLng>>> benchmarkH3SetToMultiPolygon20() {
-    return BenchmarkState.h3Core.cellsToMultiPolygon(BenchmarkState.list20, true);
+    return BenchmarkState.h3Core.cellsToMultiPolygon(new java.util.HashSet<>(BenchmarkState.list20), true);
   }
 
   @State(Scope.Benchmark)

@@ -340,7 +340,7 @@ class TestRegion extends BaseTestH3Core {
     inputHexagons.remove(0x85283097fffffffL);
     inputHexagons.remove(0x8528309bfffffffL);
 
-    List<List<LatLng>> geo = h3.cellsToMultiPolygon(inputHexagons, true).get(0);
+    List<List<LatLng>> geo = h3.cellsToMultiPolygon(new java.util.HashSet<>(inputHexagons), true).get(0);
 
     List<LatLng> outline = geo.remove(0); // geo is now holes
 
@@ -351,7 +351,7 @@ class TestRegion extends BaseTestH3Core {
 
   @Test
   void h3SetToMultiPolygonEmpty() {
-    assertEquals(0, h3.cellsToMultiPolygon(new ArrayList<Long>(), false).size());
+    assertEquals(0, h3.cellsToMultiPolygon(new java.util.HashSet<Long>(), false).size());
   }
 
   @Test
@@ -360,7 +360,7 @@ class TestRegion extends BaseTestH3Core {
 
     List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex), true);
+        h3.cellsToMultiPolygon(ImmutableSet.of(testIndex), true);
 
     // This is tricky, because output in an order starting from any vertex
     // would also be correct, but that's difficult to assert and there's
@@ -386,7 +386,7 @@ class TestRegion extends BaseTestH3Core {
 
     List<LatLng> actualBounds = h3.cellToBoundary(testIndex);
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex), false);
+        h3.cellsToMultiPolygon(ImmutableSet.of(testIndex), false);
 
     // This is tricky, because output in an order starting from any vertex
     // would also be correct, but that's difficult to assert and there's
@@ -416,7 +416,7 @@ class TestRegion extends BaseTestH3Core {
 
     // Note this is different than the h3core-js bindings, in that it uses GeoJSON (possible bug)
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        h3.cellsToMultiPolygon(ImmutableSet.of(testIndex, testIndex2), false);
 
     assertEquals(1, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
@@ -450,7 +450,7 @@ class TestRegion extends BaseTestH3Core {
     long testIndex2 = 0x8928308280fffffL;
 
     List<List<List<LatLng>>> multiBounds =
-        h3.cellsToMultiPolygon(ImmutableList.of(testIndex, testIndex2), false);
+        h3.cellsToMultiPolygon(ImmutableSet.of(testIndex, testIndex2), false);
 
     assertEquals(2, multiBounds.size());
     assertEquals(1, multiBounds.get(0).size());
@@ -464,7 +464,7 @@ class TestRegion extends BaseTestH3Core {
     // Six hexagons in a ring around a hole
     List<List<List<LatLng>>> multiBounds =
         h3.cellAddressesToMultiPolygon(
-            ImmutableList.of(
+            ImmutableSet.of(
                 "892830828c7ffff",
                 "892830828d7ffff",
                 "8928308289bffff",
@@ -488,7 +488,7 @@ class TestRegion extends BaseTestH3Core {
       addresses.add(h3.latLngToCellAddress(0, i * 0.01, 15));
     }
 
-    List<List<List<LatLng>>> multiBounds = h3.cellAddressesToMultiPolygon(addresses, false);
+    List<List<List<LatLng>>> multiBounds = h3.cellAddressesToMultiPolygon(new java.util.HashSet<>(addresses), false);
 
     assertEquals(numHexes, multiBounds.size());
     for (int i = 0; i < multiBounds.size(); i++) {
@@ -605,6 +605,6 @@ class TestRegion extends BaseTestH3Core {
             617683648067665919L,
             617683648068976639L,
             617683648028606463L);
-    assertThrows(H3Exception.class, () -> h3.cellsToMultiPolygon(cells, true));
+    assertThrows(H3Exception.class, () -> h3.cellsToMultiPolygon(new java.util.HashSet<>(cells), true));
   }
 }
