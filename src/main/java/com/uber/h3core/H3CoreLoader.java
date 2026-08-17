@@ -93,7 +93,7 @@ public final class H3CoreLoader {
     return loadNatives(os, arch);
   }
 
-  private static File createTempLibraryFile(OperatingSystem os) throws IOException {
+  static File createTempLibraryFile(OperatingSystem os) throws IOException {
     // Check if the user specified a custom directory for native libraries
     String customDir = System.getProperty("h3.native.dir");
     File dir = customDir != null ? new File(customDir) : null;

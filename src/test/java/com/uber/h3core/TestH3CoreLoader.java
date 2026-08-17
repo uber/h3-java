@@ -78,12 +78,8 @@ class TestH3CoreLoader {
       H3CoreLoader.OperatingSystem currentOs =
           H3CoreLoader.detectOs(System.getProperty("java.vendor"), System.getProperty("os.name"));
 
-      java.lang.reflect.Method method =
-          H3CoreLoader.class.getDeclaredMethod(
-              "createTempLibraryFile", H3CoreLoader.OperatingSystem.class);
-      method.setAccessible(true);
-
-      File tempFile = (File) method.invoke(null, currentOs);
+      // Call the package-private method directly! No reflection needed.
+      File tempFile = H3CoreLoader.createTempLibraryFile(currentOs);
 
       org.junit.jupiter.api.Assertions.assertTrue(
           tempFile.getAbsolutePath().startsWith(new File(customDir).getAbsolutePath()),
