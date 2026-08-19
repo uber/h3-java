@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -724,17 +725,17 @@ public class H3Core {
 
   /** Create polygons from a set of contiguous indexes */
   public List<List<List<LatLng>>> cellAddressesToMultiPolygon(
-      Collection<String> h3Addresses, boolean geoJson) {
-    List<Long> indices = stringToH3List(h3Addresses);
+      Set<String> h3Addresses, boolean geoJson) {
+    Set<Long> indices = h3Addresses.stream().map(this::stringToH3).collect(Collectors.toSet());
 
     return cellsToMultiPolygon(indices, geoJson);
   }
 
   /** Create polygons from a set of contiguous indexes */
-  public List<List<List<LatLng>>> cellsToMultiPolygon(Collection<Long> h3, boolean geoJson) {
-    long[] h3AsArray = collectionToLongArray(h3);
-
-    ArrayList<List<List<LatLng>>> result = new ArrayList<>();
+  public List<List<List<LatLng>>> cellsToMultiPolygon(Set<Long> h3, boolean geoJson) {
+  long[] h3AsArray = collectionToLongArray(h3);
+  
+  ArrayList<List<List<LatLng>>> result = new ArrayList<>();
 
     h3Api.cellsToLinkedMultiPolygon(h3AsArray, result);
 
