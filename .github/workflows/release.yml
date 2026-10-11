@@ -154,6 +154,17 @@ jobs:
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
+      - name: Extract release notes
+        run: |
+          awk -v ver="$RELEASE_VERSION" '
+            /^## / { if (found) exit; if (index($0, "## [" ver "]") == 1) { found=1; next } }
+            found
+          ' CHANGELOG.md > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "Failed to extract release notes from CHANGELOG.md"
+            exit 1
+          fi
+
       - name: Remove -SNAPSHOT suffix (prepare release version)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
@@ -193,17 +204,6 @@ jobs:
               unzip -l "$f"
           done
 
-      - name: Extract release notes
-        run: |
-          awk -v ver="$RELEASE_VERSION" '
-            /^## / { if (found) exit; if (index($0, "## [" ver "]") == 1) { found=1; next } }
-            found
-          ' CHANGELOG.md > extracted_release_notes.md
-          if [ ! -s extracted_release_notes.md ]; then
-            echo "Failed to extract release notes from CHANGELOG.md"
-            exit 1
-          fi
-
       - name: Publish to Sonatype (Maven Central)
         env:
           ORG_GRADLE_PROJECT_RELEASE_SIGNING_ENABLED: 'true'
@@ -216,11 +216,11 @@ jobs:
 
       - name: Create GitHub Release
         # This uses an action to create a release on GitHub
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: "v${{ env.RELEASE_VERSION }}"
           name: "${{ env.RELEASE_VERSION }}"
-          body_path: extracted_release_notes.md
+          body_path: release_notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
