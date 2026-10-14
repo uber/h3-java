@@ -7,6 +7,10 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 
+## [4.5.1] - 2026-10-14
+### Changed
+- Releases are signed with a new key, and the release process was updated. (#216)
+
 ## [4.5.0] - 2026-08-14
 ### Added
 - `reverseDirectedEdge` function. (#207)
