@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-22.04]
         java-distribution: [adopt]
-        java-version: [11, 17, 21, 22]
+        java-version: [17, 21, 25]
         dockcross-only: ["android-arm", "android-arm64", "linux-arm64", "linux-armv5", "linux-armv7", "linux-s390x", "linux-ppc64le", "linux-x64", "linux-x86", "windows-static-x64", "windows-static-x86"]
 
     steps:
@@ -58,7 +58,7 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         name: Upload artifacts
-        if: ${{ matrix.java-version == 11 }}
+        if: ${{ matrix.java-version == 17 }}
         with:
           name: docker-built-shared-objects-${{ matrix.dockcross-only }}
           path: |
@@ -117,7 +117,7 @@ jobs:
         # TODO: Windows pinned back
         os: [macos-latest, windows-2022]
         java-distribution: [adopt]
-        java-version: [11, 17, 21, 22]
+        java-version: [17, 21, 25]
 
     steps:
       - uses: actions/checkout@v6
@@ -148,7 +148,7 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         name: Upload Mac OS Artifacts
-        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 11 }}
+        if: ${{ matrix.os == 'macos-latest' && matrix.java-version == 17 }}
         with:
           name: macos-built-shared-objects
           path: src/main/resources/*/*.dylib
@@ -205,7 +205,7 @@ jobs:
       matrix:
         os: [ubuntu-22.04]
         java-distribution: [adopt]
-        java-version: [11]
+        java-version: [17]
 
     steps:
       - uses: actions/checkout@v6
