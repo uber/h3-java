@@ -130,6 +130,8 @@ jobs:
       - build-with-docker
       - build
 
+    if: github.repository == 'uber/h3-java'
+
     steps:
       - name: Check out code
         uses: actions/checkout@v6
@@ -151,6 +153,17 @@ jobs:
           RELEASE_VERSION=$(grep -E 'version=' gradle.properties | sed -E 's/version=//')
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+
+      - name: Extract release notes
+        run: |
+          awk -v ver="$RELEASE_VERSION" '
+            /^## / { if (found) exit; if (index($0, "## [" ver "]") == 1) { found=1; next } }
+            found
+          ' CHANGELOG.md > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "Failed to extract release notes from CHANGELOG.md"
+            exit 1
+          fi
 
       - name: Remove -SNAPSHOT suffix (prepare release version)
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -191,23 +204,23 @@ jobs:
               unzip -l "$f"
           done
 
-      - name: Publish to Sonatype OSSRH (Maven Central)
+      - name: Publish to Sonatype (Maven Central)
         env:
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
-          # OSSRH_STAGING_PROFILE_ID: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
+          ORG_GRADLE_PROJECT_RELEASE_SIGNING_ENABLED: 'true'
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.PGP_PRIVATE_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.PGP_SIGNING_KEY_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.PGP_SIGNING_KEY_PASSWORD }}
         run: ./gradlew publishAndReleaseToMavenCentral -Ph3GithubArtifactsUse=true -Ph3GithubArtifactsByRun=true
 
-      - name: Create GitHub Release (with changelog notes)
+      - name: Create GitHub Release
         # This uses an action to create a release on GitHub
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: "v${{ env.RELEASE_VERSION }}"
           name: "${{ env.RELEASE_VERSION }}"
-          body_path: CHANGELOG.md # assumes changelog contains latest release notes at top
+          body_path: release_notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
