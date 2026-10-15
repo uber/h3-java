@@ -446,12 +446,12 @@ public class H3CoreV3 {
   /** Create polygons from a set of contiguous indexes */
   public List<List<List<LatLng>>> h3AddressSetToMultiPolygon(
       Collection<String> h3Addresses, boolean geoJson) {
-    return h3Api.cellAddressesToMultiPolygon(h3Addresses, geoJson);
+    return h3Api.cellAddressesToMultiPolygon(new java.util.HashSet<>(h3Addresses), geoJson);
   }
 
   /** Create polygons from a set of contiguous indexes */
   public List<List<List<LatLng>>> h3SetToMultiPolygon(Collection<Long> h3, boolean geoJson) {
-    return h3Api.cellsToMultiPolygon(h3, geoJson);
+    return h3Api.cellsToMultiPolygon(new java.util.HashSet<>(h3), geoJson);
   }
 
   /** Returns the resolution of the provided index */
