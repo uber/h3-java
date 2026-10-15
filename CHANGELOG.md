@@ -7,7 +7,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 
-## [4.5.1] - 2026-10-14
+## [4.5.1] - 2026-10-15
 ### Changed
 - Releases are signed with a new key, and the release process was updated. (#216)
 
