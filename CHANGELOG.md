@@ -9,7 +9,7 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## [4.5.1] - 2026-10-15
 ### Changed
-- Releases are signed with a new key, and the release process was updated. (#216)
+- Releases are signed with a new key, and the release process was updated. (#216, #217)
 
 ## [4.5.0] - 2026-08-14
 ### Added
