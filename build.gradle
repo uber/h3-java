@@ -1,15 +1,6 @@
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        jcenter()
-    }
-
-}
-
 plugins {
     id 'java'
     id 'java-library'
@@ -17,9 +8,9 @@ plugins {
     id 'signing'
     id 'jacoco'
     // id 'com.github.spotbugs' version '5.2.1'
-    id 'com.diffplug.spotless' version '7.2.1'
+    id 'com.diffplug.spotless' version '8.10.4'
     id 'com.github.nbaztec.coveralls-jacoco' version '1.2.20'
-    id 'com.vanniktech.maven.publish' version '0.34.0'
+    id 'com.vanniktech.maven.publish' version '0.37.0'
 
 }
 
