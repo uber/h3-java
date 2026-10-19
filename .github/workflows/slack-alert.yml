@@ -5,6 +5,9 @@ on:
     workflows: [tests]
     types: [completed]
 
+permissions:
+  contents: read
+
 jobs:
   on-failure:
     runs-on: ubuntu-latest
