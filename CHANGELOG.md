@@ -7,6 +7,9 @@ for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
 
+### Fixed
+- Include ProGuard/R8 rules in the Android AAR to preserve classes and constructors used by JNI. (#215)
+
 ## [4.5.1] - 2026-10-15
 ### Changed
 - Releases are signed with a new key, and the release process was updated. (#216, #217)

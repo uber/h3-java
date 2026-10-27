@@ -167,7 +167,7 @@ task androidJar(type: Jar) {
         include 'android-arm64/**'
         include 'META-INF/**'
     }
-    
+
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
     manifest {
@@ -200,6 +200,10 @@ task androidAar(type: Zip) {
     archiveBaseName = 'h3-android'
     archiveVersion = project.version
     archiveExtension = 'aar'
+
+    from('src/main/proguard/h3-android.pro') {
+        rename { 'proguard.txt' }
+    }
     
     // Map android-arm to armeabi-v7a (32-bit ARM)
     from('src/main/resources/android-arm') {
