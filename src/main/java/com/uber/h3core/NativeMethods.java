@@ -154,6 +154,8 @@ final class NativeMethods {
 
   native boolean isValidVertex(long h3);
 
+  native void edgeToVertexes(long h3, long[] results);
+
   native long cellToChildPos(long child, int parentRes);
 
   native long childPosToCell(long childPos, long parent, int childRes);

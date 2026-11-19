@@ -1299,6 +1299,18 @@ public class H3Core {
     return h3Api.isValidVertex(stringToH3(h3Address));
   }
 
+  /** Returns two vertex indexes for an edge index */
+  public List<Long> edgeToVertexes(long h3) {
+    long[] results = {0, 0};
+    h3Api.edgeToVertexes(h3, results);
+    return nonZeroLongArrayToList(results);
+  }
+
+  /** Returns two vertex indexes for an edge index */
+  public List<String> edgeToVertexes(String h3Address) {
+    return h3ToStringList(edgeToVertexes(stringToH3(h3Address)));
+  }
+
   /**
    * Returns the position of the child cell within an ordered list of all children of the cell's
    * parent at the specified resolution parentRes.

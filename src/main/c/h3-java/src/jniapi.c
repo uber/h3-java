@@ -1530,6 +1530,34 @@ JNIEXPORT jboolean JNICALL Java_com_uber_h3core_NativeMethods_isValidVertex(
 
 /*
  * Class:     com_uber_h3core_NativeMethods
+ * Method:    edgeToVertexes
+ * Signature: (J[J)V
+ */
+JNIEXPORT void JNICALL Java_com_uber_h3core_NativeMethods_edgeToVertexes(
+    JNIEnv *env, jobject thiz, jlong h3, jlongArray results) {
+    H3Index v1, v2;
+    H3Error err = edgeToVertexes(h3, &v1, &v2);
+    if (err) {
+        ThrowH3Exception(env, err);
+        return;
+    }
+
+    jsize sz = (**env).GetArrayLength(env, results);
+    jlong *resultsElements = (**env).GetLongArrayElements(env, results, 0);
+
+    if (resultsElements != NULL && sz >= 2) {
+        // if sz is too small, we will fail to write all the elements
+        resultsElements[0] = v1;
+        resultsElements[1] = v2;
+
+        (**env).ReleaseLongArrayElements(env, results, resultsElements, 0);
+    } else {
+        ThrowOutOfMemoryError(env);
+    }
+}
+
+/*
+ * Class:     com_uber_h3core_NativeMethods
  * Method:    cellToChildPos
  * Signature: (JI)J
  */
