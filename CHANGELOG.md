@@ -6,6 +6,11 @@ file [H3Core.java](./src/main/java/com/uber/h3core/H3Core.java), and support
 for the Linux x64 and Darwin x64 platforms.
 
 ## Unreleased Changes
+### Added
+- `edgeToVertexes` function.
+
+### Changed
+- Upgraded the core library to v4.6.0.
 
 ## [4.5.1] - 2026-10-15
 ### Changed

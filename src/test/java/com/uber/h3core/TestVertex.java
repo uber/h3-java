@@ -114,4 +114,27 @@ class TestVertex extends BaseTestH3Core {
   void vertexToLatLngInvalid() {
     assertThrows(H3Exception.class, () -> h3.vertexToLatLng("ffffffffffffffff"));
   }
+
+  @Test
+  void edgeToVertexes() {
+    long edge = 0x115283473fffffffL;
+    List<Long> verts = h3.edgeToVertexes(edge);
+    assertEquals(2, verts.size());
+    assertEquals(0x255283463fffffffL, verts.get(0));
+    assertEquals(0x22528340ffffffffL, verts.get(1));
+  }
+
+  @Test
+  void edgeToVertexesString() {
+    String edge = "115283473fffffff";
+    List<String> verts = h3.edgeToVertexes(edge);
+    assertEquals(2, verts.size());
+    assertEquals("255283463fffffff", verts.get(0));
+    assertEquals("22528340ffffffff", verts.get(1));
+  }
+
+  @Test
+  void edgeToVertexesInvalid() {
+    assertThrows(H3Exception.class, () -> h3.edgeToVertexes(0));
+  }
 }
